@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>멀티미디어 통합형 문제</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --secondary: #9333ea;
+                --success: #22c55e;
+                --gray-50: #f9fafb;
+                --gray-100: #f3f4f6;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+                --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            body {
+                font-family: -apple-system, system-ui, sans-serif;
+                background: var(--gray-50);
+                padding: 16px;
+                padding-bottom: 80px;
+            }
+
+            /* 오디오-비주얼 매칭 스타일 */
+            .audio-visual-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: var(--shadow);
+                margin-bottom: 20px;
+                overflow: hidden;
+            }
+
+            .card-header {
+                padding: 16px;
+                border-bottom: 1px solid var(--gray-200);
+            }
+
+            .card-title {
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .card-description {
+                font-size: 14px;
+                color: var(--gray-700);
+            }
+
+            .audio-visual-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+                padding: 16px;
+            }
+
+            .audio-item {
+                background: var(--gray-50);
+                border-radius: 8px;
+                padding: 16px;
+                text-align: center;
+            }
+
+            .audio-player {
+                width: 100%;
+                margin-bottom: 8px;
+            }
+
+            .visual-item {
+                aspect-ratio: 1;
+                background: var(--gray-100);
+                border: 2px solid transparent;
+                border-radius: 8px;
+                cursor: pointer;
+                overflow: hidden;
+                transition: all 0.2s;
+            }
+
+            .visual-item:hover {
+                border-color: var(--primary);
+            }
+
+            .visual-item img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            /* 동영상 기반 선택형 */
+            .video-question {
+                background: white;
+                border-radius: 12px;
+                box-shadow: var(--shadow);
+                margin-bottom: 20px;
+                overflow: hidden;
+            }
+
+            .video-container {
+                position: relative;
+                width: 100%;
+                aspect-ratio: 16/9;
+                background: black;
+            }
+
+            .video-controls {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 16px;
+                background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+                display: flex;
+                align-items: center;
+                gap: 16px;
+            }
+
+            .play-button {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: white;
+                border: none;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .video-progress {
+                flex: 1;
+                height: 4px;
+                background: rgba(255, 255, 255, 0.3);
+                border-radius: 2px;
+                position: relative;
+            }
+
+            .progress-bar {
+                position: absolute;
+                height: 100%;
+                background: white;
+                border-radius: 2px;
+                width: 30%;
+            }
+
+            .video-options {
+                padding: 16px;
+            }
+
+            .option-button {
+                width: 100%;
+                padding: 12px;
+                margin-bottom: 8px;
+                background: var(--gray-50);
+                border: 1px solid var(--gray-200);
+                border-radius: 8px;
+                text-align: left;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .option-button:hover {
+                background: var(--primary);
+                color: white;
+            }
+
+            /* 애니메이션 상호작용 */
+            .animation-container {
+                background: white;
+                border-radius: 12px;
+                box-shadow: var(--shadow);
+                overflow: hidden;
+            }
+
+            .animation-stage {
+                position: relative;
+                width: 100%;
+                aspect-ratio: 16/9;
+                background: var(--gray-50);
+                overflow: hidden;
+            }
+
+            .interactive-object {
+                position: absolute;
+                width: 60px;
+                height: 60px;
+                background: var(--primary);
+                border-radius: 50%;
+                cursor: pointer;
+                transition: transform 0.3s;
+            }
+
+            .interactive-object:hover {
+                transform: scale(1.1);
+            }
+
+            .animation-controls {
+                padding: 16px;
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+
+            .control-button {
+                padding: 12px;
+                background: var(--gray-50);
+                border: none;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+            }
+
+            /* 하단 네비게이션 */
+            .bottom-nav {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 16px;
+                background: white;
+                border-top: 1px solid var(--gray-200);
+                display: flex;
+                gap: 12px;
+            }
+
+            .nav-button {
+                flex: 1;
+                padding: 14px;
+                border-radius: 8px;
+                font-size: 15px;
+                font-weight: 600;
+                border: none;
+                cursor: pointer;
+            }
+
+            .primary-button {
+                background: var(--primary);
+                color: white;
+            }
+
+            .secondary-button {
+                background: var(--gray-50);
+                color: var(--gray-700);
+            }
+
+            /* 모바일 최적화 */
+            @media (max-width: 640px) {
+                .audio-visual-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .animation-controls {
+                    grid-template-columns: 1fr 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 오디오-비주얼 매칭 -->
+        <div class="audio-visual-card">
+            <div class="card-header">
+                <h2 class="card-title">소리와 이미지 매칭</h2>
+                <p class="card-description">
+                    소리를 듣고 알맞은 이미지를 선택하세요.
+                </p>
+            </div>
+            <div class="audio-visual-grid">
+                <div class="audio-item">
+                    <audio class="audio-player" controls>
+                        <source src="audio1.mp3" type="audio/mpeg" />
+                    </audio>
+                    <span>소리 #1</span>
+                </div>
+                <div class="visual-item">
+                    <img src="/api/placeholder/200/200" alt="이미지 1" />
+                </div>
+                <div class="audio-item">
+                    <audio class="audio-player" controls>
+                        <source src="audio2.mp3" type="audio/mpeg" />
+                    </audio>
+                    <span>소리 #2</span>
+                </div>
+                <div class="visual-item">
+                    <img src="/api/placeholder/200/200" alt="이미지 2" />
+                </div>
+            </div>
+        </div>
+
+        <!-- 동영상 기반 선택형 -->
+        <div class="video-question">
+            <div class="card-header">
+                <h2 class="card-title">영상 기반 문제</h2>
+                <p class="card-description">
+                    영상을 보고 올바른 답을 선택하세요.
+                </p>
+            </div>
+            <div class="video-container">
+                <div class="video-controls">
+                    <button class="play-button">▶</button>
+                    <div class="video-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                    <span style="color: white">2:30</span>
+                </div>
+            </div>
+            <div class="video-options">
+                <button class="option-button">선택지 1</button>
+                <button class="option-button">선택지 2</button>
+                <button class="option-button">선택지 3</button>
+            </div>
+        </div>
+
+        <!-- 애니메이션 상호작용 -->
+        <div class="animation-container">
+            <div class="card-header">
+                <h2 class="card-title">애니메이션 상호작용</h2>
+                <p class="card-description">
+                    움직이는 요소를 관찰하고 조작하세요.
+                </p>
+            </div>
+            <div class="animation-stage">
+                <div
+                    class="interactive-object"
+                    style="left: 50%; top: 50%"
+                ></div>
+            </div>
+            <div class="animation-controls">
+                <button class="control-button">시작</button>
+                <button class="control-button">일시정지</button>
+                <button class="control-button">재설정</button>
+            </div>
+        </div>
+
+        <!-- 하단 네비게이션 -->
+        <div class="bottom-nav">
+            <button class="nav-button secondary-button">이전</button>
+            <button class="nav-button primary-button">다음</button>
+        </div>
+    </body>
+</html>

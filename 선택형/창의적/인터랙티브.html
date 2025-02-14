@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>인터랙티브 선택형</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --primary-light: #dbeafe;
+                --success: #22c55e;
+                --warning: #f59e0b;
+                --error: #ef4444;
+                --gray-50: #f9fafb;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                -webkit-tap-highlight-color: transparent;
+                touch-action: manipulation;
+            }
+
+            body {
+                font-family: -apple-system, system-ui, sans-serif;
+                background: var(--gray-50);
+                padding: 16px;
+                padding-bottom: 80px;
+            }
+
+            /* 공통 카드 스타일 */
+            .question-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+                overflow: hidden;
+            }
+
+            .card-header {
+                padding: 16px;
+                border-bottom: 1px solid var(--gray-200);
+            }
+
+            .card-title {
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .card-description {
+                font-size: 14px;
+                color: var(--gray-700);
+            }
+
+            /* 드래그앤드롭 조합형 */
+            .drag-area {
+                padding: 16px;
+            }
+
+            .drag-items {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 8px;
+                margin-bottom: 16px;
+            }
+
+            .drag-item {
+                padding: 12px;
+                background: var(--primary-light);
+                border: 2px solid var(--primary);
+                border-radius: 8px;
+                text-align: center;
+                cursor: move;
+                touch-action: none;
+                user-select: none;
+            }
+
+            .drop-zones {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .drop-zone {
+                min-height: 60px;
+                border: 2px dashed var(--gray-200);
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 12px;
+            }
+
+            /* 슬라이더 조절형 */
+            .slider-container {
+                padding: 16px;
+            }
+
+            .slider-control {
+                width: 100%;
+                margin: 20px 0;
+            }
+
+            input[type="range"] {
+                width: 100%;
+                height: 8px;
+                border-radius: 4px;
+                background: var(--gray-200);
+                outline: none;
+                -webkit-appearance: none;
+            }
+
+            input[type="range"]::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                width: 24px;
+                height: 24px;
+                background: var(--primary);
+                border-radius: 50%;
+                cursor: pointer;
+            }
+
+            .slider-value {
+                text-align: center;
+                font-size: 24px;
+                font-weight: 600;
+                color: var(--primary);
+                margin: 20px 0;
+            }
+
+            /* 시뮬레이션 기반 선택형 */
+            .simulation-area {
+                position: relative;
+                width: 100%;
+                aspect-ratio: 16/9;
+                background: var(--gray-50);
+                overflow: hidden;
+            }
+
+            .simulation-object {
+                position: absolute;
+                width: 40px;
+                height: 40px;
+                background: var(--primary);
+                border-radius: 50%;
+                touch-action: none;
+            }
+
+            .control-panel {
+                padding: 16px;
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .control-button {
+                padding: 12px;
+                border: none;
+                border-radius: 8px;
+                background: var(--primary);
+                color: white;
+                font-weight: 600;
+                cursor: pointer;
+            }
+
+            /* 가상 실험 선택형 */
+            .experiment-container {
+                padding: 16px;
+            }
+
+            .experiment-controls {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: 8px;
+                margin-bottom: 16px;
+            }
+
+            .control-group {
+                border: 1px solid var(--gray-200);
+                border-radius: 8px;
+                padding: 12px;
+            }
+
+            .control-label {
+                font-size: 14px;
+                margin-bottom: 8px;
+            }
+
+            .control-value {
+                font-size: 18px;
+                font-weight: 600;
+                color: var(--primary);
+            }
+
+            /* 3D 객체 조작형 */
+            .object-viewer {
+                width: 100%;
+                aspect-ratio: 1;
+                background: var(--gray-50);
+                border-radius: 8px;
+                margin-bottom: 16px;
+                touch-action: none;
+            }
+
+            .rotation-controls {
+                display: flex;
+                gap: 8px;
+                padding: 16px;
+            }
+
+            .rotation-button {
+                flex: 1;
+                padding: 12px;
+                border: none;
+                border-radius: 8px;
+                background: var(--primary);
+                color: white;
+                font-weight: 600;
+                cursor: pointer;
+            }
+
+            /* 하단 버튼 */
+            .action-buttons {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 16px;
+                background: white;
+                border-top: 1px solid var(--gray-200);
+                display: flex;
+                gap: 12px;
+            }
+
+            .action-button {
+                flex: 1;
+                padding: 14px;
+                border-radius: 8px;
+                font-size: 15px;
+                font-weight: 600;
+                border: none;
+                cursor: pointer;
+            }
+
+            .button-primary {
+                background: var(--primary);
+                color: white;
+            }
+
+            .button-secondary {
+                background: var(--gray-50);
+                color: var(--gray-700);
+            }
+
+            /* 모바일 최적화 */
+            @media (max-width: 640px) {
+                .drag-items {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+
+                .experiment-controls {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 드래그앤드롭 조합형 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2 class="card-title">분자 구조 만들기</h2>
+                <p class="card-description">
+                    원자를 드래그하여 올바른 위치에 배치하세요.
+                </p>
+            </div>
+            <div class="drag-area">
+                <div class="drag-items">
+                    <div class="drag-item" draggable="true">H</div>
+                    <div class="drag-item" draggable="true">O</div>
+                    <div class="drag-item" draggable="true">H</div>
+                </div>
+                <div class="drop-zones">
+                    <div class="drop-zone">여기에 드래그하세요</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 슬라이더 조절형 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2 class="card-title">pH 농도 조절</h2>
+                <p class="card-description">
+                    슬라이더를 움직여 적절한 pH 값을 설정하세요.
+                </p>
+            </div>
+            <div class="slider-container">
+                <input
+                    type="range"
+                    min="0"
+                    max="14"
+                    value="7"
+                    class="slider-control"
+                />
+                <div class="slider-value">7.0</div>
+            </div>
+        </div>
+
+        <!-- 시뮬레이션 기반 선택형 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2 class="card-title">물리 시뮬레이션</h2>
+                <p class="card-description">
+                    물체의 운동을 시뮬레이션하고 결과를 예측하세요.
+                </p>
+            </div>
+            <div class="simulation-area">
+                <div
+                    class="simulation-object"
+                    style="left: 50%; top: 50%"
+                ></div>
+            </div>
+            <div class="control-panel">
+                <button class="control-button">시작</button>
+                <button class="control-button">초기화</button>
+            </div>
+        </div>
+
+        <!-- 가상 실험 선택형 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2 class="card-title">화학 반응 실험</h2>
+                <p class="card-description">
+                    변수를 조절하여 올바른 반응 조건을 찾으세요.
+                </p>
+            </div>
+            <div class="experiment-container">
+                <div class="experiment-controls">
+                    <div class="control-group">
+                        <div class="control-label">온도</div>
+                        <div class="control-value">25°C</div>
+                    </div>
+                    <div class="control-group">
+                        <div class="control-label">압력</div>
+                        <div class="control-value">1 atm</div>
+                    </div>
+                    <div class="control-group">
+                        <div class="control-label">농도</div>
+                        <div class="control-value">0.5 M</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3D 객체 조작형 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2 class="card-title">분자 구조 관찰</h2>
+                <p class="card-description">
+                    3D 모델을 회전하여 정답을 선택하세요.
+                </p>
+            </div>
+            <div class="object-viewer">
+                <!-- 3D 객체가 표시될 영역 -->
+            </div>
+            <div class="rotation-controls">
+                <button class="rotation-button">X축 회전</button>
+                <button class="rotation-button">Y축 회전</button>
+                <button class="rotation-button">Z축 회전</button>
+            </div>
+        </div>
+
+        <!-- 하단 버튼 -->
+        <div class="action-buttons">
+            <button class="action-button button-secondary">다시하기</button>
+            <button class="action-button button-primary">제출하기</button>
+        </div>
+    </body>
+</html>

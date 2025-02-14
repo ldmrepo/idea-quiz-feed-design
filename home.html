@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>문항 작성</title>
+        <style>
+            /* 기본 스타일 */
+            :root {
+                --primary-color: #0095f6;
+                --border-color: #dbdbdb;
+                --background-color: #fafafa;
+                --text-primary: #262626;
+                --text-secondary: #8e8e8e;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+            }
+
+            /* 컨테이너 */
+            .container {
+                max-width: 1000px;
+                margin: 20px auto;
+                padding: 0 20px;
+            }
+
+            /* 문항 작성 카드 */
+            .question-editor {
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+            }
+
+            /* 헤더 */
+            .editor-header {
+                padding: 20px;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .editor-title {
+                font-size: 24px;
+                font-weight: 600;
+                margin-bottom: 10px;
+            }
+
+            /* 템플릿 선택 */
+            .template-selector {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 16px;
+                padding: 20px;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .template-card {
+                border: 2px solid var(--border-color);
+                border-radius: 8px;
+                padding: 16px;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .template-card:hover {
+                border-color: var(--primary-color);
+                background-color: #f8f9fa;
+            }
+
+            .template-card.selected {
+                border-color: var(--primary-color);
+                background-color: #e8f0fe;
+            }
+
+            .template-title {
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .template-description {
+                font-size: 14px;
+                color: var(--text-secondary);
+            }
+
+            /* 에디터 메인 */
+            .editor-main {
+                padding: 20px;
+            }
+
+            .input-group {
+                margin-bottom: 20px;
+            }
+
+            .input-label {
+                display: block;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .input-field {
+                width: 100%;
+                padding: 12px;
+                border: 1px solid var(--border-color);
+                border-radius: 4px;
+                font-size: 14px;
+                transition: border-color 0.2s;
+            }
+
+            .input-field:focus {
+                outline: none;
+                border-color: var(--primary-color);
+            }
+
+            /* 드래그앤드롭 영역 */
+            .drag-drop-area {
+                border: 2px dashed var(--border-color);
+                border-radius: 8px;
+                padding: 40px;
+                text-align: center;
+                background-color: #f8f9fa;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .drag-drop-area:hover {
+                border-color: var(--primary-color);
+                background-color: #e8f0fe;
+            }
+
+            .drag-drop-icon {
+                font-size: 48px;
+                margin-bottom: 16px;
+                color: var(--text-secondary);
+            }
+
+            .drag-drop-text {
+                font-size: 16px;
+                color: var(--text-secondary);
+                margin-bottom: 8px;
+            }
+
+            .drag-drop-subtext {
+                font-size: 14px;
+                color: var(--text-secondary);
+            }
+
+            /* 미디어 프리뷰 */
+            .media-preview {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 16px;
+                margin-top: 16px;
+            }
+
+            .media-item {
+                position: relative;
+                aspect-ratio: 1;
+                border-radius: 4px;
+                overflow: hidden;
+            }
+
+            .media-item img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .media-remove {
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                width: 24px;
+                height: 24px;
+                background: rgba(0, 0, 0, 0.5);
+                border-radius: 50%;
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+            }
+
+            /* 태그 입력 */
+            .tag-input-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                padding: 8px;
+                border: 1px solid var(--border-color);
+                border-radius: 4px;
+            }
+
+            .tag {
+                background-color: #e8f0fe;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 14px;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+
+            .tag-remove {
+                cursor: pointer;
+                color: var(--text-secondary);
+            }
+
+            .tag-input {
+                border: none;
+                padding: 4px;
+                flex: 1;
+                min-width: 100px;
+            }
+
+            .tag-input:focus {
+                outline: none;
+            }
+
+            /* 하단 버튼 */
+            .editor-footer {
+                padding: 20px;
+                border-top: 1px solid var(--border-color);
+                display: flex;
+                justify-content: flex-end;
+                gap: 12px;
+            }
+
+            .btn {
+                padding: 12px 24px;
+                border-radius: 4px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .btn-secondary {
+                background-color: transparent;
+                border: 1px solid var(--border-color);
+                color: var(--text-primary);
+            }
+
+            .btn-secondary:hover {
+                background-color: #f8f9fa;
+            }
+
+            .btn-primary {
+                background-color: var(--primary-color);
+                border: none;
+                color: white;
+            }
+
+            .btn-primary:hover {
+                background-color: #0077e6;
+            }
+
+            /* 반응형 디자인 */
+            @media (max-width: 768px) {
+                .container {
+                    padding: 0 12px;
+                }
+
+                .template-selector {
+                    grid-template-columns: 1fr;
+                }
+
+                .editor-title {
+                    font-size: 20px;
+                }
+
+                .drag-drop-area {
+                    padding: 20px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="question-editor">
+                <!-- 헤더 -->
+                <div class="editor-header">
+                    <h1 class="editor-title">문항 작성</h1>
+                    <p class="editor-subtitle">
+                        템플릿을 선택하거나 직접 작성해보세요
+                    </p>
+                </div>
+
+                <!-- 템플릿 선택 -->
+                <div class="template-selector">
+                    <div class="template-card">
+                        <h3 class="template-title">객관식 문항</h3>
+                        <p class="template-description">
+                            4개의 선택지가 있는 기본 객관식 문항입니다.
+                        </p>
+                    </div>
+                    <div class="template-card">
+                        <h3 class="template-title">주관식 문항</h3>
+                        <p class="template-description">
+                            답안을 직접 작성하는 주관식 문항입니다.
+                        </p>
+                    </div>
+                    <div class="template-card">
+                        <h3 class="template-title">서술형 문항</h3>
+                        <p class="template-description">
+                            긴 답변을 작성하는 서술형 문항입니다.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 에디터 메인 -->
+                <div class="editor-main">
+                    <!-- 제목 입력 -->
+                    <div class="input-group">
+                        <label class="input-label">문항 제목</label>
+                        <input
+                            type="text"
+                            class="input-field"
+                            placeholder="제목을 입력하세요"
+                        />
+                    </div>
+
+                    <!-- 문제 내용 -->
+                    <div class="input-group">
+                        <label class="input-label">문제 내용</label>
+                        <textarea
+                            class="input-field"
+                            rows="6"
+                            placeholder="문제 내용을 입력하세요"
+                        ></textarea>
+                    </div>
+
+                    <!-- 미디어 추가 -->
+                    <div class="input-group">
+                        <label class="input-label">미디어 추가</label>
+                        <div class="drag-drop-area">
+                            <div class="drag-drop-icon">📁</div>
+                            <p class="drag-drop-text">
+                                이미지나 파일을 드래그하거나 클릭하여 업로드
+                            </p>
+                            <p class="drag-drop-subtext">
+                                최대 10개 파일, 각 20MB 이하
+                            </p>
+                        </div>
+                        <!-- 미디어 프리뷰 -->
+                        <div class="media-preview">
+                            <div class="media-item">
+                                <img
+                                    src="/api/placeholder/150/150"
+                                    alt="Preview"
+                                />
+                                <div class="media-remove">×</div>
+                            </div>
+                            <div class="media-item">
+                                <img
+                                    src="/api/placeholder/150/150"
+                                    alt="Preview"
+                                />
+                                <div class="media-remove">×</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 태그 입력 -->
+                    <div class="input-group">
+                        <label class="input-label">태그 추가</label>
+                        <div class="tag-input-container">
+                            <div class="tag">
+                                수학 <span class="tag-remove">×</span>
+                            </div>
+                            <div class="tag">
+                                미적분 <span class="tag-remove">×</span>
+                            </div>
+                            <input
+                                type="text"
+                                class="tag-input"
+                                placeholder="태그 입력 후 Enter"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 하단 버튼 -->
+                <div class="editor-footer">
+                    <button class="btn btn-secondary">임시저장</button>
+                    <button class="btn btn-primary">발행하기</button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

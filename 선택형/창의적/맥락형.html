@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>게임형 선택형 문제</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --secondary: #9333ea;
+                --success: #22c55e;
+                --warning: #f59e0b;
+                --error: #ef4444;
+                --gray-50: #f9fafb;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            body {
+                font-family: -apple-system, system-ui, sans-serif;
+                background: var(--gray-50);
+                padding: 16px;
+            }
+
+            /* 게임 스테이터스 바 */
+            .game-status {
+                position: sticky;
+                top: 0;
+                background: white;
+                padding: 12px 16px;
+                border-radius: 12px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                margin-bottom: 16px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                z-index: 100;
+            }
+
+            .status-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .status-label {
+                font-size: 14px;
+                color: var(--gray-700);
+            }
+
+            .status-value {
+                font-weight: 600;
+                color: var(--primary);
+            }
+
+            /* 퍼즐 완성형 */
+            .puzzle-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 4px;
+                margin-bottom: 20px;
+                aspect-ratio: 1;
+            }
+
+            .puzzle-piece {
+                background: var(--primary);
+                border-radius: 8px;
+                cursor: move;
+                touch-action: none;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .puzzle-piece img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            /* 블록 조립형 */
+            .blocks-container {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+                gap: 8px;
+                padding: 16px;
+            }
+
+            .block {
+                aspect-ratio: 1;
+                background: var(--secondary);
+                border-radius: 8px;
+                cursor: pointer;
+                transition: transform 0.2s;
+            }
+
+            .block:active {
+                transform: scale(0.95);
+            }
+
+            /* 미로 탐색형 */
+            .maze-container {
+                position: relative;
+                aspect-ratio: 1;
+                background: white;
+                border-radius: 12px;
+                overflow: hidden;
+                margin-bottom: 20px;
+            }
+
+            .maze-grid {
+                display: grid;
+                grid-template-columns: repeat(8, 1fr);
+                grid-template-rows: repeat(8, 1fr);
+                gap: 2px;
+                height: 100%;
+            }
+
+            .maze-cell {
+                background: var(--gray-50);
+                border: 1px solid var(--gray-200);
+            }
+
+            .maze-player {
+                position: absolute;
+                width: 20px;
+                height: 20px;
+                background: var(--primary);
+                border-radius: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            /* 카드 매칭형 */
+            .cards-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 8px;
+                padding: 16px;
+            }
+
+            .memory-card {
+                aspect-ratio: 3/4;
+                background: var(--primary);
+                border-radius: 8px;
+                cursor: pointer;
+                position: relative;
+                transform-style: preserve-3d;
+                transition: transform 0.6s;
+            }
+
+            .memory-card.flipped {
+                transform: rotateY(180deg);
+            }
+
+            .card-front,
+            .card-back {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                backface-visibility: hidden;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 24px;
+                color: white;
+            }
+
+            .card-back {
+                background: var(--primary);
+                transform: rotateY(180deg);
+            }
+
+            /* 보물 찾기형 */
+            .treasure-map {
+                position: relative;
+                aspect-ratio: 16/9;
+                background: var(--gray-50);
+                border-radius: 12px;
+                overflow: hidden;
+                margin-bottom: 20px;
+            }
+
+            .dig-spot {
+                position: absolute;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                border: 2px solid var(--warning);
+                transform: translate(-50%, -50%);
+                cursor: pointer;
+            }
+
+            .dig-spot::before {
+                content: "X";
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                color: var(--warning);
+                font-weight: bold;
+            }
+
+            /* 게임 컨트롤 */
+            .game-controls {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 16px;
+                background: white;
+                border-top: 1px solid var(--gray-200);
+                display: flex;
+                gap: 12px;
+            }
+
+            .game-button {
+                flex: 1;
+                padding: 14px;
+                border: none;
+                border-radius: 8px;
+                font-size: 15px;
+                font-weight: 600;
+                cursor: pointer;
+            }
+
+            .primary-button {
+                background: var(--primary);
+                color: white;
+            }
+
+            .secondary-button {
+                background: var(--gray-50);
+                color: var(--gray-700);
+            }
+
+            /* 모바일 최적화 */
+            @media (max-width: 640px) {
+                .cards-grid {
+                    grid-template-columns: repeat(3, 1fr);
+                }
+
+                .blocks-container {
+                    grid-template-columns: repeat(3, 1fr);
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 게임 스테이터스 -->
+        <div class="game-status">
+            <div class="status-item">
+                <span class="status-label">시간</span>
+                <span class="status-value">02:30</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">점수</span>
+                <span class="status-value">850</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">진행</span>
+                <span class="status-value">3/5</span>
+            </div>
+        </div>
+
+        <!-- 퍼즐 완성형 -->
+        <div class="game-section">
+            <div class="puzzle-grid">
+                <div class="puzzle-piece" draggable="true">
+                    <img src="/api/placeholder/100/100" alt="퍼즐 조각 1" />
+                </div>
+                <!-- 반복 -->
+            </div>
+        </div>
+
+        <!-- 블록 조립형 -->
+        <div class="game-section">
+            <div class="blocks-container">
+                <div class="block"></div>
+                <!-- 반복 -->
+            </div>
+        </div>
+
+        <!-- 미로 탐색형 -->
+        <div class="game-section">
+            <div class="maze-container">
+                <div class="maze-grid">
+                    <!-- 미로 셀 동적 생성 -->
+                </div>
+                <div class="maze-player" style="left: 10%; top: 10%"></div>
+            </div>
+        </div>
+
+        <!-- 카드 매칭형 -->
+        <div class="game-section">
+            <div class="cards-grid">
+                <div class="memory-card">
+                    <div class="card-front">?</div>
+                    <div class="card-back">A</div>
+                </div>
+                <!-- 반복 -->
+            </div>
+        </div>
+
+        <!-- 보물 찾기형 -->
+        <div class="game-section">
+            <div class="treasure-map">
+                <img
+                    src="/api/placeholder/800/450"
+                    alt="보물 지도"
+                    style="width: 100%; height: 100%; object-fit: cover"
+                />
+                <div class="dig-spot" style="left: 30%; top: 40%"></div>
+                <div class="dig-spot" style="left: 70%; top: 60%"></div>
+            </div>
+        </div>
+
+        <!-- 게임 컨트롤 -->
+        <div class="game-controls">
+            <button class="game-button secondary-button">힌트 보기</button>
+            <button class="game-button primary-button">정답 확인</button>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
+        <title>문제 템플릿</title>
+        <style>
+            /* 모바일 최적화 기본 설정 */
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            :root {
+                --safe-bottom: env(safe-area-inset-bottom);
+                --primary: #2563eb;
+                --gray-50: #f9fafb;
+                --gray-100: #f3f4f6;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+                --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            }
+
+            body {
+                font-family: -apple-system, system-ui, sans-serif;
+                background: var(--gray-50);
+                padding-bottom: calc(60px + var(--safe-bottom));
+            }
+
+            /* 상단 헤더 */
+            .header {
+                position: sticky;
+                top: 0;
+                background: white;
+                padding: 16px;
+                box-shadow: var(--shadow);
+                z-index: 100;
+            }
+
+            .header-title {
+                font-size: 18px;
+                font-weight: 600;
+                text-align: center;
+            }
+
+            /* 카테고리 스크롤 */
+            .category-scroll {
+                position: sticky;
+                top: 54px;
+                background: white;
+                padding: 12px;
+                border-bottom: 1px solid var(--gray-200);
+                z-index: 90;
+            }
+
+            .category-list {
+                display: flex;
+                gap: 8px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                padding: 4px;
+            }
+
+            .category-list::-webkit-scrollbar {
+                display: none;
+            }
+
+            .category-item {
+                padding: 8px 16px;
+                background: var(--gray-100);
+                border-radius: 20px;
+                font-size: 14px;
+                white-space: nowrap;
+                border: none;
+                cursor: pointer;
+            }
+
+            .category-item.active {
+                background: var(--primary);
+                color: white;
+            }
+
+            /* 템플릿 리스트 */
+            .template-list {
+                padding: 16px;
+            }
+
+            .template-card {
+                background: white;
+                border-radius: 12px;
+                margin-bottom: 16px;
+                box-shadow: var(--shadow);
+                overflow: hidden;
+            }
+
+            .template-preview {
+                padding: 20px;
+                background: var(--gray-50);
+                min-height: 120px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .template-info {
+                padding: 16px;
+            }
+
+            .template-title {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+
+            .template-desc {
+                font-size: 14px;
+                color: var(--gray-700);
+                margin-bottom: 12px;
+            }
+
+            .template-tags {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+
+            .tag {
+                padding: 4px 12px;
+                background: var(--gray-100);
+                border-radius: 12px;
+                font-size: 12px;
+                color: var(--gray-700);
+            }
+
+            /* 하단 탭 바 */
+            .tab-bar {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: white;
+                padding: 12px 16px;
+                padding-bottom: calc(12px + var(--safe-bottom));
+                box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+            }
+
+            .create-button {
+                width: 100%;
+                padding: 16px;
+                background: var(--primary);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+            }
+
+            /* 터치 최적화 */
+            .template-card {
+                cursor: pointer;
+                transition: transform 0.1s;
+                user-select: none;
+                -webkit-user-select: none;
+            }
+
+            .template-card:active {
+                transform: scale(0.98);
+            }
+
+            .category-item:active {
+                opacity: 0.8;
+            }
+
+            @media (hover: hover) {
+                .template-card:hover {
+                    transform: translateY(-2px);
+                }
+            }
+
+            /* 아이폰 노치 대응 */
+            @supports (padding-top: env(safe-area-inset-top)) {
+                .header {
+                    padding-top: calc(16px + env(safe-area-inset-top));
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 헤더 -->
+        <header class="header">
+            <h1 class="header-title">문제 템플릿 선택</h1>
+        </header>
+
+        <!-- 카테고리 -->
+        <div class="category-scroll">
+            <div class="category-list">
+                <button class="category-item active">전체</button>
+                <button class="category-item">객관식</button>
+                <button class="category-item">주관식</button>
+                <button class="category-item">OX형</button>
+                <button class="category-item">이미지형</button>
+                <button class="category-item">짝맞추기</button>
+                <button class="category-item">순서배열</button>
+            </div>
+        </div>
+
+        <!-- 템플릿 목록 -->
+        <div class="template-list">
+            <!-- 기본 객관식 -->
+            <div class="template-card">
+                <div class="template-preview">
+                    <div class="preview-content">[객관식 미리보기]</div>
+                </div>
+                <div class="template-info">
+                    <h3 class="template-title">기본 객관식</h3>
+                    <p class="template-desc">
+                        4개의 선택지 중 정답을 고르는 기본적인 문제 유형입니다.
+                    </p>
+                    <div class="template-tags">
+                        <span class="tag">단일 선택</span>
+                        <span class="tag">기본형</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 이미지 선택형 -->
+            <div class="template-card">
+                <div class="template-preview">
+                    <div class="preview-content">[이미지 선택 미리보기]</div>
+                </div>
+                <div class="template-info">
+                    <h3 class="template-title">이미지 선택형</h3>
+                    <p class="template-desc">
+                        이미지를 활용한 시각적인 선택형 문제입니다.
+                    </p>
+                    <div class="template-tags">
+                        <span class="tag">이미지</span>
+                        <span class="tag">시각 자료</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OX형 -->
+            <div class="template-card">
+                <div class="template-preview">
+                    <div class="preview-content">[OX 미리보기]</div>
+                </div>
+                <div class="template-info">
+                    <h3 class="template-title">OX 퀴즈</h3>
+                    <p class="template-desc">
+                        참/거짓을 판단하는 간단한 문제 유형입니다.
+                    </p>
+                    <div class="template-tags">
+                        <span class="tag">OX형</span>
+                        <span class="tag">양자택일</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 하단 탭 바 -->
+        <div class="tab-bar">
+            <button class="create-button">템플릿으로 문제 만들기</button>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>프로세스 기반 문제</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --success: #22c55e;
+                --warning: #f59e0b;
+                --error: #ef4444;
+                --gray-50: #f9fafb;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, system-ui, sans-serif;
+                background: var(--gray-50);
+                padding: 16px;
+            }
+
+            /* 프로그레스 바 */
+            .progress-bar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: var(--gray-200);
+                z-index: 100;
+            }
+
+            .progress-fill {
+                height: 100%;
+                background: var(--primary);
+                width: 0%;
+                transition: width 0.3s;
+            }
+
+            /* 단계 표시기 */
+            .step-indicator {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 24px;
+                padding: 0 16px;
+            }
+
+            .step-dot {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: var(--gray-200);
+                position: relative;
+            }
+
+            .step-dot.active {
+                background: var(--primary);
+            }
+
+            .step-dot.completed {
+                background: var(--success);
+            }
+
+            .step-line {
+                flex: 1;
+                height: 2px;
+                background: var(--gray-200);
+                margin: 5px 8px;
+            }
+
+            /* 문제 카드 */
+            .question-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+                overflow: hidden;
+            }
+
+            .card-header {
+                padding: 16px;
+                border-bottom: 1px solid var(--gray-200);
+            }
+
+            .card-title {
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .card-description {
+                font-size: 14px;
+                color: var(--gray-700);
+            }
+
+            /* 타이머 */
+            .timer {
+                position: absolute;
+                top: 16px;
+                right: 16px;
+                background: var(--primary);
+                color: white;
+                padding: 4px 12px;
+                border-radius: 16px;
+                font-size: 14px;
+                font-weight: 600;
+            }
+
+            /* 선택지 컨테이너 */
+            .options-container {
+                padding: 16px;
+            }
+
+            .option-button {
+                width: 100%;
+                padding: 16px;
+                margin-bottom: 12px;
+                background: var(--gray-50);
+                border: 1px solid var(--gray-200);
+                border-radius: 8px;
+                text-align: left;
+                cursor: pointer;
+                transition: all 0.2s;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .option-button:hover {
+                background: var(--primary);
+                color: white;
+            }
+
+            .option-number {
+                width: 24px;
+                height: 24px;
+                background: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--primary);
+            }
+
+            /* 조건부 분기 UI */
+            .branch-container {
+                position: relative;
+                padding: 16px;
+            }
+
+            .branch-path {
+                margin-bottom: 20px;
+                padding: 16px;
+                background: var(--gray-50);
+                border-radius: 8px;
+                border-left: 4px solid var(--primary);
+            }
+
+            .branch-conditions {
+                font-size: 14px;
+                color: var(--gray-700);
+                margin-bottom: 12px;
+            }
+
+            /* 결과 기반 UI */
+            .result-feedback {
+                padding: 16px;
+                margin-bottom: 16px;
+                background: var(--gray-50);
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .result-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: var(--success);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+            }
+
+            /* 시간제한 UI */
+            .time-limit {
+                display: flex;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+
+            .time-box {
+                width: 60px;
+                height: 60px;
+                background: var(--primary);
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 24px;
+                font-weight: 600;
+                color: white;
+            }
+
+            /* 하단 네비게이션 */
+            .bottom-nav {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 16px;
+                background: white;
+                border-top: 1px solid var(--gray-200);
+                display: flex;
+                gap: 12px;
+            }
+
+            .nav-button {
+                flex: 1;
+                padding: 14px;
+                border-radius: 8px;
+                font-size: 15px;
+                font-weight: 600;
+                border: none;
+                cursor: pointer;
+            }
+
+            .button-primary {
+                background: var(--primary);
+                color: white;
+            }
+
+            .button-secondary {
+                background: var(--gray-50);
+                color: var(--gray-700);
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 프로그레스 바 -->
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: 33%"></div>
+        </div>
+
+        <!-- 단계 표시기 -->
+        <div class="step-indicator">
+            <div class="step-dot completed"></div>
+            <div class="step-line"></div>
+            <div class="step-dot active"></div>
+            <div class="step-line"></div>
+            <div class="step-dot"></div>
+        </div>
+
+        <!-- 조건부 분기 선택 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2 class="card-title">프로세스 실행 계획</h2>
+                <p class="card-description">
+                    상황에 따른 최적의 경로를 선택하세요.
+                </p>
+            </div>
+            <div class="branch-container">
+                <div class="branch-path">
+                    <div class="branch-conditions">
+                        조건: 시스템 부하가 70% 이상
+                    </div>
+                    <button class="option-button">
+                        <span class="option-number">A</span>
+                        <span>백업 서버로 전환</span>
+                    </button>
+                </div>
+                <div class="branch-path">
+                    <div class="branch-conditions">
+                        조건: 시스템 부하가 30-70%
+                    </div>
+                    <button class="option-button">
+                        <span class="option-number">B</span>
+                        <span>로드 밸런싱 활성화</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 결과 기반 후속 선택 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2 class="card-title">오류 처리 프로세스</h2>
+                <p class="card-description">
+                    이전 단계의 결과에 따라 적절한 조치를 선택하세요.
+                </p>
+            </div>
+            <div class="result-feedback">
+                <div class="result-icon">!</div>
+                <div>
+                    <div style="font-weight: 600">이전 결과</div>
+                    <div style="font-size: 14px">데이터베이스 연결 실패</div>
+                </div>
+            </div>
+            <div class="options-container">
+                <button class="option-button">
+                    <span class="option-number">1</span>
+                    <span>연결 재시도</span>
+                </button>
+                <button class="option-button">
+                    <span class="option-number">2</span>
+                    <span>백업 DB 활성화</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 시간제한 연쇄 선택 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2 class="card-title">긴급 대응 절차</h2>
+                <p class="card-description">
+                    제한 시간 내에 올바른 순서로 선택하세요.
+                </p>
+            </div>
+            <div class="time-limit">
+                <div class="time-box">30</div>
+            </div>
+            <div class="options-container">
+                <button class="option-button">
+                    <span class="option-number">1</span>
+                    <span>시스템 진단</span>
+                </button>
+                <button class="option-button">
+                    <span class="option-number">2</span>
+                    <span>오류 로그 분석</span>
+                </button>
+                <button class="option-button">
+                    <span class="option-number">3</span>
+                    <span>복구 절차 실행</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 하단 네비게이션 -->
+        <div class="bottom-nav">
+            <button class="nav-button button-secondary">이전</button>
+            <button class="nav-button button-primary">다음</button>
+        </div>
+    </body>
+</html>

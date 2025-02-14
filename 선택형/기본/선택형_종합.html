@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
+        <title>기본 선택형 문제</title>
+        <style>
+            /* 기본 설정 */
+            :root {
+                --primary: #2563eb;
+                --primary-light: #e0e7ff;
+                --success: #22c55e;
+                --danger: #ef4444;
+                --warning: #f59e0b;
+                --gray-50: #f9fafb;
+                --gray-100: #f3f4f6;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+                --gray-900: #111827;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            body {
+                font-family: -apple-system, system-ui, sans-serif;
+                background: var(--gray-50);
+                color: var(--gray-900);
+                line-height: 1.5;
+                padding-bottom: 80px;
+            }
+
+            /* 문제 유형 탭 */
+            .question-types {
+                position: sticky;
+                top: 0;
+                background: white;
+                padding: 12px;
+                border-bottom: 1px solid var(--gray-200);
+                z-index: 100;
+            }
+
+            .type-scroll {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                white-space: nowrap;
+                padding-bottom: 4px;
+            }
+
+            .type-scroll::-webkit-scrollbar {
+                display: none;
+            }
+
+            .type-button {
+                display: inline-block;
+                padding: 8px 16px;
+                margin-right: 8px;
+                border: 1px solid var(--gray-200);
+                border-radius: 20px;
+                font-size: 14px;
+                background: white;
+                color: var(--gray-700);
+                cursor: pointer;
+            }
+
+            .type-button.active {
+                background: var(--primary);
+                color: white;
+                border-color: var(--primary);
+            }
+
+            /* 문제 컨테이너 */
+            .question-container {
+                max-width: 640px;
+                margin: 16px auto;
+                padding: 0 16px;
+            }
+
+            /* 문제 카드 */
+            .question-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                margin-bottom: 16px;
+                overflow: hidden;
+            }
+
+            .question-header {
+                padding: 16px;
+                border-bottom: 1px solid var(--gray-200);
+            }
+
+            .question-type {
+                font-size: 12px;
+                color: var(--primary);
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .question-title {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .question-text {
+                font-size: 15px;
+                color: var(--gray-700);
+            }
+
+            /* 선택지 스타일 */
+            .options-container {
+                padding: 16px;
+            }
+
+            /* 단일 선택 & 다중 선택 스타일 */
+            .option-item {
+                position: relative;
+                margin-bottom: 12px;
+            }
+
+            .option-input {
+                position: absolute;
+                opacity: 0;
+            }
+
+            .option-label {
+                display: flex;
+                align-items: center;
+                padding: 14px;
+                background: var(--gray-50);
+                border: 2px solid var(--gray-200);
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .option-mark {
+                width: 24px;
+                height: 24px;
+                border: 2px solid var(--gray-200);
+                border-radius: 50%;
+                margin-right: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 14px;
+                background: white;
+            }
+
+            /* 체크박스 스타일 */
+            .checkbox .option-mark {
+                border-radius: 4px;
+            }
+
+            .option-text {
+                font-size: 15px;
+                flex: 1;
+            }
+
+            /* 선택 상태 */
+            .option-input:checked + .option-label {
+                background: var(--primary-light);
+                border-color: var(--primary);
+            }
+
+            .option-input:checked + .option-label .option-mark {
+                background: var(--primary);
+                border-color: var(--primary);
+                color: white;
+            }
+
+            /* OX형 스타일 */
+            .ox-container {
+                display: flex;
+                gap: 12px;
+            }
+
+            .ox-button {
+                flex: 1;
+                padding: 24px;
+                border: 2px solid var(--gray-200);
+                border-radius: 12px;
+                text-align: center;
+                font-size: 24px;
+                font-weight: bold;
+                cursor: pointer;
+                background: white;
+            }
+
+            .ox-button.selected {
+                background: var(--primary-light);
+                border-color: var(--primary);
+                color: var(--primary);
+            }
+
+            /* True/False 스타일 */
+            .tf-container {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .tf-button {
+                padding: 16px;
+                border: 2px solid var(--gray-200);
+                border-radius: 8px;
+                text-align: center;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                background: white;
+            }
+
+            .tf-button.selected {
+                background: var(--primary-light);
+                border-color: var(--primary);
+                color: var(--primary);
+            }
+
+            /* 하단 버튼 */
+            .action-buttons {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 16px;
+                background: white;
+                border-top: 1px solid var(--gray-200);
+                display: flex;
+                gap: 12px;
+                z-index: 100;
+            }
+
+            .action-button {
+                flex: 1;
+                padding: 14px;
+                border-radius: 8px;
+                font-size: 15px;
+                font-weight: 600;
+                border: none;
+                cursor: pointer;
+            }
+
+            .button-submit {
+                background: var(--primary);
+                color: white;
+            }
+
+            .button-skip {
+                background: var(--gray-100);
+                color: var(--gray-700);
+            }
+
+            /* 모바일 최적화 */
+            @media (max-width: 640px) {
+                .question-container {
+                    padding: 0 12px;
+                }
+
+                .action-buttons {
+                    padding: 12px;
+                    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 문제 유형 탭 -->
+        <div class="question-types">
+            <div class="type-scroll">
+                <button class="type-button active">4지선다</button>
+                <button class="type-button">5지선다</button>
+                <button class="type-button">다중 선택</button>
+                <button class="type-button">OX형</button>
+                <button class="type-button">진위형</button>
+            </div>
+        </div>
+
+        <div class="question-container">
+            <!-- 4지선다형 -->
+            <div class="question-card">
+                <div class="question-header">
+                    <div class="question-type">4지선다형</div>
+                    <h2 class="question-title">문제 1</h2>
+                    <p class="question-text">다음 중 옳은 것을 고르시오.</p>
+                </div>
+                <div class="options-container">
+                    <div class="option-item">
+                        <input
+                            type="radio"
+                            name="single"
+                            id="opt1"
+                            class="option-input"
+                        />
+                        <label for="opt1" class="option-label">
+                            <span class="option-mark">1</span>
+                            <span class="option-text">첫 번째 선택지</span>
+                        </label>
+                    </div>
+                    <!-- 반복 -->
+                </div>
+            </div>
+
+            <!-- OX형 -->
+            <div class="question-card">
+                <div class="question-header">
+                    <div class="question-type">OX형</div>
+                    <h2 class="question-title">문제 2</h2>
+                    <p class="question-text">
+                        다음 문장이 맞으면 O, 틀리면 X를 선택하시오.
+                    </p>
+                </div>
+                <div class="options-container">
+                    <div class="ox-container">
+                        <button class="ox-button">O</button>
+                        <button class="ox-button">X</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 진위형 -->
+            <div class="question-card">
+                <div class="question-header">
+                    <div class="question-type">진위형</div>
+                    <h2 class="question-title">문제 3</h2>
+                    <p class="question-text">
+                        다음 문장의 참/거짓을 판단하시오.
+                    </p>
+                </div>
+                <div class="options-container">
+                    <div class="tf-container">
+                        <button class="tf-button">참(True)</button>
+                        <button class="tf-button">거짓(False)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 하단 버튼 -->
+        <div class="action-buttons">
+            <button class="action-button button-skip">건너뛰기</button>
+            <button class="action-button button-submit">제출하기</button>
+        </div>
+    </body>
+</html>

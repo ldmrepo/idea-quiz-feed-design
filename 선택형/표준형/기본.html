@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
+        <title>4지선다형 템플릿</title>
+        <style>
+            /* 기본 설정 */
+            :root {
+                --primary: #2563eb;
+                --success: #22c55e;
+                --danger: #ef4444;
+                --gray-50: #f9fafb;
+                --gray-100: #f3f4f6;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+                --gray-900: #111827;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            body {
+                font-family: -apple-system, system-ui, sans-serif;
+                background: var(--gray-50);
+                color: var(--gray-900);
+                line-height: 1.5;
+            }
+
+            /* 문제 컨테이너 */
+            .question-container {
+                max-width: 640px;
+                margin: 0 auto;
+                padding: 16px;
+            }
+
+            /* 문제 카드 */
+            .question-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                overflow: hidden;
+                margin-bottom: 16px;
+            }
+
+            /* 문제 헤더 */
+            .question-header {
+                padding: 16px;
+                border-bottom: 1px solid var(--gray-200);
+            }
+
+            .question-title {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .question-text {
+                font-size: 15px;
+                color: var(--gray-700);
+            }
+
+            /* 선택지 영역 */
+            .options-container {
+                padding: 12px;
+            }
+
+            .option-item {
+                position: relative;
+                margin-bottom: 12px;
+            }
+
+            .option-input {
+                position: absolute;
+                opacity: 0;
+                cursor: pointer;
+            }
+
+            .option-label {
+                display: flex;
+                align-items: center;
+                padding: 16px;
+                background: var(--gray-50);
+                border: 2px solid var(--gray-200);
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s;
+                user-select: none;
+            }
+
+            .option-number {
+                width: 24px;
+                height: 24px;
+                background: white;
+                border: 2px solid var(--gray-200);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 14px;
+                font-weight: 600;
+                margin-right: 12px;
+            }
+
+            .option-text {
+                font-size: 15px;
+                flex: 1;
+            }
+
+            /* 선택 상태 */
+            .option-input:checked + .option-label {
+                background: var(--primary);
+                border-color: var(--primary);
+                color: white;
+            }
+
+            .option-input:checked + .option-label .option-number {
+                background: white;
+                border-color: white;
+                color: var(--primary);
+            }
+
+            /* 정답/오답 상태 */
+            .option-label.correct {
+                background: var(--success);
+                border-color: var(--success);
+                color: white;
+            }
+
+            .option-label.incorrect {
+                background: var(--danger);
+                border-color: var(--danger);
+                color: white;
+            }
+
+            /* 하단 버튼 */
+            .action-buttons {
+                display: flex;
+                gap: 12px;
+                padding: 16px;
+                border-top: 1px solid var(--gray-200);
+            }
+
+            .action-button {
+                flex: 1;
+                padding: 14px;
+                border: none;
+                border-radius: 8px;
+                font-size: 15px;
+                font-weight: 600;
+                cursor: pointer;
+                text-align: center;
+            }
+
+            .button-submit {
+                background: var(--primary);
+                color: white;
+            }
+
+            .button-skip {
+                background: var(--gray-100);
+                color: var(--gray-700);
+            }
+
+            /* 모바일 최적화 */
+            @media (max-width: 640px) {
+                .question-container {
+                    padding: 12px;
+                }
+
+                .option-label {
+                    padding: 14px;
+                }
+
+                .action-buttons {
+                    position: fixed;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    background: white;
+                    padding: 12px 16px;
+                    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+                    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+                }
+
+                body {
+                    padding-bottom: 80px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="question-container">
+            <!-- 문제 카드 -->
+            <div class="question-card">
+                <!-- 문제 헤더 -->
+                <div class="question-header">
+                    <h2 class="question-title">문제 1</h2>
+                    <p class="question-text">
+                        다음 중 HTML의 기본 문서 구조를 올바르게 나타낸 것은?
+                    </p>
+                </div>
+
+                <!-- 선택지 영역 -->
+                <div class="options-container">
+                    <div class="option-item">
+                        <input
+                            type="radio"
+                            name="answer"
+                            id="option1"
+                            class="option-input"
+                        />
+                        <label for="option1" class="option-label">
+                            <span class="option-number">1</span>
+                            <span class="option-text"
+                                >&lt;html&gt;&lt;head&gt;&lt;body&gt;&lt;/html&gt;</span
+                            >
+                        </label>
+                    </div>
+
+                    <div class="option-item">
+                        <input
+                            type="radio"
+                            name="answer"
+                            id="option2"
+                            class="option-input"
+                        />
+                        <label for="option2" class="option-label">
+                            <span class="option-number">2</span>
+                            <span class="option-text"
+                                >&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;</span
+                            >
+                        </label>
+                    </div>
+
+                    <div class="option-item">
+                        <input
+                            type="radio"
+                            name="answer"
+                            id="option3"
+                            class="option-input"
+                        />
+                        <label for="option3" class="option-label">
+                            <span class="option-number">3</span>
+                            <span class="option-text"
+                                >&lt;head&gt;&lt;body&gt;&lt;/head&gt;&lt;/body&gt;</span
+                            >
+                        </label>
+                    </div>
+
+                    <div class="option-item">
+                        <input
+                            type="radio"
+                            name="answer"
+                            id="option4"
+                            class="option-input"
+                        />
+                        <label for="option4" class="option-label">
+                            <span class="option-number">4</span>
+                            <span class="option-text"
+                                >&lt;html&gt;&lt;body&gt;&lt;head&gt;&lt;/body&gt;&lt;/html&gt;</span
+                            >
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 하단 버튼 -->
+            <div class="action-buttons">
+                <button class="action-button button-skip">건너뛰기</button>
+                <button class="action-button button-submit">제출하기</button>
+            </div>
+        </div>
+    </body>
+</html>

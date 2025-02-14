@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>시각적 선택형 문제</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --success: #22c55e;
+                --warning: #f59e0b;
+                --error: #ef4444;
+                --gray-50: #f9fafb;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            body {
+                font-family: -apple-system, system-ui, sans-serif;
+                background: var(--gray-50);
+                padding: 16px;
+            }
+
+            /* 문제 카드 공통 스타일 */
+            .question-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+                overflow: hidden;
+            }
+
+            .card-header {
+                padding: 16px;
+                border-bottom: 1px solid var(--gray-200);
+            }
+
+            .card-title {
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .card-description {
+                font-size: 14px;
+                color: var(--gray-700);
+            }
+
+            /* 이미지 영역 선택형 (핫스팟) */
+            .hotspot-container {
+                position: relative;
+                width: 100%;
+                aspect-ratio: 16/9;
+                background: var(--gray-50);
+                overflow: hidden;
+            }
+
+            .hotspot-image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .hotspot {
+                position: absolute;
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                background: rgba(37, 99, 235, 0.3);
+                border: 2px solid var(--primary);
+                transform: translate(-50%, -50%);
+                cursor: pointer;
+            }
+
+            .hotspot.active {
+                background: rgba(37, 99, 235, 0.6);
+            }
+
+            /* 다이어그램 완성형 */
+            .diagram-container {
+                padding: 16px;
+            }
+
+            .diagram-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+                margin-bottom: 16px;
+            }
+
+            .diagram-slot {
+                aspect-ratio: 1;
+                border: 2px dashed var(--gray-200);
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+            }
+
+            .diagram-piece {
+                width: 100%;
+                height: 100%;
+                padding: 8px;
+                border-radius: 8px;
+                background: var(--primary);
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 14px;
+                cursor: move;
+            }
+
+            /* 지도 기반 선택형 */
+            .map-container {
+                position: relative;
+                width: 100%;
+                aspect-ratio: 4/3;
+                background: var(--gray-50);
+            }
+
+            .map-pin {
+                position: absolute;
+                width: 24px;
+                height: 24px;
+                background: var(--primary);
+                border-radius: 50% 50% 50% 0;
+                transform: translate(-50%, -100%) rotate(-45deg);
+                cursor: pointer;
+            }
+
+            .map-pin::after {
+                content: "";
+                position: absolute;
+                width: 8px;
+                height: 8px;
+                background: white;
+                border-radius: 50%;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            /* 차트/그래프 분석형 */
+            .chart-container {
+                padding: 16px;
+            }
+
+            .chart-area {
+                width: 100%;
+                height: 200px;
+                background: var(--gray-50);
+                border: 1px solid var(--gray-200);
+                border-radius: 8px;
+                margin-bottom: 16px;
+            }
+
+            .chart-options {
+                display: grid;
+                gap: 8px;
+            }
+
+            .chart-option {
+                padding: 12px;
+                border: 1px solid var(--gray-200);
+                border-radius: 8px;
+                font-size: 14px;
+                cursor: pointer;
+            }
+
+            .chart-option:hover {
+                background: var(--gray-50);
+            }
+
+            /* 시각적 패턴 찾기형 */
+            .pattern-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 8px;
+                padding: 16px;
+            }
+
+            .pattern-item {
+                aspect-ratio: 1;
+                border: 1px solid var(--gray-200);
+                border-radius: 8px;
+                overflow: hidden;
+                cursor: pointer;
+            }
+
+            .pattern-item img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            /* 모바일 최적화 */
+            @media (max-width: 640px) {
+                .diagram-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+
+                .pattern-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+
+            /* 하단 버튼 */
+            .action-buttons {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 16px;
+                background: white;
+                border-top: 1px solid var(--gray-200);
+                display: flex;
+                gap: 12px;
+            }
+
+            .action-button {
+                flex: 1;
+                padding: 14px;
+                border-radius: 8px;
+                font-size: 15px;
+                font-weight: 600;
+                border: none;
+                cursor: pointer;
+            }
+
+            .submit-button {
+                background: var(--primary);
+                color: white;
+            }
+
+            .reset-button {
+                background: var(--gray-50);
+                color: var(--gray-700);
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 이미지 영역 선택형 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2 class="card-title">이미지 영역 선택</h2>
+                <p class="card-description">해당하는 부분을 찾아 선택하세요.</p>
+            </div>
+            <div class="hotspot-container">
+                <img
+                    src="/api/placeholder/800/450"
+                    alt="선택 이미지"
+                    class="hotspot-image"
+                />
+                <div class="hotspot" style="left: 30%; top: 40%"></div>
+                <div class="hotspot" style="left: 60%; top: 60%"></div>
+            </div>
+        </div>
+
+        <!-- 다이어그램 완성형 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2 class="card-title">다이어그램 완성</h2>
+                <p class="card-description">
+                    빈 칸에 알맞은 요소를 배치하세요.
+                </p>
+            </div>
+            <div class="diagram-container">
+                <div class="diagram-grid">
+                    <div class="diagram-piece">시작</div>
+                    <div class="diagram-slot"></div>
+                    <div class="diagram-piece">종료</div>
+                    <div class="diagram-slot"></div>
+                    <div class="diagram-piece">처리</div>
+                    <div class="diagram-slot"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 지도 기반 선택형 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2 class="card-title">지도 위치 선택</h2>
+                <p class="card-description">
+                    문제에서 설명하는 위치를 지도에서 찾으세요.
+                </p>
+            </div>
+            <div class="map-container">
+                <img
+                    src="/api/placeholder/800/600"
+                    alt="지도"
+                    style="width: 100%; height: 100%; object-fit: cover"
+                />
+                <div class="map-pin" style="left: 40%; top: 50%"></div>
+            </div>
+        </div>
+
+        <!-- 차트/그래프 분석형 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2 class="card-title">데이터 분석</h2>
+                <p class="card-description">
+                    그래프를 분석하고 올바른 해석을 선택하세요.
+                </p>
+            </div>
+            <div class="chart-container">
+                <div class="chart-area">
+                    <!-- 차트가 들어갈 영역 -->
+                </div>
+                <div class="chart-options">
+                    <div class="chart-option">상승 추세를 보이고 있다.</div>
+                    <div class="chart-option">하락 추세를 보이고 있다.</div>
+                    <div class="chart-option">일정한 패턴이 반복된다.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 시각적 패턴 찾기형 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2 class="card-title">패턴 찾기</h2>
+                <p class="card-description">
+                    다른 패턴을 가진 이미지를 선택하세요.
+                </p>
+            </div>
+            <div class="pattern-grid">
+                <div class="pattern-item">
+                    <img src="/api/placeholder/100/100" alt="패턴 1" />
+                </div>
+                <div class="pattern-item">
+                    <img src="/api/placeholder/100/100" alt="패턴 2" />
+                </div>
+                <div class="pattern-item">
+                    <img src="/api/placeholder/100/100" alt="패턴 3" />
+                </div>
+                <div class="pattern-item">
+                    <img src="/api/placeholder/100/100" alt="패턴 4" />
+                </div>
+            </div>
+        </div>
+
+        <!-- 하단 버튼 -->
+        <div class="action-buttons">
+            <button class="action-button reset-button">다시하기</button>
+            <button class="action-button submit-button">제출하기</button>
+        </div>
+    </body>
+</html>
