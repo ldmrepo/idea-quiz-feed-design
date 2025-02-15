@@ -1,0 +1,2955 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>수익화 중심 피드</title>
+        <style>
+            /* 기존 스타일은 유지하면서 새로운 스타일 추가 */
+            .creator-badge {
+                padding: 2px 8px;
+                border-radius: 12px;
+                font-size: 11px;
+                margin-left: 8px;
+            }
+
+            .badge-premium {
+                background: linear-gradient(45deg, #ffd700, #ffa500);
+                color: white;
+            }
+
+            .badge-verified {
+                background: #1a73e8;
+                color: white;
+            }
+
+            .hashtags {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+                margin-top: 12px;
+            }
+
+            .hashtag {
+                color: #1a73e8;
+                font-size: 14px;
+                cursor: pointer;
+            }
+
+            .hashtag:hover {
+                text-decoration: underline;
+            }
+
+            .creator-stats {
+                display: flex;
+                gap: 16px;
+                margin-top: 12px;
+                padding: 12px;
+                background: #f8f9fa;
+                border-radius: 8px;
+                font-size: 14px;
+            }
+
+            .premium-content {
+                padding: 16px;
+                background: linear-gradient(45deg, #f9f2ff, #fff4e6);
+                border-radius: 8px;
+                margin-top: 16px;
+            }
+
+            .membership-btn {
+                background: linear-gradient(45deg, #ffd700, #ffa500);
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 20px;
+                font-weight: 500;
+                cursor: pointer;
+                margin-top: 12px;
+            }
+
+            .monetization-info {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                font-size: 12px;
+                color: #666;
+            }
+
+            .price-tag {
+                padding: 4px 8px;
+                background: #e8f0fe;
+                color: #1a73e8;
+                border-radius: 12px;
+                font-size: 12px;
+                font-weight: 500;
+            }
+
+            .feed-item {
+                background: white;
+                border-radius: 12px;
+                margin-bottom: 20px;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+                overflow: hidden;
+            }
+
+            .creator-header {
+                padding: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                border-bottom: 1px solid #eee;
+            }
+
+            .creator-info {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .avatar {
+                width: 48px;
+                height: 48px;
+                border-radius: 24px;
+                background: #eee;
+            }
+
+            .content-preview {
+                padding: 20px;
+            }
+
+            .interaction-bar {
+                display: flex;
+                padding: 12px 16px;
+                border-top: 1px solid #eee;
+                gap: 16px;
+            }
+
+            .action-btn {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 8px 16px;
+                border: none;
+                border-radius: 20px;
+                background: #f0f2f5;
+                font-size: 14px;
+                cursor: pointer;
+            }
+
+            .primary-btn {
+                background: #1a73e8;
+                color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <div style="max-width: 800px; margin: 0 auto; padding: 20px">
+            <!-- 문항 컨텐츠 피드 아이템 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >수학의 정석</span
+                                >
+                                <span class="creator-badge badge-verified"
+                                    >인증</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #e8f0fe; color: #1a73e8"
+                                    >문항</span
+                                >
+                            </div>
+                            <div style="font-size: 14px; color: #666">
+                                수학 전문 · 문항 1.2만개 · 평균 평점 4.9
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 8px">
+                        <button
+                            class="action-btn"
+                            style="color: #1a73e8; font-weight: 500"
+                        >
+                            내 퀴즈에 추가
+                        </button>
+                        <button class="action-btn primary-btn">
+                            + 구독하기
+                        </button>
+                    </div>
+                </div>
+
+                <div class="content-preview">
+                    <!-- 문항 메타 정보 -->
+                    <div style="display: flex; gap: 8px; margin-bottom: 12px">
+                        <span class="price-tag">고2 수학</span>
+                        <span
+                            class="price-tag"
+                            style="background: #fff0e1; color: #e37400"
+                            >중급</span
+                        >
+                        <span
+                            class="price-tag"
+                            style="background: #fce8e8; color: #d93025"
+                            >선택형</span
+                        >
+                    </div>
+
+                    <!-- 문항 내용 -->
+                    <div
+                        style="
+                            background: #f8f9fa;
+                            padding: 20px;
+                            border-radius: 8px;
+                            margin-bottom: 16px;
+                        "
+                    >
+                        <h3 style="margin-bottom: 16px">
+                            다음 중 미분 가능한 함수는?
+                        </h3>
+
+                        <!-- 선택지 -->
+                        <div
+                            style="
+                                display: flex;
+                                flex-direction: column;
+                                gap: 12px;
+                            "
+                        >
+                            <label
+                                style="
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 12px;
+                                    padding: 12px;
+                                    background: white;
+                                    border-radius: 8px;
+                                    cursor: pointer;
+                                "
+                            >
+                                <input
+                                    type="radio"
+                                    name="answer"
+                                    style="width: 20px; height: 20px"
+                                />
+                                <span>① y = |x|</span>
+                            </label>
+                            <label
+                                style="
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 12px;
+                                    padding: 12px;
+                                    background: white;
+                                    border-radius: 8px;
+                                    cursor: pointer;
+                                "
+                            >
+                                <input
+                                    type="radio"
+                                    name="answer"
+                                    style="width: 20px; height: 20px"
+                                />
+                                <span>② y = x²</span>
+                            </label>
+                            <label
+                                style="
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 12px;
+                                    padding: 12px;
+                                    background: white;
+                                    border-radius: 8px;
+                                    cursor: pointer;
+                                "
+                            >
+                                <input
+                                    type="radio"
+                                    name="answer"
+                                    style="width: 20px; height: 20px"
+                                />
+                                <span>③ y = ⌊x⌋</span>
+                            </label>
+                            <label
+                                style="
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 12px;
+                                    padding: 12px;
+                                    background: white;
+                                    border-radius: 8px;
+                                    cursor: pointer;
+                                "
+                            >
+                                <input
+                                    type="radio"
+                                    name="answer"
+                                    style="width: 20px; height: 20px"
+                                />
+                                <span>④ y = sin(x)</span>
+                            </label>
+                        </div>
+
+                        <!-- 문항 제어 -->
+                        <div
+                            style="
+                                display: flex;
+                                justify-content: space-between;
+                                margin-top: 16px;
+                            "
+                        >
+                            <button
+                                class="action-btn"
+                                style="background: white"
+                            >
+                                답안 제출
+                            </button>
+                            <button
+                                class="action-btn"
+                                style="background: white"
+                            >
+                                해설 보기
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 문항 통계 -->
+                    <div class="creator-stats">
+                        <div>📊 정답률 67%</div>
+                        <div>👥 시도 1.2만회</div>
+                        <div>💡 해설 조회 5.6천</div>
+                        <div>📖 관련 강의 3개</div>
+                    </div>
+
+                    <!-- 퀴즈 구성 도구 -->
+                    <div
+                        style="
+                            background: #e8f0fe;
+                            padding: 16px;
+                            border-radius: 8px;
+                            margin-top: 16px;
+                        "
+                    >
+                        <div
+                            style="
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                margin-bottom: 12px;
+                            "
+                        >
+                            <div>
+                                <div style="font-weight: 500; color: #1a73e8">
+                                    퀴즈 구성하기
+                                </div>
+                                <div style="font-size: 14px; color: #666">
+                                    이 문항을 퀴즈에 추가하여 학습자료를
+                                    만들어보세요
+                                </div>
+                            </div>
+                            <button class="action-btn primary-btn">
+                                + 새 퀴즈 만들기
+                            </button>
+                        </div>
+                        <div
+                            style="
+                                display: flex;
+                                gap: 8px;
+                                overflow-x: auto;
+                                padding-bottom: 8px;
+                            "
+                        >
+                            <div
+                                style="
+                                    flex: 0 0 auto;
+                                    padding: 12px;
+                                    background: white;
+                                    border-radius: 8px;
+                                    min-width: 200px;
+                                "
+                            >
+                                <div style="font-weight: 500">
+                                    수능 실전 모의고사
+                                </div>
+                                <div
+                                    style="
+                                        font-size: 12px;
+                                        color: #666;
+                                        margin-top: 4px;
+                                    "
+                                >
+                                    문항 24개 · 난이도 중
+                                </div>
+                            </div>
+                            <div
+                                style="
+                                    flex: 0 0 auto;
+                                    padding: 12px;
+                                    background: white;
+                                    border-radius: 8px;
+                                    min-width: 200px;
+                                "
+                            >
+                                <div style="font-weight: 500">
+                                    미적분 기출 문제
+                                </div>
+                                <div
+                                    style="
+                                        font-size: 12px;
+                                        color: #666;
+                                        margin-top: 4px;
+                                    "
+                                >
+                                    문항 15개 · 난이도 상
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 해시태그 -->
+                    <div class="hashtags">
+                        <span class="hashtag">#미적분</span>
+                        <span class="hashtag">#수학</span>
+                        <span class="hashtag">#함수의연속성</span>
+                        <span class="hashtag">#수능특강</span>
+                    </div>
+                </div>
+
+                <div class="interaction-bar">
+                    <button class="action-btn">👍 도움됨 2.3천</button>
+                    <button class="action-btn">💬 댓글 45</button>
+                    <button class="action-btn">🔖 저장</button>
+                    <button class="action-btn">↗️ 공유</button>
+                </div>
+            </div>
+            <!-- 실시간 퀴즈 배틀 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600">퀴즈 배틀</span>
+                                <span
+                                    class="creator-badge"
+                                    style="background: #ff4b4b; color: white"
+                                    >LIVE</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #805ad5; color: white"
+                                    >4명 대결중</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                    <button class="action-btn primary-btn">참여하기</button>
+                </div>
+
+                <div class="content-preview">
+                    <h2 style="margin: 12px 0">미적분 스피드 퀴즈 배틀</h2>
+
+                    <div
+                        style="
+                            background: #f8f9fa;
+                            padding: 16px;
+                            border-radius: 8px;
+                        "
+                    >
+                        <div
+                            style="
+                                display: flex;
+                                justify-content: space-between;
+                                margin-bottom: 16px;
+                            "
+                        >
+                            <div>
+                                <div style="font-size: 14px; color: #666">
+                                    진행 중인 라운드
+                                </div>
+                                <div style="font-weight: 500; font-size: 18px">
+                                    ROUND 3/5
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-size: 14px; color: #666">
+                                    현재 상금
+                                </div>
+                                <div style="font-weight: 500; font-size: 18px">
+                                    2,500 포인트
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-size: 14px; color: #666">
+                                    남은 시간
+                                </div>
+                                <div style="font-weight: 500; font-size: 18px">
+                                    02:45
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            style="display: flex; gap: 8px; margin-bottom: 12px"
+                        >
+                            <span class="price-tag">5문항</span>
+                            <span class="price-tag">문항당 30초</span>
+                            <span class="price-tag">난이도 중</span>
+                        </div>
+                    </div>
+
+                    <div class="creator-stats">
+                        <div>👥 현재 4명 대결중</div>
+                        <div>🏆 1위 상금 1,500p</div>
+                        <div>⚡ 평균 응답 8초</div>
+                    </div>
+                </div>
+            </div>
+            <!-- 문제 만들기 챌린지 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >문제 제작 챌린지</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #00b894; color: white"
+                                    >진행중</span
+                                >
+                            </div>
+                            <div style="font-size: 14px; color: #666">
+                                이번 주 테마: 실생활 속 미적분
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-preview">
+                    <div
+                        style="
+                            background: linear-gradient(
+                                45deg,
+                                #00b894,
+                                #00cec9
+                            );
+                            padding: 20px;
+                            border-radius: 8px;
+                            color: white;
+                        "
+                    >
+                        <h2 style="margin-bottom: 12px">
+                            나만의 창의적인 문제를 만들어보세요!
+                        </h2>
+                        <p style="margin-bottom: 16px">
+                            우수 문제 선정 시 프리미엄 3개월 이용권 증정
+                        </p>
+
+                        <div style="display: flex; gap: 12px; margin-top: 16px">
+                            <div
+                                style="
+                                    background: rgba(255, 255, 255, 0.2);
+                                    padding: 12px;
+                                    border-radius: 8px;
+                                    flex: 1;
+                                    text-align: center;
+                                "
+                            >
+                                <div style="font-size: 24px; font-weight: bold">
+                                    127
+                                </div>
+                                <div style="font-size: 12px">참여 문제 수</div>
+                            </div>
+                            <div
+                                style="
+                                    background: rgba(255, 255, 255, 0.2);
+                                    padding: 12px;
+                                    border-radius: 8px;
+                                    flex: 1;
+                                    text-align: center;
+                                "
+                            >
+                                <div style="font-size: 24px; font-weight: bold">
+                                    3
+                                </div>
+                                <div style="font-size: 12px">남은 일수</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 16px">
+                        <h3 style="margin-bottom: 8px">참여 방법</h3>
+                        <div style="color: #666">
+                            1. 실생활 관련 미적분 문제 제작 2. 상세한 해설 포함
+                            3. 난이도 태그 설정
+                        </div>
+                    </div>
+
+                    <div class="creator-stats">
+                        <div>📝 현재 127개 제출</div>
+                        <div>👑 우수작 5개 선정</div>
+                        <div>⭐ 평균 평점 4.2</div>
+                    </div>
+                </div>
+
+                <div class="interaction-bar">
+                    <button class="action-btn primary-btn">문제 만들기</button>
+                    <button class="action-btn">제출작 보기</button>
+                    <button class="action-btn">가이드라인</button>
+                </div>
+            </div>
+            <!-- 개념 연결 맵 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >개념 연결 지도</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #4834d4; color: white"
+                                    >AI 기반</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-preview">
+                    <h2 style="margin: 12px 0">미적분 개념 관계도</h2>
+
+                    <div
+                        style="
+                            background: #f8f9fa;
+                            padding: 16px;
+                            border-radius: 8px;
+                            margin-bottom: 16px;
+                        "
+                    >
+                        <div style="font-weight: 500; margin-bottom: 12px">
+                            현재 학습 중인 개념: 미분계수
+                        </div>
+
+                        <div
+                            style="
+                                display: flex;
+                                flex-direction: column;
+                                gap: 12px;
+                            "
+                        >
+                            <div
+                                style="
+                                    background: white;
+                                    padding: 12px;
+                                    border-radius: 8px;
+                                "
+                            >
+                                <div style="font-weight: 500; color: #1a73e8">
+                                    선수 개념
+                                </div>
+                                <div
+                                    style="
+                                        display: flex;
+                                        gap: 8px;
+                                        margin-top: 8px;
+                                    "
+                                >
+                                    <span class="price-tag">평균변화율</span>
+                                    <span class="price-tag">함수의 극한</span>
+                                </div>
+                            </div>
+
+                            <div
+                                style="
+                                    background: white;
+                                    padding: 12px;
+                                    border-radius: 8px;
+                                "
+                            >
+                                <div style="font-weight: 500; color: #1a73e8">
+                                    다음 학습 개념
+                                </div>
+                                <div
+                                    style="
+                                        display: flex;
+                                        gap: 8px;
+                                        margin-top: 8px;
+                                    "
+                                >
+                                    <span class="price-tag">도함수</span>
+                                    <span class="price-tag">미분법칙</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="creator-stats">
+                        <div>📚 연결 개념 5개</div>
+                        <div>✅ 완료 2개</div>
+                        <div>⏱️ 예상 학습 시간 3시간</div>
+                    </div>
+                </div>
+
+                <div class="interaction-bar">
+                    <button class="action-btn">전체 맵 보기</button>
+                    <button class="action-btn">학습 시작</button>
+                    <button class="action-btn">진도 체크</button>
+                </div>
+            </div>
+            <!-- 시험 시뮬레이션 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >실전 모의고사</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #e84393; color: white"
+                                    >실전형</span
+                                >
+                            </div>
+                            <div style="font-size: 14px; color: #666">
+                                현재 328명 응시중
+                            </div>
+                        </div>
+                    </div>
+                    <button class="action-btn primary-btn">시험 시작</button>
+                </div>
+                <!-- 시험 시뮬레이션 피드 -->
+                <div class="content-preview">
+                    <h2 style="margin: 12px 0">2025 6월 모의평가 시뮬레이션</h2>
+
+                    <div
+                        style="
+                            background: #f8f9fa;
+                            padding: 16px;
+                            border-radius: 8px;
+                        "
+                    >
+                        <div
+                            style="
+                                display: flex;
+                                justify-content: space-between;
+                                margin-bottom: 16px;
+                            "
+                        >
+                            <div>
+                                <div style="font-size: 14px; color: #666">
+                                    총 문항
+                                </div>
+                                <div style="font-weight: 500; font-size: 18px">
+                                    30문항
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-size: 14px; color: #666">
+                                    제한시간
+                                </div>
+                                <div style="font-weight: 500; font-size: 18px">
+                                    100분
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-size: 14px; color: #666">
+                                    응시 가능
+                                </div>
+                                <div style="font-weight: 500; font-size: 18px">
+                                    3회
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            style="
+                                padding: 12px;
+                                background: white;
+                                border-radius: 8px;
+                                margin-top: 12px;
+                            "
+                        >
+                            <div style="font-weight: 500; margin-bottom: 8px">
+                                실전 시험 환경 제공
+                            </div>
+                            <div
+                                style="display: flex; gap: 8px; flex-wrap: wrap"
+                            >
+                                <span class="price-tag">OMR 체크</span>
+                                <span class="price-tag">시험장 소음</span>
+                                <span class="price-tag">타이머</span>
+                                <span class="price-tag">자리 배치</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="creator-stats">
+                        <div>👥 누적 응시 1.2만명</div>
+                        <div>📊 평균 점수 84점</div>
+                        <div>⏱️ 평균 소요 92분</div>
+                    </div>
+                </div>
+            </div>
+            <!-- AI 맞춤형 문제 세트 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >AI 문제 생성기</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #7c3aed; color: white"
+                                    >GPT 4.0</span
+                                >
+                            </div>
+                            <div style="font-size: 14px; color: #666">
+                                실시간 학습 패턴 분석 기반
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-preview">
+                    <div
+                        style="
+                            background: linear-gradient(
+                                45deg,
+                                #7c3aed,
+                                #4f46e5
+                            );
+                            padding: 20px;
+                            border-radius: 8px;
+                            color: white;
+                        "
+                    >
+                        <h3 style="margin-bottom: 12px">
+                            당신을 위한 맞춤형 문제 세트
+                        </h3>
+                        <div
+                            style="
+                                background: rgba(255, 255, 255, 0.1);
+                                padding: 12px;
+                                border-radius: 8px;
+                                margin-bottom: 12px;
+                            "
+                        >
+                            <p>최근 취약점 분석 결과:</p>
+                            <ul style="margin-top: 8px; list-style: none">
+                                <li>• 함수의 극한 개념 이해도 72%</li>
+                                <li>• 적분 계산 정확도 85%</li>
+                                <li>• 문제 해결 시간 평균 3.2분</li>
+                            </ul>
+                        </div>
+                        <button
+                            class="action-btn"
+                            style="
+                                background: white;
+                                color: #7c3aed;
+                                width: 100%;
+                            "
+                        >
+                            맞춤 문제 생성하기
+                        </button>
+                    </div>
+
+                    <div class="creator-stats">
+                        <div>🎯 정확도 예측 92%</div>
+                        <div>⚡ 실시간 난이도 조정</div>
+                        <div>📊 학습 패턴 분석</div>
+                    </div>
+                </div>
+            </div>
+            <!-- AI 학습 어시스턴트 대화형 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600">AI 튜터</span>
+                                <span
+                                    class="creator-badge"
+                                    style="background: #059669; color: white"
+                                    >실시간 대화</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="content-preview"
+                    style="
+                        background: #f9fafb;
+                        padding: 16px;
+                        border-radius: 8px;
+                    "
+                >
+                    <div
+                        style="display: flex; flex-direction: column; gap: 12px"
+                    >
+                        <div
+                            style="
+                                background: white;
+                                padding: 12px;
+                                border-radius: 8px;
+                            "
+                        >
+                            <div style="color: #666; font-size: 14px">
+                                학생 질문
+                            </div>
+                            <div style="margin-top: 4px">
+                                미분 가능한 함수의 조건이 뭔가요?
+                            </div>
+                        </div>
+                        <div
+                            style="
+                                background: #e8f5e9;
+                                padding: 12px;
+                                border-radius: 8px;
+                            "
+                        >
+                            <div style="color: #666; font-size: 14px">
+                                AI 튜터 답변
+                            </div>
+                            <div style="margin-top: 4px">
+                                미분 가능한 함수의 조건을 설명해드리겠습니다: 1.
+                                해당 점에서 연속일 것 2. 좌극한과 우극한이 같을
+                                것
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        class="action-btn primary-btn"
+                        style="width: 100%; margin-top: 12px"
+                    >
+                        AI 튜터와 대화하기
+                    </button>
+                </div>
+            </div>
+            <!-- AI 학습 경로 추천 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >학습 내비게이터 AI</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #2563eb; color: white"
+                                    >경로 추천</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-preview">
+                    <h3 style="margin-bottom: 16px">맞춤형 학습 로드맵</h3>
+                    <div
+                        style="display: flex; flex-direction: column; gap: 12px"
+                    >
+                        <div
+                            class="learning-path"
+                            style="
+                                background: #f3f4f6;
+                                padding: 16px;
+                                border-radius: 8px;
+                            "
+                        >
+                            <div
+                                style="
+                                    display: flex;
+                                    justify-content: space-between;
+                                    margin-bottom: 8px;
+                                "
+                            >
+                                <span style="font-weight: 500"
+                                    >STEP 1: 기초 개념</span
+                                >
+                                <span style="color: #666">예상 2주</span>
+                            </div>
+                            <div
+                                class="progress-bar"
+                                style="
+                                    height: 4px;
+                                    background: #e5e7eb;
+                                    border-radius: 2px;
+                                "
+                            >
+                                <div
+                                    style="
+                                        width: 60%;
+                                        height: 100%;
+                                        background: #2563eb;
+                                        border-radius: 2px;
+                                    "
+                                ></div>
+                            </div>
+                        </div>
+                        <div
+                            class="learning-path"
+                            style="
+                                background: #f3f4f6;
+                                padding: 16px;
+                                border-radius: 8px;
+                            "
+                        >
+                            <div
+                                style="
+                                    display: flex;
+                                    justify-content: space-between;
+                                    margin-bottom: 8px;
+                                "
+                            >
+                                <span style="font-weight: 500"
+                                    >STEP 2: 응용 문제</span
+                                >
+                                <span style="color: #666">예상 3주</span>
+                            </div>
+                            <div
+                                class="progress-bar"
+                                style="
+                                    height: 4px;
+                                    background: #e5e7eb;
+                                    border-radius: 2px;
+                                "
+                            >
+                                <div
+                                    style="
+                                        width: 30%;
+                                        height: 100%;
+                                        background: #2563eb;
+                                        border-radius: 2px;
+                                    "
+                                ></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 학습 스터디 모집 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >스터디 모집</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #20bf6b; color: white"
+                                    >모집중</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-preview">
+                    <h2 style="margin: 12px 0">
+                        수능 수학 문제풀이 스터디원 모집
+                    </h2>
+
+                    <div
+                        style="
+                            background: white;
+                            border: 2px solid #20bf6b;
+                            padding: 16px;
+                            border-radius: 8px;
+                            margin: 16px 0;
+                        "
+                    >
+                        <div
+                            style="
+                                display: flex;
+                                flex-wrap: wrap;
+                                gap: 16px;
+                                margin-bottom: 16px;
+                            "
+                        >
+                            <div>
+                                <div style="font-size: 14px; color: #666">
+                                    모집 인원
+                                </div>
+                                <div style="font-weight: 500">3명 (2/5)</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 14px; color: #666">
+                                    학습 시간
+                                </div>
+                                <div style="font-weight: 500">
+                                    평일 저녁 9-11시
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-size: 14px; color: #666">
+                                    진행 방식
+                                </div>
+                                <div style="font-weight: 500">온라인 화상</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 14px; color: #666">
+                                    목표 수준
+                                </div>
+                                <div style="font-weight: 500">
+                                    수능 수학 1-2등급
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="font-weight: 500; margin-bottom: 8px">
+                            스터디 계획
+                        </div>
+                        <ul style="color: #666; padding-left: 20px">
+                            <li>매일 문제 30개 풀이</li>
+                            <li>격일 화상 문제 풀이</li>
+                            <li>주간 모의고사 응시</li>
+                        </ul>
+                    </div>
+
+                    <div class="creator-stats">
+                        <div>👥 현재 2명 참여중</div>
+                        <div>📅 12주 과정</div>
+                        <div>💬 문의 12건</div>
+                    </div>
+                </div>
+
+                <div class="interaction-bar">
+                    <button class="action-btn primary-btn">참여 신청</button>
+                    <button class="action-btn">상세 정보</button>
+                    <button class="action-btn">문의하기</button>
+                </div>
+            </div>
+
+            <!-- 문제 해설 라이브 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >실시간 해설</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #ff0000; color: white"
+                                    >LIVE</span
+                                >
+                            </div>
+                            <div style="font-size: 14px; color: #666">
+                                시청자 432명
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-preview">
+                    <h2 style="margin: 12px 0">2024 수능 수학 킬러문항 해설</h2>
+
+                    <div
+                        style="
+                            background: black;
+                            padding: 20px;
+                            border-radius: 8px;
+                            color: white;
+                            margin: 16px 0;
+                        "
+                    >
+                        <div style="text-align: center; margin-bottom: 12px">
+                            <span
+                                style="
+                                    background: #ff0000;
+                                    padding: 4px 12px;
+                                    border-radius: 12px;
+                                    font-size: 12px;
+                                "
+                                >LIVE</span
+                            >
+                        </div>
+                        <div style="font-size: 14px; text-align: center">
+                            현재 29번 문항 해설 중
+                        </div>
+                        <div
+                            style="
+                                margin-top: 12px;
+                                display: flex;
+                                justify-content: center;
+                                gap: 16px;
+                            "
+                        >
+                            <button class="action-btn">이전 문항</button>
+                            <button class="action-btn primary-btn">
+                                지금 참여하기
+                            </button>
+                            <button class="action-btn">다음 문항</button>
+                        </div>
+                    </div>
+
+                    <div class="creator-stats">
+                        <div>👥 432명 시청중</div>
+                        <div>💬 채팅 812개</div>
+                        <div>❤️ 좋아요 1.2천</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 학습자 멘토링 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >서울대 멘토링</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #6c5ce7; color: white"
+                                    >인증 멘토</span
+                                >
+                            </div>
+                            <div style="font-size: 14px; color: #666">
+                                수학과 재학 · 수능 만점
+                            </div>
+                        </div>
+                    </div>
+                    <button class="action-btn primary-btn">멘토링 신청</button>
+                </div>
+
+                <div class="content-preview">
+                    <div
+                        style="
+                            padding: 20px;
+                            background: #f8f9fa;
+                            border-radius: 8px;
+                            margin-bottom: 16px;
+                        "
+                    >
+                        <h3 style="margin-bottom: 12px">1:1 맞춤 멘토링</h3>
+                        <div
+                            style="
+                                display: flex;
+                                gap: 16px;
+                                margin-bottom: 16px;
+                            "
+                        >
+                            <div>
+                                <div style="font-size: 14px; color: #666">
+                                    세션 시간
+                                </div>
+                                <div style="font-weight: 500">60분</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 14px; color: #666">
+                                    가능 시간
+                                </div>
+                                <div style="font-weight: 500">평일 저녁</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 14px; color: #666">
+                                    진행 방식
+                                </div>
+                                <div style="font-weight: 500">화상 통화</div>
+                            </div>
+                        </div>
+
+                        <div style="font-weight: 500; margin-bottom: 8px">
+                            멘토링 내용
+                        </div>
+                        <ul style="color: #666; padding-left: 20px">
+                            <li>취약점 분석 및 극복 전략</li>
+                            <li>문제 풀이 실전 팁</li>
+                            <li>시간 관리 노하우</li>
+                        </ul>
+                    </div>
+
+                    <div class="creator-stats">
+                        <div>⭐ 평점 4.9</div>
+                        <div>👥 멘티 123명</div>
+                        <div>📚 총 312회 세션</div>
+                    </div>
+                </div>
+            </div>
+            <!-- 주간 베스트 문항 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >금주의 BEST 문항</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #ffd700; color: white"
+                                    >BEST</span
+                                >
+                            </div>
+                            <div style="font-size: 14px; color: #666">
+                                2월 2주차 인기 문항 모음
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-preview">
+                    <div
+                        style="
+                            background: linear-gradient(
+                                45deg,
+                                #ffd700,
+                                #ffa500
+                            );
+                            padding: 20px;
+                            border-radius: 8px;
+                            color: white;
+                        "
+                    >
+                        <h3 style="margin-bottom: 16px">
+                            이번 주 최고 인기 문항 TOP 3
+                        </h3>
+                        <div
+                            style="
+                                display: flex;
+                                flex-direction: column;
+                                gap: 12px;
+                            "
+                        >
+                            <div
+                                style="
+                                    background: rgba(255, 255, 255, 0.2);
+                                    padding: 12px;
+                                    border-radius: 8px;
+                                "
+                            >
+                                <div
+                                    style="
+                                        display: flex;
+                                        justify-content: space-between;
+                                    "
+                                >
+                                    <span>1위 · 미적분</span>
+                                    <span>도움됨 2.3천</span>
+                                </div>
+                            </div>
+                            <div
+                                style="
+                                    background: rgba(255, 255, 255, 0.2);
+                                    padding: 12px;
+                                    border-radius: 8px;
+                                "
+                            >
+                                <div
+                                    style="
+                                        display: flex;
+                                        justify-content: space-between;
+                                    "
+                                >
+                                    <span>2위 · 확률과 통계</span>
+                                    <span>도움됨 1.8천</span>
+                                </div>
+                            </div>
+                            <div
+                                style="
+                                    background: rgba(255, 255, 255, 0.2);
+                                    padding: 12px;
+                                    border-radius: 8px;
+                                "
+                            >
+                                <div
+                                    style="
+                                        display: flex;
+                                        justify-content: space-between;
+                                    "
+                                >
+                                    <span>3위 · 기하</span>
+                                    <span>도움됨 1.5천</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="creator-stats">
+                        <div>👍 총 추천 5.6천</div>
+                        <div>💬 댓글 428개</div>
+                        <div>📊 평균 정답률 62%</div>
+                    </div>
+                </div>
+
+                <div class="interaction-bar">
+                    <button class="action-btn">전체 보기</button>
+                    <button class="action-btn">유형별 보기</button>
+                    <button class="action-btn">난이도별 보기</button>
+                </div>
+            </div>
+
+            <!-- 오답 노트 공유 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >민지's 오답 노트</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #4caf50; color: white"
+                                    >공개</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                    <button class="action-btn primary-btn">노트 저장</button>
+                </div>
+
+                <div class="content-preview">
+                    <h2 style="margin: 12px 0">미적분 킬러 문항 오답 정리</h2>
+
+                    <div
+                        style="
+                            background: #f8f9fa;
+                            padding: 16px;
+                            border-radius: 8px;
+                            margin: 16px 0;
+                        "
+                    >
+                        <div style="margin-bottom: 16px">
+                            <div style="font-weight: 500; margin-bottom: 8px">
+                                실수한 부분
+                            </div>
+                            <div style="color: #666">
+                                적분 구간 설정 시 부호 처리 실수
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 16px">
+                            <div style="font-weight: 500; margin-bottom: 8px">
+                                해결 방법
+                            </div>
+                            <div style="color: #666">
+                                1. 구간별 함수 그래프 그리기 2. 부호 변화 지점
+                                체크 3. 구간별 적분 계산
+                            </div>
+                        </div>
+
+                        <div style="font-weight: 500; margin-bottom: 8px">
+                            유사 문항
+                        </div>
+                        <div style="display: flex; gap: 8px">
+                            <span class="price-tag">2023 수능 30번</span>
+                            <span class="price-tag">2022 9월 29번</span>
+                        </div>
+                    </div>
+
+                    <div class="creator-stats">
+                        <div>📚 연관 문항 3개</div>
+                        <div>🔍 조회수 328</div>
+                        <div>💡 도움됨 45</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 시험 D-Day 타임라인 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >수능 카운트다운</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #e53e3e; color: white"
+                                    >D-100</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-preview">
+                    <div
+                        style="
+                            background: linear-gradient(
+                                45deg,
+                                #e53e3e,
+                                #ed8936
+                            );
+                            padding: 20px;
+                            border-radius: 8px;
+                            color: white;
+                        "
+                    >
+                        <h2 style="margin-bottom: 16px">D-100 학습 로드맵</h2>
+
+                        <div
+                            style="
+                                background: rgba(255, 255, 255, 0.2);
+                                padding: 16px;
+                                border-radius: 8px;
+                                margin-bottom: 16px;
+                            "
+                        >
+                            <div style="font-weight: 500; margin-bottom: 8px">
+                                오늘의 필수 학습
+                            </div>
+                            <div
+                                style="
+                                    display: flex;
+                                    flex-direction: column;
+                                    gap: 8px;
+                                "
+                            >
+                                <div>• 확률과 통계 단원 마무리</div>
+                                <div>• 6월 평가원 오답 복습</div>
+                                <div>• 약점 유형 20문제</div>
+                            </div>
+                        </div>
+
+                        <div
+                            style="
+                                display: flex;
+                                justify-content: space-between;
+                                margin-top: 12px;
+                            "
+                        >
+                            <div style="text-align: center">
+                                <div style="font-size: 24px; font-weight: bold">
+                                    42%
+                                </div>
+                                <div style="font-size: 12px">학습 진도율</div>
+                            </div>
+                            <div style="text-align: center">
+                                <div style="font-size: 24px; font-weight: bold">
+                                    85%
+                                </div>
+                                <div style="font-size: 12px">목표 달성률</div>
+                            </div>
+                            <div style="text-align: center">
+                                <div style="font-size: 24px; font-weight: bold">
+                                    3
+                                </div>
+                                <div style="font-size: 12px">남은 모의고사</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="creator-stats">
+                        <div>📚 남은 단원 3개</div>
+                        <div>✅ 완료 단원 5개</div>
+                        <div>📊 예상 등급 1-2</div>
+                    </div>
+                </div>
+
+                <div class="interaction-bar">
+                    <button class="action-btn primary-btn">학습 시작</button>
+                    <button class="action-btn">진도 체크</button>
+                    <button class="action-btn">일정 관리</button>
+                </div>
+            </div>
+            <!-- 퀴즈 세트 피드 아이템 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >수학의 정석</span
+                                >
+                                <span class="creator-badge badge-premium"
+                                    >프리미엄</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #fce8e8; color: #d93025"
+                                    >퀴즈</span
+                                >
+                            </div>
+                            <div style="font-size: 14px; color: #666">
+                                30분 전 업데이트 · 누적 응시 5.2만
+                            </div>
+                        </div>
+                    </div>
+                    <button class="action-btn primary-btn">퀴즈 풀기</button>
+                </div>
+
+                <div class="content-preview">
+                    <h2 style="margin: 12px 0">
+                        2025 수능 대비 미적분 모의고사
+                    </h2>
+
+                    <!-- 퀴즈 메타 정보 -->
+                    <div
+                        style="
+                            background: #f8f9fa;
+                            padding: 20px;
+                            border-radius: 8px;
+                            margin: 16px 0;
+                        "
+                    >
+                        <div
+                            style="
+                                display: flex;
+                                justify-content: space-between;
+                                margin-bottom: 16px;
+                            "
+                        >
+                            <div>
+                                <div style="font-size: 14px; color: #666">
+                                    총 문항
+                                </div>
+                                <div style="font-weight: 500; font-size: 18px">
+                                    30문제
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-size: 14px; color: #666">
+                                    제한 시간
+                                </div>
+                                <div style="font-weight: 500; font-size: 18px">
+                                    70분
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-size: 14px; color: #666">
+                                    평균 점수
+                                </div>
+                                <div style="font-weight: 500; font-size: 18px">
+                                    68점
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-size: 14px; color: #666">
+                                    난이도
+                                </div>
+                                <div style="font-weight: 500; font-size: 18px">
+                                    중상
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 문항 구성 -->
+                        <div style="font-weight: 500; margin-bottom: 8px">
+                            문항 구성
+                        </div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap">
+                            <span class="price-tag">선택형 20문항</span>
+                            <span class="price-tag">단답형 7문항</span>
+                            <span class="price-tag">서술형 3문항</span>
+                        </div>
+                    </div>
+
+                    <!-- 퀴즈 통계 -->
+                    <div class="creator-stats">
+                        <div>👥 응시 1.2만명</div>
+                        <div>⭐ 평점 4.8</div>
+                        <div>📊 합격률 62%</div>
+                        <div>💬 리뷰 238개</div>
+                    </div>
+
+                    <div class="hashtags">
+                        <span class="hashtag">#수능특강</span>
+                        <span class="hashtag">#미적분</span>
+                        <span class="hashtag">#모의고사</span>
+                        <span class="hashtag">#기출문제</span>
+                    </div>
+                </div>
+
+                <div class="interaction-bar">
+                    <button class="action-btn">👍 도움됨 956</button>
+                    <button class="action-btn">💬 댓글 34</button>
+                    <button class="action-btn">🔖 저장</button>
+                    <button class="action-btn">↗️ 공유</button>
+                </div>
+            </div>
+            <!-- 실시간 풀이/스터디 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >실시간 스터디</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #ff4444; color: white"
+                                    >LIVE</span
+                                >
+                            </div>
+                            <div style="font-size: 14px; color: #666">
+                                현재 32명 참여중
+                            </div>
+                        </div>
+                    </div>
+                    <button class="action-btn primary-btn">참여하기</button>
+                </div>
+
+                <div class="content-preview">
+                    <h2 style="margin: 12px 0">수능 D-100 실시간 문제풀이</h2>
+                    <p style="color: #666">
+                        지금 다른 수험생들과 함께 문제를 풀어보세요!
+                    </p>
+
+                    <div class="creator-stats">
+                        <div>👥 32명 참여중</div>
+                        <div>📝 현재 5번 문항</div>
+                        <div>⏱️ 30분째 진행중</div>
+                    </div>
+                </div>
+            </div>
+            <!-- 문제 해설/토론 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600">수학토론방</span>
+                                <span
+                                    class="creator-badge"
+                                    style="background: #4caf50; color: white"
+                                    >토론</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-preview">
+                    <h2 style="margin: 12px 0">
+                        2024 수능 수학 30번 해법 토론
+                    </h2>
+
+                    <div class="creator-stats">
+                        <div>💬 진행중인 토론 3개</div>
+                        <div>👥 참여자 125명</div>
+                        <div>📝 댓글 89개</div>
+                    </div>
+                </div>
+            </div>
+            <!-- 학습 자료/요약 노트 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >합격생 노트</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #9c27b0; color: white"
+                                    >학습자료</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-preview">
+                    <h2 style="margin: 12px 0">미적분 핵심 개념 정리 노트</h2>
+                    <div
+                        style="
+                            background: #f8f9fa;
+                            padding: 16px;
+                            border-radius: 8px;
+                        "
+                    >
+                        <div style="font-size: 14px">PDF 자료 · 23페이지</div>
+                    </div>
+
+                    <div class="creator-stats">
+                        <div>⬇️ 다운로드 2.3천</div>
+                        <div>⭐ 평점 4.8</div>
+                        <div>💬 댓글 156개</div>
+                    </div>
+                </div>
+            </div>
+            <!-- 성취/인증 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >민지님의 학습인증</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #ff9800; color: white"
+                                    >인증</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-preview">
+                    <h2 style="margin: 12px 0">오늘의 학습 목표 달성!</h2>
+                    <p style="color: #666">
+                        미적분 100문제 풀기 목표 달성했습니다 🎉
+                    </p>
+
+                    <div class="creator-stats">
+                        <div>✅ 100문제 완료</div>
+                        <div>⭐ 정답률 85%</div>
+                        <div>⏱️ 학습시간 5시간</div>
+                    </div>
+                </div>
+            </div>
+            <!-- 학습 챌린지/이벤트 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >수능 챌린지</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #e91e63; color: white"
+                                    >이벤트</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-preview">
+                    <h2 style="margin: 12px 0">7일 연속 문제풀이 챌린지</h2>
+                    <p style="color: #666">
+                        매일 30문제 이상 풀고 학습 습관을 만들어보세요!
+                    </p>
+
+                    <div class="creator-stats">
+                        <div>🏃 참여자 1.2만명</div>
+                        <div>🎁 리워드 뱃지 제공</div>
+                        <div>⏱️ 5일 남음</div>
+                    </div>
+                </div>
+            </div>
+            <!-- 프리미엄 문제 세트 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >수학의 정석</span
+                                >
+                                <span class="creator-badge badge-premium"
+                                    >프리미엄</span
+                                >
+                            </div>
+                            <div style="font-size: 14px; color: #666">
+                                구독자 25.3만 · 평균 평점 4.9
+                            </div>
+                        </div>
+                    </div>
+                    <button class="action-btn primary-btn">+ 구독하기</button>
+                </div>
+
+                <div class="content-preview">
+                    <div class="monetization-info">
+                        <span class="price-tag">월 9,900원</span>
+                        <span>프리미엄 전용</span>
+                    </div>
+                    <h2 style="margin: 12px 0">
+                        수능 수학 실전 문제 세트 Vol.5
+                    </h2>
+                    <p style="color: #666">
+                        최신 수능 경향을 반영한 고퀄리티 문제 세트입니다. 상세한
+                        해설과 개념 정리가 포함되어 있습니다.
+                    </p>
+
+                    <div class="creator-stats">
+                        <div>⭐ 평점 4.9</div>
+                        <div>👥 현재 1.2만명 학습 중</div>
+                        <div>✍️ 후기 238개</div>
+                    </div>
+
+                    <div class="hashtags">
+                        <span class="hashtag">#수능수학</span>
+                        <span class="hashtag">#미적분</span>
+                        <span class="hashtag">#수학1</span>
+                        <span class="hashtag">#문제풀이</span>
+                    </div>
+                </div>
+
+                <div class="interaction-bar">
+                    <button class="action-btn">👍 도움됨 2.3천</button>
+                    <button class="action-btn">💬 댓글 45</button>
+                    <button class="action-btn">🔖 저장</button>
+                    <button class="action-btn">↗️ 공유</button>
+                </div>
+            </div>
+            <!-- AI 추천 학습 문항 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >AI 학습 도우미</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #805ad5; color: white"
+                                    >AI 추천</span
+                                >
+                            </div>
+                            <div style="font-size: 14px; color: #666">
+                                맞춤형 학습 추천
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-preview">
+                    <h2 style="margin: 12px 0">오늘의 맞춤 학습 문항</h2>
+                    <div
+                        style="
+                            background: #f8f9fa;
+                            padding: 16px;
+                            border-radius: 8px;
+                        "
+                    >
+                        <p style="color: #666; margin-bottom: 12px">
+                            최근 풀이한 문제들의 패턴을 분석한 결과, 다음
+                            문항들을 추천드립니다:
+                        </p>
+                        <div
+                            style="
+                                display: flex;
+                                flex-direction: column;
+                                gap: 8px;
+                            "
+                        >
+                            <div
+                                style="
+                                    background: white;
+                                    padding: 12px;
+                                    border-radius: 8px;
+                                "
+                            >
+                                <span class="price-tag">취약점 보완</span>
+                                <div>도함수의 활용 문제 5문항</div>
+                            </div>
+                            <div
+                                style="
+                                    background: white;
+                                    padding: 12px;
+                                    border-radius: 8px;
+                                "
+                            >
+                                <span class="price-tag">실력 향상</span>
+                                <div>적분 응용 문제 3문항</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 문제 풀이 스트리크 챌린지 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >매일 학습 챌린지</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #f6ad55; color: white"
+                                    >Day 7</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-preview">
+                    <div
+                        style="
+                            background: linear-gradient(
+                                45deg,
+                                #4fd1c5,
+                                #4299e1
+                            );
+                            padding: 20px;
+                            border-radius: 8px;
+                            color: white;
+                        "
+                    >
+                        <h2 style="margin-bottom: 12px">7일 연속 학습 달성!</h2>
+                        <div
+                            style="display: flex; gap: 8px; margin-bottom: 16px"
+                        >
+                            <div
+                                style="
+                                    background: rgba(255, 255, 255, 0.2);
+                                    padding: 8px;
+                                    border-radius: 8px;
+                                    flex: 1;
+                                    text-align: center;
+                                "
+                            >
+                                <div style="font-size: 24px; font-weight: bold">
+                                    147
+                                </div>
+                                <div style="font-size: 12px">푼 문제</div>
+                            </div>
+                            <div
+                                style="
+                                    background: rgba(255, 255, 255, 0.2);
+                                    padding: 8px;
+                                    border-radius: 8px;
+                                    flex: 1;
+                                    text-align: center;
+                                "
+                            >
+                                <div style="font-size: 24px; font-weight: bold">
+                                    82%
+                                </div>
+                                <div style="font-size: 12px">정답률</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 시험 D-Day 특별 문제 세트 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >수능 D-30 특별 준비</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #e53e3e; color: white"
+                                    >긴급</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-preview">
+                    <div
+                        style="
+                            padding: 20px;
+                            border: 2px solid #e53e3e;
+                            border-radius: 8px;
+                        "
+                    >
+                        <h2 style="margin-bottom: 12px">
+                            수능 D-30 필수 문항 모음
+                        </h2>
+                        <div
+                            style="
+                                display: flex;
+                                flex-wrap: wrap;
+                                gap: 8px;
+                                margin-top: 12px;
+                            "
+                        >
+                            <span class="price-tag">빈출 유형</span>
+                            <span class="price-tag">고난도</span>
+                            <span class="price-tag">시간 단축</span>
+                        </div>
+                        <button
+                            class="action-btn primary-btn"
+                            style="width: 100%; margin-top: 16px"
+                        >
+                            지금 시작하기
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- 오답 노트 자동 생성 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >AI 오답 분석</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #38b2ac; color: white"
+                                    >NEW</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-preview">
+                    <h2 style="margin: 12px 0">이번 주 오답 분석 결과</h2>
+                    <div
+                        style="
+                            background: #f8f9fa;
+                            padding: 16px;
+                            border-radius: 8px;
+                        "
+                    >
+                        <div style="margin-bottom: 16px">
+                            <div style="font-weight: 500; margin-bottom: 8px">
+                                취약 유형 분석
+                            </div>
+                            <div
+                                style="
+                                    display: flex;
+                                    flex-direction: column;
+                                    gap: 8px;
+                                "
+                            >
+                                <div
+                                    style="
+                                        background: white;
+                                        padding: 12px;
+                                        border-radius: 8px;
+                                    "
+                                >
+                                    함수의 연속성 관련 문항 (정답률 45%)
+                                </div>
+                                <div
+                                    style="
+                                        background: white;
+                                        padding: 12px;
+                                        border-radius: 8px;
+                                    "
+                                >
+                                    적분 계산 문항 (정답률 52%)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 일반 강의 콘텐츠 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600">과학쌤</span>
+                                <span class="creator-badge badge-verified"
+                                    >인증</span
+                                >
+                            </div>
+                            <div style="font-size: 14px; color: #666">
+                                구독자 8.5만 · 물리 전문
+                            </div>
+                        </div>
+                    </div>
+                    <button class="action-btn">+ 구독하기</button>
+                </div>
+
+                <div class="content-preview">
+                    <h2 style="margin: 12px 0">물리 핵심 개념 30분 완성</h2>
+                    <p style="color: #666">
+                        수능 물리 필수 개념을 30분만에 깔끔하게 정리했습니다.
+                    </p>
+
+                    <div class="creator-stats">
+                        <div>👀 조회수 5.2만</div>
+                        <div>⭐ 평점 4.8</div>
+                        <div>💰 무료</div>
+                    </div>
+
+                    <div class="hashtags">
+                        <span class="hashtag">#고교물리</span>
+                        <span class="hashtag">#수능과학</span>
+                        <span class="hashtag">#개념정리</span>
+                        <span class="hashtag">#무료강의</span>
+                    </div>
+                </div>
+
+                <div class="interaction-bar">
+                    <button class="action-btn">👍 도움됨 1.2천</button>
+                    <button class="action-btn">💬 댓글 89</button>
+                    <button class="action-btn">🔖 저장</button>
+                    <button class="action-btn">↗️ 공유</button>
+                </div>
+            </div>
+            <!-- 프리미엄 해설 콘텐츠 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600">영어마스터</span>
+                                <span class="creator-badge badge-premium"
+                                    >프리미엄</span
+                                >
+                            </div>
+                            <div style="font-size: 14px; color: #666">
+                                구독자 15.8만 · 토익/토플 전문
+                            </div>
+                        </div>
+                    </div>
+                    <button class="action-btn primary-btn">+ 구독하기</button>
+                </div>
+
+                <div class="content-preview">
+                    <div class="monetization-info">
+                        <span class="price-tag">프리미엄</span>
+                    </div>
+                    <h2 style="margin: 12px 0">2025 토익 실전 모의고사 해설</h2>
+                    <p style="color: #666">
+                        최신 출제 경향을 완벽 분석한 디테일한 해설 강의입니다.
+                    </p>
+
+                    <div class="premium-content">
+                        <div style="font-weight: 500">프리미엄 혜택</div>
+                        <ul style="margin: 8px 0; color: #666; font-size: 14px">
+                            <li>상세 문항 분석 PDF</li>
+                            <li>1:1 질문 답변</li>
+                            <li>학습 진도 관리</li>
+                        </ul>
+                        <button class="membership-btn">멤버십 가입하기</button>
+                    </div>
+
+                    <div class="hashtags">
+                        <span class="hashtag">#토익</span>
+                        <span class="hashtag">#영어시험</span>
+                        <span class="hashtag">#모의고사</span>
+                        <span class="hashtag">#해설강의</span>
+                    </div>
+                </div>
+
+                <div class="interaction-bar">
+                    <button class="action-btn">👍 도움됨 956</button>
+                    <button class="action-btn">💬 댓글 34</button>
+                    <button class="action-btn">🔖 저장</button>
+                    <button class="action-btn">↗️ 공유</button>
+                </div>
+            </div>
+            <!-- 비디오 콘텐츠 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >수학의 정석</span
+                                >
+                                <span class="creator-badge badge-verified"
+                                    >인증</span
+                                >
+                            </div>
+                            <div style="font-size: 14px; color: #666">
+                                구독자 25.3만 · 영상 조회수 1.2만
+                            </div>
+                        </div>
+                    </div>
+                    <button class="action-btn primary-btn">+ 구독하기</button>
+                </div>
+
+                <div class="content-preview">
+                    <h2 style="margin: 12px 0">
+                        미적분 개념 마스터하기 [1/10]
+                    </h2>
+
+                    <!-- 유튜브 비디오 플레이어 -->
+                    <div
+                        style="
+                            position: relative;
+                            width: 100%;
+                            padding-top: 56.25%;
+                            margin: 12px 0;
+                            border-radius: 8px;
+                            overflow: hidden;
+                        "
+                    >
+                        <iframe
+                            style="
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                width: 100%;
+                                height: 100%;
+                                border: none;
+                            "
+                            src="https://www.youtube.com/embed/VIDEO_ID_HERE"
+                            title="미적분 개념 마스터하기"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen
+                        >
+                        </iframe>
+                    </div>
+
+                    <p style="color: #666">
+                        미적분의 기초 개념부터 심화 내용까지 쉽게
+                        설명해드립니다. 기초가 부족한 학생들도 쉽게 따라올 수
+                        있어요!
+                    </p>
+
+                    <div class="creator-stats">
+                        <div>👀 조회수 1.2만</div>
+                        <div>⭐ 평점 4.9</div>
+                        <div>⏱️ 15:32</div>
+                        <div>📅 3일 전</div>
+                    </div>
+
+                    <div class="hashtags">
+                        <span class="hashtag">#수학강의</span>
+                        <span class="hashtag">#미적분</span>
+                        <span class="hashtag">#수능수학</span>
+                        <span class="hashtag">#인강</span>
+                    </div>
+                </div>
+
+                <div class="interaction-bar">
+                    <button class="action-btn">👍 좋아요 2.3천</button>
+                    <button class="action-btn">💬 댓글 156</button>
+                    <button class="action-btn">🔖 저장</button>
+                    <button class="action-btn">↗️ 공유</button>
+                </div>
+            </div>
+            <!-- AI 학습 패턴 분석 리포트 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >AI 학습 분석</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #3b82f6; color: white"
+                                    >주간 리포트</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-preview">
+                    <div
+                        style="
+                            background: linear-gradient(
+                                45deg,
+                                #3b82f6,
+                                #2563eb
+                            );
+                            padding: 20px;
+                            border-radius: 8px;
+                            color: white;
+                        "
+                    >
+                        <h3>이번 주 학습 패턴 분석</h3>
+                        <div style="margin-top: 16px; display: flex; gap: 12px">
+                            <div
+                                style="
+                                    flex: 1;
+                                    background: rgba(255, 255, 255, 0.1);
+                                    padding: 12px;
+                                    border-radius: 8px;
+                                "
+                            >
+                                <div style="font-weight: 500">
+                                    최적 학습 시간대
+                                </div>
+                                <div style="font-size: 20px; margin-top: 4px">
+                                    오전 10-12시
+                                </div>
+                                <div style="font-size: 12px; margin-top: 4px">
+                                    정답률 87%
+                                </div>
+                            </div>
+                            <div
+                                style="
+                                    flex: 1;
+                                    background: rgba(255, 255, 255, 0.1);
+                                    padding: 12px;
+                                    border-radius: 8px;
+                                "
+                            >
+                                <div style="font-weight: 500">취약 시간대</div>
+                                <div style="font-size: 20px; margin-top: 4px">
+                                    저녁 8-10시
+                                </div>
+                                <div style="font-size: 12px; margin-top: 4px">
+                                    정답률 62%
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            style="
+                                margin-top: 16px;
+                                background: rgba(255, 255, 255, 0.1);
+                                padding: 12px;
+                                border-radius: 8px;
+                            "
+                        >
+                            <div style="font-weight: 500; margin-bottom: 8px">
+                                AI 추천 학습 계획
+                            </div>
+                            <ul style="list-style: none">
+                                <li>• 오전 시간대 집중 학습 배치</li>
+                                <li>• 저녁 시간은 복습 위주로 구성</li>
+                                <li>• 20분 학습 + 5분 휴식 사이클 추천</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- AI 문제 유형 예측 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >시험 문항 예측</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #059669; color: white"
+                                    >AI 분석</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-preview">
+                    <div
+                        style="
+                            padding: 20px;
+                            background: #f0fdf4;
+                            border-radius: 8px;
+                        "
+                    >
+                        <h3 style="color: #059669">2025 수능 예상 문항 패턴</h3>
+                        <div style="margin-top: 16px">
+                            <div
+                                style="
+                                    background: white;
+                                    padding: 12px;
+                                    border-radius: 8px;
+                                    margin-bottom: 8px;
+                                "
+                            >
+                                <div style="font-weight: 500">
+                                    출제 확률 상위 유형
+                                </div>
+                                <div
+                                    style="
+                                        display: flex;
+                                        gap: 8px;
+                                        margin-top: 8px;
+                                        flex-wrap: wrap;
+                                    "
+                                >
+                                    <span class="price-tag"
+                                        >적분 응용 (87%)</span
+                                    >
+                                    <span class="price-tag"
+                                        >미분 계산 (82%)</span
+                                    >
+                                    <span class="price-tag"
+                                        >함수의 극한 (78%)</span
+                                    >
+                                </div>
+                            </div>
+
+                            <div
+                                style="
+                                    background: white;
+                                    padding: 12px;
+                                    border-radius: 8px;
+                                "
+                            >
+                                <div style="font-weight: 500">
+                                    AI 추천 학습 순서
+                                </div>
+                                <div style="margin-top: 8px; color: #666">
+                                    1. 함수의 극한 기본 개념 2. 미분 계산 실전
+                                    연습 3. 적분 응용문제 심화
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- AI 실시간 문제 해설 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >AI 해설 어시스턴트</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #7c3aed; color: white"
+                                    >실시간</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-preview">
+                    <div
+                        style="
+                            padding: 20px;
+                            border: 2px solid #7c3aed;
+                            border-radius: 8px;
+                        "
+                    >
+                        <div
+                            style="
+                                display: flex;
+                                flex-direction: column;
+                                gap: 12px;
+                            "
+                        >
+                            <div
+                                style="
+                                    background: #f3f4f6;
+                                    padding: 12px;
+                                    border-radius: 8px;
+                                "
+                            >
+                                <div style="color: #666">학생 질문</div>
+                                <div style="margin-top: 4px">
+                                    이 미분 문제의 핵심 포인트가 뭔가요?
+                                </div>
+                            </div>
+
+                            <div
+                                style="
+                                    background: #ede9fe;
+                                    padding: 12px;
+                                    border-radius: 8px;
+                                "
+                            >
+                                <div style="color: #666">
+                                    AI 해설 (실시간 생성중...)
+                                </div>
+                                <div style="margin-top: 4px">
+                                    이 문제의 핵심은 합성함수의 미분입니다.
+                                    1단계: 외부함수 파악 2단계: 내부함수 파악
+                                    3단계: 연쇄법칙 적용
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 16px">
+                            <button
+                                class="action-btn"
+                                style="
+                                    width: 100%;
+                                    background: #7c3aed;
+                                    color: white;
+                                "
+                            >
+                                추가 질문하기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- AI 유형별 문제 큐레이션 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >AI 문제 추천</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #3b82f6; color: white"
+                                    >실시간 추천</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-preview">
+                    <div
+                        style="
+                            background: #eff6ff;
+                            padding: 20px;
+                            border-radius: 8px;
+                        "
+                    >
+                        <h3>오늘의 맞춤형 문제 세트</h3>
+
+                        <div
+                            style="
+                                margin-top: 16px;
+                                background: white;
+                                padding: 12px;
+                                border-radius: 8px;
+                            "
+                        >
+                            <div style="font-weight: 500">기본 개념 강화</div>
+                            <div
+                                style="
+                                    margin-top: 8px;
+                                    display: flex;
+                                    gap: 8px;
+                                    flex-wrap: wrap;
+                                "
+                            >
+                                <span class="price-tag">미분 기초 3문제</span>
+                                <span class="price-tag">정답률 85%</span>
+                            </div>
+                        </div>
+
+                        <div
+                            style="
+                                margin-top: 12px;
+                                background: white;
+                                padding: 12px;
+                                border-radius: 8px;
+                            "
+                        >
+                            <div style="font-weight: 500">취약점 보완</div>
+                            <div
+                                style="
+                                    margin-top: 8px;
+                                    display: flex;
+                                    gap: 8px;
+                                    flex-wrap: wrap;
+                                "
+                            >
+                                <span class="price-tag">적분 응용 5문제</span>
+                                <span class="price-tag">정답률 65%</span>
+                            </div>
+                        </div>
+
+                        <div
+                            style="
+                                margin-top: 12px;
+                                background: white;
+                                padding: 12px;
+                                border-radius: 8px;
+                            "
+                        >
+                            <div style="font-weight: 500">실전 대비</div>
+                            <div
+                                style="
+                                    margin-top: 8px;
+                                    display: flex;
+                                    gap: 8px;
+                                    flex-wrap: wrap;
+                                "
+                            >
+                                <span class="price-tag">킬러문항 2문제</span>
+                                <span class="price-tag">정답률 45%</span>
+                            </div>
+                        </div>
+
+                        <button
+                            class="action-btn primary-btn"
+                            style="width: 100%; margin-top: 16px"
+                        >
+                            맞춤 학습 시작하기
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- AI 학습 성과 분석 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >AI 성과 리포트</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #059669; color: white"
+                                    >주간 분석</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-preview">
+                    <div
+                        style="
+                            padding: 20px;
+                            border-radius: 8px;
+                            background: #f0fdf4;
+                        "
+                    >
+                        <h3>이번 주 학습 성과</h3>
+
+                        <div style="display: flex; gap: 12px; margin-top: 16px">
+                            <div
+                                style="
+                                    flex: 1;
+                                    background: white;
+                                    padding: 12px;
+                                    border-radius: 8px;
+                                    text-align: center;
+                                "
+                            >
+                                <div
+                                    style="
+                                        color: #059669;
+                                        font-size: 24px;
+                                        font-weight: bold;
+                                    "
+                                >
+                                    85%
+                                </div>
+                                <div style="font-size: 14px; color: #666">
+                                    평균 정답률
+                                </div>
+                            </div>
+                            <div
+                                style="
+                                    flex: 1;
+                                    background: white;
+                                    padding: 12px;
+                                    border-radius: 8px;
+                                    text-align: center;
+                                "
+                            >
+                                <div
+                                    style="
+                                        color: #059669;
+                                        font-size: 24px;
+                                        font-weight: bold;
+                                    "
+                                >
+                                    +12%
+                                </div>
+                                <div style="font-size: 14px; color: #666">
+                                    성장률
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            style="
+                                margin-top: 16px;
+                                background: white;
+                                padding: 12px;
+                                border-radius: 8px;
+                            "
+                        >
+                            <div style="font-weight: 500; margin-bottom: 8px">
+                                강점 영역
+                            </div>
+                            <div
+                                style="display: flex; gap: 8px; flex-wrap: wrap"
+                            >
+                                <span class="price-tag">함수의 극한 (92%)</span>
+                                <span class="price-tag">미분법 (88%)</span>
+                            </div>
+                        </div>
+
+                        <div
+                            style="
+                                margin-top: 12px;
+                                background: white;
+                                padding: 12px;
+                                border-radius: 8px;
+                            "
+                        >
+                            <div style="font-weight: 500; margin-bottom: 8px">
+                                보완 필요
+                            </div>
+                            <div
+                                style="display: flex; gap: 8px; flex-wrap: wrap"
+                            >
+                                <span class="price-tag">적분법 (67%)</span>
+                                <span class="price-tag">벡터 (62%)</span>
+                            </div>
+                        </div>
+
+                        <button
+                            class="action-btn"
+                            style="
+                                width: 100%;
+                                margin-top: 16px;
+                                background: #059669;
+                                color: white;
+                            "
+                        >
+                            상세 분석 보기
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- AI 학습 스케줄러 피드 -->
+            <div class="feed-item">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="avatar"></div>
+                        <div>
+                            <div style="display: flex; align-items: center">
+                                <span style="font-weight: 600"
+                                    >AI 학습 스케줄러</span
+                                >
+                                <span
+                                    class="creator-badge"
+                                    style="background: #7c3aed; color: white"
+                                    >최적화</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-preview">
+                    <div
+                        style="
+                            padding: 20px;
+                            background: #f5f3ff;
+                            border-radius: 8px;
+                        "
+                    >
+                        <h3>오늘의 최적 학습 계획</h3>
+
+                        <div
+                            style="
+                                margin-top: 16px;
+                                background: white;
+                                padding: 12px;
+                                border-radius: 8px;
+                            "
+                        >
+                            <div style="font-weight: 500">
+                                오전 피크타임 (10:00-12:00)
+                            </div>
+                            <div style="color: #666; margin-top: 4px">
+                                새로운 개념 학습 추천
+                            </div>
+                            <div
+                                style="display: flex; gap: 8px; margin-top: 8px"
+                            >
+                                <span class="price-tag">미적분</span>
+                                <span class="price-tag">신규 문제</span>
+                            </div>
+                        </div>
+
+                        <div
+                            style="
+                                margin-top: 12px;
+                                background: white;
+                                padding: 12px;
+                                border-radius: 8px;
+                            "
+                        >
+                            <div style="font-weight: 500">
+                                오후 학습 (2:00-4:00)
+                            </div>
+                            <div style="color: #666; margin-top: 4px">
+                                문제 풀이 및 복습
+                            </div>
+                            <div
+                                style="display: flex; gap: 8px; margin-top: 8px"
+                            >
+                                <span class="price-tag">기출문제</span>
+                                <span class="price-tag">오답노트</span>
+                            </div>
+                        </div>
+
+                        <div
+                            style="
+                                margin-top: 12px;
+                                background: white;
+                                padding: 12px;
+                                border-radius: 8px;
+                            "
+                        >
+                            <div style="font-weight: 500">
+                                저녁 정리 (8:00-9:00)
+                            </div>
+                            <div style="color: #666; margin-top: 4px">
+                                개념 정리 및 요약
+                            </div>
+                            <div
+                                style="display: flex; gap: 8px; margin-top: 8px"
+                            >
+                                <span class="price-tag">요약노트</span>
+                                <span class="price-tag">마인드맵</span>
+                            </div>
+                        </div>
+
+                        <button
+                            class="action-btn"
+                            style="
+                                width: 100%;
+                                margin-top: 16px;
+                                background: #7c3aed;
+                                color: white;
+                            "
+                        >
+                            스케줄 적용하기
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

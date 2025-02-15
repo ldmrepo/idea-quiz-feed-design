@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>학습 피드</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, Helvetica, Arial, sans-serif;
+                background-color: #fafafa;
+            }
+
+            .navbar {
+                position: fixed;
+                top: 0;
+                width: 100%;
+                background-color: white;
+                border-bottom: 1px solid #dbdbdb;
+                padding: 10px 0;
+                z-index: 100;
+            }
+
+            .nav-container {
+                max-width: 935px;
+                margin: 0 auto;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 20px;
+            }
+
+            .logo {
+                font-size: 24px;
+                font-weight: bold;
+                color: #262626;
+                text-decoration: none;
+            }
+
+            .main-container {
+                max-width: 935px;
+                margin: 80px auto 0;
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 28px;
+                padding: 0 20px;
+            }
+
+            .feed {
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            .post {
+                background-color: white;
+                border: 1px solid #dbdbdb;
+                border-radius: 8px;
+                overflow: hidden;
+            }
+
+            .post-header {
+                display: flex;
+                align-items: center;
+                padding: 14px;
+            }
+
+            .profile-img {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                margin-right: 10px;
+                background-color: #efefef;
+            }
+
+            .post-content {
+                padding: 0 14px 14px;
+            }
+
+            .content-preview {
+                width: 100%;
+                height: 200px;
+                background-color: #efefef;
+                margin-bottom: 14px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #8e8e8e;
+            }
+
+            .video-preview {
+                background-color: #000;
+                color: white;
+            }
+
+            .quiz-preview {
+                background-color: #e3f2fd;
+            }
+
+            .actions {
+                display: flex;
+                gap: 16px;
+                margin-top: 10px;
+            }
+
+            .action-btn {
+                background: none;
+                border: none;
+                color: #262626;
+                font-size: 14px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+
+            .sidebar {
+                position: sticky;
+                top: 80px;
+                height: fit-content;
+            }
+
+            .progress-card {
+                background-color: white;
+                border: 1px solid #dbdbdb;
+                border-radius: 8px;
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .progress-title {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 15px;
+            }
+
+            .progress-bar {
+                width: 100%;
+                height: 8px;
+                background-color: #efefef;
+                border-radius: 4px;
+                overflow: hidden;
+            }
+
+            .progress-fill {
+                width: 65%;
+                height: 100%;
+                background-color: #0095f6;
+                border-radius: 4px;
+            }
+
+            .recommended {
+                background-color: white;
+                border: 1px solid #dbdbdb;
+                border-radius: 8px;
+                padding: 20px;
+            }
+
+            .recommended-title {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 15px;
+            }
+
+            .recommended-item {
+                display: flex;
+                align-items: center;
+                padding: 8px 0;
+                cursor: pointer;
+            }
+
+            .recommended-item:hover {
+                background-color: #fafafa;
+            }
+
+            @media (max-width: 768px) {
+                .main-container {
+                    grid-template-columns: 1fr;
+                }
+
+                .sidebar {
+                    display: none;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="#" class="logo">LearnFeed</a>
+                <div class="nav-right">
+                    <button class="action-btn">새 학습</button>
+                </div>
+            </div>
+        </nav>
+
+        <main class="main-container">
+            <div class="feed">
+                <!-- 동영상 게시물 -->
+                <article class="post">
+                    <header class="post-header">
+                        <div class="profile-img"></div>
+                        <div>
+                            <strong>수학의 정석</strong>
+                            <p style="font-size: 12px; color: #8e8e8e">
+                                고등수학 - 미적분
+                            </p>
+                        </div>
+                    </header>
+                    <div class="post-content">
+                        <div class="content-preview video-preview">
+                            🎥 미적분의 기초 개념 설명
+                        </div>
+                        <h3>미적분 입문: 극한과 연속의 개념</h3>
+                        <p style="color: #8e8e8e; margin: 8px 0">
+                            극한과 연속성의 기본 개념을 이해하고 실생활 예제를
+                            통해 학습합니다.
+                        </p>
+                        <div class="actions">
+                            <button class="action-btn">👍 도움됨</button>
+                            <button class="action-btn">💾 저장</button>
+                            <button class="action-btn">➡️ 공유</button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 시험지/퀴즈 게시물 -->
+                <article class="post">
+                    <header class="post-header">
+                        <div class="profile-img"></div>
+                        <div>
+                            <strong>과학 탐구</strong>
+                            <p style="font-size: 12px; color: #8e8e8e">
+                                물리학 - 역학
+                            </p>
+                        </div>
+                    </header>
+                    <div class="post-content">
+                        <div class="content-preview quiz-preview">
+                            📝 주간 역학 퀴즈
+                        </div>
+                        <h3>뉴턴의 운동법칙 실전 문제</h3>
+                        <p style="color: #8e8e8e; margin: 8px 0">
+                            5문제로 구성된 간단한 퀴즈입니다. 제한시간 15분
+                        </p>
+                        <div class="actions">
+                            <button class="action-btn">✏️ 시작하기</button>
+                            <button class="action-btn">👥 함께 풀기</button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <aside class="sidebar">
+                <div class="progress-card">
+                    <h3 class="progress-title">학습 진도</h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <p style="margin-top: 10px; color: #8e8e8e">
+                        이번 주 목표의 65% 달성!
+                    </p>
+                </div>
+
+                <div class="recommended">
+                    <h3 class="recommended-title">추천 학습</h3>
+                    <div class="recommended-item">
+                        <div class="profile-img"></div>
+                        <div style="margin-left: 10px">
+                            <strong>삼각함수의 기초</strong>
+                            <p style="font-size: 12px; color: #8e8e8e">
+                                수학 - 15분
+                            </p>
+                        </div>
+                    </div>
+                    <div class="recommended-item">
+                        <div class="profile-img"></div>
+                        <div style="margin-left: 10px">
+                            <strong>화학반응식 균형 맞추기</strong>
+                            <p style="font-size: 12px; color: #8e8e8e">
+                                화학 - 20분
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </body>
+</html>
