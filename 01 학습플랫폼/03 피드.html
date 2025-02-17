@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>SocialLearn</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, Helvetica, Arial, sans-serif;
+                background-color: #f0f2f5;
+                color: #1c1e21;
+            }
+
+            /* 네비게이션 바 */
+            .navbar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 60px;
+                background: white;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+                z-index: 100;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 16px;
+            }
+
+            .nav-icons {
+                display: flex;
+                gap: 24px;
+                align-items: center;
+            }
+
+            .nav-icon {
+                width: 24px;
+                height: 24px;
+                background: #eee;
+                border-radius: 50%;
+            }
+
+            /* 스토리/하이라이트 섹션 */
+            .stories {
+                margin-top: 70px;
+                padding: 10px;
+                background: white;
+                border-bottom: 1px solid #ddd;
+            }
+
+            .story-container {
+                display: flex;
+                gap: 12px;
+                overflow-x: auto;
+                padding: 4px;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .story {
+                width: 80px;
+                text-align: center;
+            }
+
+            .story-ring {
+                width: 64px;
+                height: 64px;
+                border-radius: 50%;
+                background: linear-gradient(
+                    45deg,
+                    #f09433,
+                    #e6683c,
+                    #dc2743,
+                    #cc2366,
+                    #bc1888
+                );
+                padding: 2px;
+                margin: 0 auto 4px;
+            }
+
+            .story-img {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                background: white;
+            }
+
+            /* 피드 컨테이너 */
+            .feed {
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 16px;
+            }
+
+            /* 컨텐츠 카드 */
+            .content-card {
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+                margin-bottom: 16px;
+                overflow: hidden;
+            }
+
+            .card-header {
+                display: flex;
+                align-items: center;
+                padding: 12px;
+                justify-content: space-between;
+            }
+
+            .creator-info {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .creator-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: #eee;
+            }
+
+            .preview-container {
+                position: relative;
+                padding-top: 56.25%;
+                background: #f8f9fa;
+            }
+
+            .preview-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(0, 0, 0, 0.05);
+            }
+
+            .content-info {
+                padding: 12px;
+            }
+
+            .engagement-bar {
+                display: flex;
+                align-items: center;
+                padding: 8px 12px;
+                gap: 16px;
+                border-top: 1px solid #eee;
+            }
+
+            .engagement-action {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                color: #666;
+                font-size: 14px;
+            }
+
+            .action-icon {
+                width: 20px;
+                height: 20px;
+                background: #eee;
+                border-radius: 50%;
+            }
+
+            .badge {
+                padding: 4px 8px;
+                background: #e8f0fe;
+                color: #1a73e8;
+                border-radius: 12px;
+                font-size: 12px;
+            }
+
+            .comments {
+                padding: 12px;
+                background: #f8f9fa;
+                border-top: 1px solid #eee;
+            }
+
+            .comment {
+                display: flex;
+                gap: 8px;
+                margin-bottom: 8px;
+            }
+
+            .comment-avatar {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background: #eee;
+            }
+
+            /* 플로팅 액션 버튼 */
+            .floating-action {
+                position: fixed;
+                bottom: 24px;
+                right: 24px;
+                width: 56px;
+                height: 56px;
+                border-radius: 28px;
+                background: #1a73e8;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                cursor: pointer;
+            }
+
+            @media (max-width: 768px) {
+                .feed {
+                    padding: 8px;
+                }
+
+                .content-card {
+                    border-radius: 0;
+                    margin: 0 -8px 16px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 네비게이션 바 -->
+        <nav class="navbar">
+            <div style="font-size: 24px; font-weight: bold; color: #1a73e8">
+                SocialLearn
+            </div>
+            <div class="nav-icons">
+                <div class="nav-icon"></div>
+                <div class="nav-icon"></div>
+                <div class="nav-icon"></div>
+            </div>
+        </nav>
+
+        <!-- 스토리/하이라이트 섹션 -->
+        <section class="stories">
+            <div class="story-container">
+                <div class="story">
+                    <div class="story-ring">
+                        <div class="story-img"></div>
+                    </div>
+                    <span style="font-size: 12px">수학의 발견</span>
+                </div>
+                <div class="story">
+                    <div class="story-ring">
+                        <div class="story-img"></div>
+                    </div>
+                    <span style="font-size: 12px">코딩챌린지</span>
+                </div>
+                <div class="story">
+                    <div class="story-ring">
+                        <div class="story-img"></div>
+                    </div>
+                    <span style="font-size: 12px">과학실험</span>
+                </div>
+                <div class="story">
+                    <div class="story-ring">
+                        <div class="story-img"></div>
+                    </div>
+                    <span style="font-size: 12px">영어회화</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 메인 피드 -->
+        <main class="feed">
+            <!-- 컨텐츠 카드 1 -->
+            <article class="content-card">
+                <div class="card-header">
+                    <div class="creator-info">
+                        <div class="creator-avatar"></div>
+                        <div>
+                            <div style="font-weight: 600">수학의 정석</div>
+                            <div style="font-size: 12px; color: #666">
+                                수학 · 중급
+                            </div>
+                        </div>
+                    </div>
+                    <div style="color: #666">•••</div>
+                </div>
+                <div class="preview-container">
+                    <div class="preview-overlay">미적분 마스터 클래스</div>
+                </div>
+                <div class="content-info">
+                    <h3>미적분의 기초: 극한과 연속성</h3>
+                    <p style="color: #666; margin-top: 4px; font-size: 14px">
+                        실생활 예제로 배우는 미적분의 핵심 개념
+                    </p>
+                    <div style="display: flex; gap: 8px; margin-top: 8px">
+                        <span class="badge">2시간 30분</span>
+                        <span class="badge">수강생 1.2만명</span>
+                    </div>
+                </div>
+                <div class="engagement-bar">
+                    <div class="engagement-action">
+                        <div class="action-icon"></div>
+                        <span>도움됨 2.1천</span>
+                    </div>
+                    <div class="engagement-action">
+                        <div class="action-icon"></div>
+                        <span>댓글 82</span>
+                    </div>
+                    <div class="engagement-action">
+                        <div class="action-icon"></div>
+                        <span>공유</span>
+                    </div>
+                </div>
+                <div class="comments">
+                    <div class="comment">
+                        <div class="comment-avatar"></div>
+                        <div>
+                            <div style="font-size: 14px">
+                                <strong>민지</strong> 설명이 정말 이해하기
+                                쉬워요! 👍
+                            </div>
+                            <div
+                                style="
+                                    font-size: 12px;
+                                    color: #666;
+                                    margin-top: 2px;
+                                "
+                            >
+                                좋아요 23 · 답글
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 컨텐츠 카드 2 -->
+            <article class="content-card">
+                <div class="card-header">
+                    <div class="creator-info">
+                        <div class="creator-avatar"></div>
+                        <div>
+                            <div style="font-weight: 600">코딩의 신</div>
+                            <div style="font-size: 12px; color: #666">
+                                프로그래밍 · 입문
+                            </div>
+                        </div>
+                    </div>
+                    <div style="color: #666">•••</div>
+                </div>
+                <div class="preview-container">
+                    <div class="preview-overlay">파이썬 기초 프로그래밍</div>
+                </div>
+                <div class="content-info">
+                    <h3>파이썬 시작하기: 기초 문법과 실습</h3>
+                    <p style="color: #666; margin-top: 4px; font-size: 14px">
+                        코딩 입문자를 위한 친절한 파이썬 강의
+                    </p>
+                    <div style="display: flex; gap: 8px; margin-top: 8px">
+                        <span class="badge">1시간 45분</span>
+                        <span class="badge">수강생 8.5천명</span>
+                    </div>
+                </div>
+                <div class="engagement-bar">
+                    <div class="engagement-action">
+                        <div class="action-icon"></div>
+                        <span>도움됨 1.5천</span>
+                    </div>
+                    <div class="engagement-action">
+                        <div class="action-icon"></div>
+                        <span>댓글 64</span>
+                    </div>
+                    <div class="engagement-action">
+                        <div class="action-icon"></div>
+                        <span>공유</span>
+                    </div>
+                </div>
+            </article>
+        </main>
+
+        <!-- 플로팅 액션 버튼 -->
+        <div class="floating-action">+</div>
+    </body>
+</html>

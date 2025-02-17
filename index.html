@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Portfolio</title>
+        <style>
+            /* 기본 스타일 */
+            body {
+                margin: 0;
+                padding: 0;
+                font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+                background-color: #f0f0f0;
+            }
+            /* 헤더 스타일 */
+            header {
+                background: #1a73e8;
+                color: #fff;
+                padding: 40px 20px;
+                text-align: center;
+            }
+            header h1 {
+                margin: 0;
+                font-size: 36px;
+            }
+            /* 포트폴리오 컨테이너 */
+            .portfolio-container {
+                max-width: 1000px;
+                margin: 40px auto;
+                padding: 20px;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 20px;
+            }
+            /* 포트폴리오 아이템(카드) */
+            .portfolio-item {
+                background: #fff;
+                padding: 20px;
+                border-radius: 8px;
+                text-align: center;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+                transition: transform 0.3s, box-shadow 0.3s;
+            }
+            .portfolio-item a {
+                text-decoration: none;
+                color: #1a73e8;
+                font-size: 18px;
+                font-weight: 600;
+                display: block;
+                padding: 10px 0;
+            }
+            .portfolio-item:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>문항 소셜 플랫폼</h1>
+        </header>
+        <div class="portfolio-container">
+            <div class="portfolio-item">
+                <a href="./01 학습플랫폼/레이아웃.html">로그인</a>
+            </div>
+            <div class="portfolio-item">
+                <a href="./01 학습플랫폼/01 피드.html">피드 #1</a>
+            </div>
+            <div class="portfolio-item">
+                <a href="./01 학습플랫폼/02 피드.html">피드 #2</a>
+            </div>
+            <div class="portfolio-item">
+                <a href="./01 학습플랫폼/03 피드.html">피드 #3</a>
+            </div>
+            <div class="portfolio-item">
+                <a href="./01 학습플랫폼/04 피드.html">피드 #4</a>
+            </div>
+            <div class="portfolio-item">
+                <a href="./01 학습플랫폼/05 피드.html">피드 #5</a>
+            </div>
+            <div class="portfolio-item">
+                <a href="./01 학습플랫폼/06 피드.html">피드 #6</a>
+            </div>
+            <div class="portfolio-item">
+                <a href="./01 학습플랫폼/07 피드.html">피드 #7</a>
+            </div>
+            <div class="portfolio-item">
+                <a href="./01 학습플랫폼/08 피드.html">피드 #7</a>
+            </div>
+        </div>
+    </body>
+</html>

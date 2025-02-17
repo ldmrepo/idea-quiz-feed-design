@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>QuizShare - 데스크탑</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, Helvetica, Arial, sans-serif;
+                background-color: #f0f2f5;
+                color: #1c1e21;
+            }
+
+            .app-container {
+                display: grid;
+                grid-template-columns: 320px minmax(600px, 800px) 320px;
+                gap: 24px;
+                max-width: 1920px;
+                margin: 0 auto;
+                padding: 80px 16px 16px;
+            }
+
+            /* 공통 사이드바 스타일 */
+            .sidebar {
+                position: sticky;
+                top: 80px;
+                height: calc(100vh - 100px);
+                overflow-y: auto;
+            }
+
+            .sidebar-card {
+                background: white;
+                border-radius: 12px;
+                padding: 16px;
+                margin-bottom: 16px;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            }
+
+            /* 학습 경로 카드 */
+            .path-card {
+                padding: 12px;
+                background: #f8f9fa;
+                border-radius: 8px;
+                margin-bottom: 8px;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .path-card:hover {
+                background: #e8f0fe;
+            }
+
+            /* 진도 바 */
+            .progress-bar {
+                width: 100%;
+                height: 4px;
+                background: #eee;
+                border-radius: 2px;
+                margin-top: 8px;
+            }
+
+            .progress-fill {
+                height: 100%;
+                background: #1a73e8;
+                border-radius: 2px;
+            }
+
+            /* 시험 일정 카드 */
+            .exam-card {
+                display: flex;
+                align-items: center;
+                padding: 12px;
+                border: 1px solid #eee;
+                border-radius: 8px;
+                margin-bottom: 8px;
+            }
+
+            .exam-date {
+                width: 50px;
+                height: 50px;
+                background: #e8f0fe;
+                border-radius: 8px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                margin-right: 12px;
+            }
+
+            /* 실시간 인기 문제 */
+            .trending-item {
+                display: flex;
+                align-items: center;
+                padding: 12px;
+                border-bottom: 1px solid #eee;
+            }
+
+            .trending-rank {
+                font-size: 20px;
+                font-weight: bold;
+                color: #1a73e8;
+                margin-right: 12px;
+                width: 24px;
+            }
+
+            /* 태그 스타일 */
+            .tag {
+                display: inline-block;
+                padding: 4px 12px;
+                border-radius: 16px;
+                font-size: 12px;
+                margin-right: 8px;
+                margin-bottom: 8px;
+                background: #f0f2f5;
+                color: #666;
+            }
+
+            .tag.active {
+                background: #1a73e8;
+                color: white;
+            }
+
+            @media (max-width: 1440px) {
+                .app-container {
+                    grid-template-columns: 280px minmax(600px, 1fr) 280px;
+                }
+            }
+
+            @media (max-width: 1200px) {
+                .app-container {
+                    grid-template-columns: 280px 1fr;
+                }
+                .right-sidebar {
+                    display: none;
+                }
+            }
+
+            @media (max-width: 960px) {
+                .app-container {
+                    grid-template-columns: 1fr;
+                }
+                .left-sidebar {
+                    display: none;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="app-container">
+            <!-- 좌측 사이드바 -->
+            <aside class="sidebar left-sidebar">
+                <!-- 학습 목적 선택 -->
+                <div class="sidebar-card">
+                    <h3 style="margin-bottom: 12px">학습 목적</h3>
+                    <div class="tag active">수능</div>
+                    <div class="tag">공무원</div>
+                    <div class="tag">자격증</div>
+                    <div class="tag">편입</div>
+                    <div class="tag">토익</div>
+                    <div class="tag">개발자</div>
+                </div>
+
+                <!-- 학습 경로 -->
+                <div class="sidebar-card">
+                    <h3 style="margin-bottom: 12px">나의 학습 경로</h3>
+                    <div class="path-card">
+                        <div
+                            style="
+                                display: flex;
+                                justify-content: space-between;
+                            "
+                        >
+                            <span>수능 수학</span>
+                            <span>75%</span>
+                        </div>
+                        <div
+                            style="font-size: 12px; color: #666; margin: 4px 0"
+                        >
+                            미적분 II - 극한과 연속
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div class="path-card">
+                        <div
+                            style="
+                                display: flex;
+                                justify-content: space-between;
+                            "
+                        >
+                            <span>데이터 구조</span>
+                            <span>45%</span>
+                        </div>
+                        <div
+                            style="font-size: 12px; color: #666; margin: 4px 0"
+                        >
+                            트리와 그래프
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 45%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 북마크 -->
+                <div class="sidebar-card">
+                    <h3 style="margin-bottom: 12px">저장한 문제</h3>
+                    <div style="color: #666; font-size: 14px">
+                        최근 저장한 문제 5개
+                    </div>
+                    <div style="margin-top: 12px">
+                        <div
+                            style="
+                                padding: 8px 0;
+                                border-bottom: 1px solid #eee;
+                            "
+                        >
+                            미적분 - 곡선의 기울기
+                        </div>
+                        <div
+                            style="
+                                padding: 8px 0;
+                                border-bottom: 1px solid #eee;
+                            "
+                        >
+                            물리 - 뉴턴의 운동법칙
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- 메인 컨텐츠 영역 -->
+            <main
+                style="
+                    background: white;
+                    border-radius: 12px;
+                    min-height: 100vh;
+                    padding: 24px;
+                "
+            >
+                메인 피드 영역
+            </main>
+
+            <!-- 우측 사이드바 -->
+            <aside class="sidebar right-sidebar">
+                <!-- 시험 일정 -->
+                <div class="sidebar-card">
+                    <h3 style="margin-bottom: 12px">다가오는 시험</h3>
+                    <div class="exam-card">
+                        <div class="exam-date">
+                            <div style="font-size: 20px; font-weight: bold">
+                                15
+                            </div>
+                            <div style="font-size: 12px">MAR</div>
+                        </div>
+                        <div>
+                            <div style="font-weight: 500">
+                                2025 수능 모의고사
+                            </div>
+                            <div style="font-size: 12px; color: #666">D-28</div>
+                        </div>
+                    </div>
+                    <div class="exam-card">
+                        <div class="exam-date">
+                            <div style="font-size: 20px; font-weight: bold">
+                                22
+                            </div>
+                            <div style="font-size: 12px">MAR</div>
+                        </div>
+                        <div>
+                            <div style="font-weight: 500">정보처리기사</div>
+                            <div style="font-size: 12px; color: #666">D-35</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 실시간 인기 문제 -->
+                <div class="sidebar-card">
+                    <h3 style="margin-bottom: 12px">실시간 인기 문제</h3>
+                    <div class="trending-item">
+                        <div class="trending-rank">1</div>
+                        <div>
+                            <div>삼각함수의 덧셈정리</div>
+                            <div style="font-size: 12px; color: #666">
+                                조회 1.2만 · 도움됨 852
+                            </div>
+                        </div>
+                    </div>
+                    <div class="trending-item">
+                        <div class="trending-rank">2</div>
+                        <div>
+                            <div>SQL 기초 문제</div>
+                            <div style="font-size: 12px; color: #666">
+                                조회 8,542 · 도움됨 623
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 스터디 그룹 -->
+                <div class="sidebar-card">
+                    <h3 style="margin-bottom: 12px">내 스터디 그룹</h3>
+                    <div
+                        style="
+                            padding: 12px;
+                            background: #f8f9fa;
+                            border-radius: 8px;
+                            margin-bottom: 8px;
+                        "
+                    >
+                        <div style="font-weight: 500">수능 수학 스터디</div>
+                        <div
+                            style="
+                                font-size: 12px;
+                                color: #666;
+                                margin-top: 4px;
+                            "
+                        >
+                            다음 모임: 오늘 오후 7시
+                        </div>
+                    </div>
+                    <div
+                        style="
+                            padding: 12px;
+                            background: #f8f9fa;
+                            border-radius: 8px;
+                        "
+                    >
+                        <div style="font-weight: 500">알고리즘 문제 풀이</div>
+                        <div
+                            style="
+                                font-size: 12px;
+                                color: #666;
+                                margin-top: 4px;
+                            "
+                        >
+                            다음 모임: 내일 오후 2시
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>학습 컨텐츠 피드</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, Helvetica, Arial, sans-serif;
+                background-color: #f0f2f5;
+                color: #1c1e21;
+            }
+
+            .feed-container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 16px;
+            }
+
+            /* 필터 탭 */
+            .filter-tabs {
+                display: flex;
+                gap: 8px;
+                margin-bottom: 20px;
+                overflow-x: auto;
+                padding-bottom: 8px;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .filter-tab {
+                padding: 8px 16px;
+                border-radius: 20px;
+                background: white;
+                border: 1px solid #ddd;
+                font-size: 14px;
+                cursor: pointer;
+                white-space: nowrap;
+            }
+
+            .filter-tab.active {
+                background: #1a73e8;
+                color: white;
+                border-color: #1a73e8;
+            }
+
+            /* 컨텐츠 카드 공통 스타일 */
+            .content-card {
+                background: white;
+                border-radius: 12px;
+                margin-bottom: 16px;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+                overflow: hidden;
+            }
+
+            .card-header {
+                padding: 16px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 1px solid #eee;
+            }
+
+            .creator-info {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .creator-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 20px;
+                background: #eee;
+            }
+
+            .content-type {
+                padding: 4px 12px;
+                border-radius: 16px;
+                font-size: 12px;
+                font-weight: 500;
+            }
+
+            .type-question {
+                background: #e8f0fe;
+                color: #1a73e8;
+            }
+
+            .type-quiz {
+                background: #fce8e8;
+                color: #d93025;
+            }
+
+            .type-video {
+                background: #e6f4ea;
+                color: #137333;
+            }
+
+            .type-document {
+                background: #fff0e1;
+                color: #e37400;
+            }
+
+            .card-content {
+                padding: 20px;
+            }
+
+            /* 문제 카드 특화 스타일 */
+            .question-options {
+                margin-top: 16px;
+            }
+
+            .option {
+                padding: 12px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                margin-bottom: 8px;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .option:hover {
+                background: #f8f9fa;
+            }
+
+            /* 퀴즈 세트 카드 특화 스타일 */
+            .quiz-info {
+                display: flex;
+                gap: 16px;
+                margin-top: 12px;
+                padding: 12px;
+                background: #f8f9fa;
+                border-radius: 8px;
+            }
+
+            /* 비디오 카드 특화 스타일 */
+            .video-preview {
+                position: relative;
+                padding-top: 56.25%;
+                background: #000;
+                margin: -20px -20px 16px;
+            }
+
+            .play-button {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 60px;
+                height: 60px;
+                background: rgba(255, 255, 255, 0.9);
+                border-radius: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+            }
+
+            /* 학습자료 카드 특화 스타일 */
+            .document-preview {
+                padding: 16px;
+                background: #f8f9fa;
+                border-radius: 8px;
+                margin-top: 12px;
+            }
+
+            /* 상호작용 바 */
+            .interaction-bar {
+                display: flex;
+                padding: 12px 16px;
+                border-top: 1px solid #eee;
+                gap: 16px;
+            }
+
+            .action-btn {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 8px 16px;
+                border: none;
+                border-radius: 20px;
+                background: #f0f2f5;
+                font-size: 14px;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .action-btn:hover {
+                background: #e4e6eb;
+            }
+
+            @media (max-width: 640px) {
+                .feed-container {
+                    padding: 8px;
+                }
+
+                .content-card {
+                    border-radius: 0;
+                    margin: 0 -8px 16px;
+                }
+
+                .interaction-bar {
+                    flex-wrap: wrap;
+                }
+
+                .action-btn {
+                    flex: 1;
+                    justify-content: center;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="feed-container">
+            <!-- 필터 탭 -->
+            <div class="filter-tabs">
+                <div class="filter-tab active">전체</div>
+                <div class="filter-tab">문항</div>
+                <div class="filter-tab">퀴즈</div>
+                <div class="filter-tab">동영상</div>
+                <div class="filter-tab">학습자료</div>
+                <div class="filter-tab">프리미엄</div>
+            </div>
+
+            <!-- 개별 문항 카드 -->
+            <div class="content-card">
+                <div class="card-header">
+                    <div class="creator-info">
+                        <div class="creator-avatar"></div>
+                        <div>
+                            <div style="font-weight: 500">수학의 정석</div>
+                            <div style="font-size: 12px; color: #666">
+                                10분 전
+                            </div>
+                        </div>
+                    </div>
+                    <span class="content-type type-question">문항</span>
+                </div>
+                <div class="card-content">
+                    <h3>다음 중 미분 가능한 함수는?</h3>
+                    <div class="question-options">
+                        <div class="option">a) y = |x|</div>
+                        <div class="option">b) y = x²</div>
+                        <div class="option">c) y = ⌊x⌋</div>
+                        <div class="option">d) y = sin(x)</div>
+                    </div>
+                </div>
+                <div class="interaction-bar">
+                    <button class="action-btn">👍 도움됨 245</button>
+                    <button class="action-btn">💬 댓글 23</button>
+                    <button class="action-btn">➕ 퀴즈에 추가</button>
+                    <button class="action-btn">↗️ 공유</button>
+                </div>
+            </div>
+
+            <!-- 퀴즈 세트 카드 -->
+            <div class="content-card">
+                <div class="card-header">
+                    <div class="creator-info">
+                        <div class="creator-avatar"></div>
+                        <div>
+                            <div style="font-weight: 500">
+                                공무원 수험마스터
+                            </div>
+                            <div style="font-size: 12px; color: #666">
+                                1시간 전
+                            </div>
+                        </div>
+                    </div>
+                    <span class="content-type type-quiz">모의고사</span>
+                </div>
+                <div class="card-content">
+                    <h3>2025 공무원 9급 수학 실전 모의고사</h3>
+                    <p style="color: #666; margin-top: 8px">
+                        최신 출제 경향을 반영한 실전 감각 테스트
+                    </p>
+                    <div class="quiz-info">
+                        <div>
+                            <div style="font-size: 12px; color: #666">
+                                문항 수
+                            </div>
+                            <div style="font-weight: 500">20문제</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: #666">
+                                제한 시간
+                            </div>
+                            <div style="font-weight: 500">30분</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: #666">
+                                난이도
+                            </div>
+                            <div style="font-weight: 500">중급</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="interaction-bar">
+                    <button class="action-btn">✏️ 시험 시작</button>
+                    <button class="action-btn">💾 나중에 풀기</button>
+                    <button class="action-btn">↗️ 공유</button>
+                </div>
+            </div>
+
+            <!-- 동영상 강의 카드 -->
+            <div class="content-card">
+                <div class="card-header">
+                    <div class="creator-info">
+                        <div class="creator-avatar"></div>
+                        <div>
+                            <div style="font-weight: 500">과학쌤</div>
+                            <div style="font-size: 12px; color: #666">
+                                2시간 전
+                            </div>
+                        </div>
+                    </div>
+                    <span class="content-type type-video">동영상</span>
+                </div>
+                <div class="card-content">
+                    <div class="video-preview">
+                        <div class="play-button">▶️</div>
+                    </div>
+                    <h3>뉴턴의 운동법칙 완벽 정리</h3>
+                    <p style="color: #666; margin-top: 8px">
+                        실생활 예제로 이해하는 물리의 기초
+                    </p>
+                    <div style="margin-top: 12px; font-size: 14px; color: #666">
+                        🕒 15:32 · 조회수 1.2만
+                    </div>
+                </div>
+                <div class="interaction-bar">
+                    <button class="action-btn">👍 좋아요 532</button>
+                    <button class="action-btn">💬 댓글 45</button>
+                    <button class="action-btn">💾 저장</button>
+                    <button class="action-btn">↗️ 공유</button>
+                </div>
+            </div>
+
+            <!-- 학습자료 카드 -->
+            <div class="content-card">
+                <div class="card-header">
+                    <div class="creator-info">
+                        <div class="creator-avatar"></div>
+                        <div>
+                            <div style="font-weight: 500">영문법 연구소</div>
+                            <div style="font-size: 12px; color: #666">
+                                3시간 전
+                            </div>
+                        </div>
+                    </div>
+                    <span class="content-type type-document">학습자료</span>
+                </div>
+                <div class="card-content">
+                    <h3>토익 문법 핵심 정리 노트</h3>
+                    <p style="color: #666; margin-top: 8px">
+                        실전에서 자주 나오는 문법 포인트 총정리
+                    </p>
+                    <div class="document-preview">
+                        <div
+                            style="
+                                display: flex;
+                                align-items: center;
+                                gap: 12px;
+                            "
+                        >
+                            <div
+                                style="
+                                    width: 40px;
+                                    height: 40px;
+                                    background: #eee;
+                                    border-radius: 4px;
+                                "
+                            ></div>
+                            <div>
+                                <div>TOEIC_Grammar_Summary.pdf</div>
+                                <div style="font-size: 12px; color: #666">
+                                    3.2MB · 25페이지
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="interaction-bar">
+                    <button class="action-btn">⬇️ 다운로드</button>
+                    <button class="action-btn">👍 도움됨 324</button>
+                    <button class="action-btn">💾 저장</button>
+                    <button class="action-btn">↗️ 공유</button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>SocialLearn - 학습 컨텐츠</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, Helvetica, Arial, sans-serif;
+                background-color: #f8f9fa;
+                color: #1c1e21;
+            }
+
+            /* 네비게이션 바 */
+            .navbar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 60px;
+                background: white;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+                z-index: 100;
+                display: flex;
+                align-items: center;
+                padding: 0 16px;
+                justify-content: space-between;
+            }
+
+            .search-bar {
+                flex: 1;
+                max-width: 600px;
+                margin: 0 16px;
+                position: relative;
+            }
+
+            .search-input {
+                width: 100%;
+                padding: 8px 16px;
+                border: 1px solid #ddd;
+                border-radius: 24px;
+                font-size: 16px;
+            }
+
+            /* 카테고리 네비게이션 */
+            .category-nav {
+                position: fixed;
+                top: 60px;
+                left: 0;
+                right: 0;
+                background: white;
+                z-index: 99;
+                border-bottom: 1px solid #ddd;
+            }
+
+            .category-scroll {
+                overflow-x: auto;
+                white-space: nowrap;
+                padding: 12px 16px;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .category-btn {
+                display: inline-block;
+                padding: 8px 16px;
+                margin-right: 8px;
+                border: 1px solid #ddd;
+                border-radius: 20px;
+                font-size: 14px;
+                color: #666;
+                background: white;
+                cursor: pointer;
+            }
+
+            .category-btn.active {
+                background: #1a73e8;
+                color: white;
+                border-color: #1a73e8;
+            }
+
+            /* 필터 바 */
+            .filter-bar {
+                display: flex;
+                align-items: center;
+                padding: 12px 16px;
+                background: white;
+                margin-top: 116px;
+                border-bottom: 1px solid #ddd;
+            }
+
+            .filter-btn {
+                padding: 6px 12px;
+                margin-right: 8px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-size: 14px;
+                background: white;
+            }
+
+            /* 컨텐츠 그리드 */
+            .content-grid {
+                padding: 16px;
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 16px;
+                margin-top: 16px;
+            }
+
+            .content-card {
+                background: white;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            }
+
+            .content-thumbnail {
+                position: relative;
+                width: 100%;
+                padding-top: 56.25%; /* 16:9 비율 */
+                background: #eee;
+            }
+
+            .content-duration {
+                position: absolute;
+                bottom: 8px;
+                right: 8px;
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                padding: 2px 4px;
+                border-radius: 4px;
+                font-size: 12px;
+            }
+
+            .content-info {
+                padding: 12px;
+            }
+
+            .content-title {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 4px;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+            .content-meta {
+                font-size: 14px;
+                color: #666;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-top: 8px;
+            }
+
+            .difficulty-badge {
+                padding: 2px 6px;
+                border-radius: 4px;
+                font-size: 12px;
+                background: #e8f0fe;
+                color: #1a73e8;
+            }
+
+            /* 모바일 최적화 */
+            @media (max-width: 768px) {
+                .search-bar {
+                    display: none;
+                }
+
+                .content-grid {
+                    grid-template-columns: 1fr;
+                    gap: 12px;
+                    padding: 12px;
+                }
+
+                .filter-bar {
+                    overflow-x: auto;
+                    white-space: nowrap;
+                    -webkit-overflow-scrolling: touch;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 네비게이션 바 -->
+        <nav class="navbar">
+            <div>SocialLearn</div>
+            <div class="search-bar">
+                <input
+                    type="text"
+                    class="search-input"
+                    placeholder="학습하고 싶은 주제를 검색하세요"
+                />
+            </div>
+            <div>로그인</div>
+        </nav>
+
+        <!-- 카테고리 네비게이션 -->
+        <div class="category-nav">
+            <div class="category-scroll">
+                <button class="category-btn active">전체</button>
+                <button class="category-btn">수학</button>
+                <button class="category-btn">과학</button>
+                <button class="category-btn">프로그래밍</button>
+                <button class="category-btn">언어</button>
+                <button class="category-btn">인문학</button>
+                <button class="category-btn">예술</button>
+                <button class="category-btn">경영/경제</button>
+            </div>
+        </div>
+
+        <!-- 필터 바 -->
+        <div class="filter-bar">
+            <button class="filter-btn">난이도 ▼</button>
+            <button class="filter-btn">최신순 ▼</button>
+            <button class="filter-btn">인기순 ▼</button>
+            <button class="filter-btn">무료 강좌</button>
+        </div>
+
+        <!-- 컨텐츠 그리드 -->
+        <div class="content-grid">
+            <!-- 컨텐츠 카드 1 -->
+            <div class="content-card">
+                <div class="content-thumbnail">
+                    <span class="content-duration">2시간 30분</span>
+                </div>
+                <div class="content-info">
+                    <h3 class="content-title">
+                        미적분의 기초: 극한과 연속성의 이해
+                    </h3>
+                    <div class="content-meta">
+                        <span class="difficulty-badge">입문</span>
+                        <span>수강생 1.2만명</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 컨텐츠 카드 2 -->
+            <div class="content-card">
+                <div class="content-thumbnail">
+                    <span class="content-duration">1시간 45분</span>
+                </div>
+                <div class="content-info">
+                    <h3 class="content-title">
+                        파이썬 기초: 프로그래밍 시작하기
+                    </h3>
+                    <div class="content-meta">
+                        <span class="difficulty-badge">초급</span>
+                        <span>수강생 2.5만명</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 컨텐츠 카드 3 -->
+            <div class="content-card">
+                <div class="content-thumbnail">
+                    <span class="content-duration">3시간</span>
+                </div>
+                <div class="content-info">
+                    <h3 class="content-title">물리학 기초: 뉴턴의 운동법칙</h3>
+                    <div class="content-meta">
+                        <span class="difficulty-badge">중급</span>
+                        <span>수강생 8천명</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 컨텐츠 카드 4 -->
+            <div class="content-card">
+                <div class="content-thumbnail">
+                    <span class="content-duration">4시간 15분</span>
+                </div>
+                <div class="content-info">
+                    <h3 class="content-title">
+                        실전 영어회화: 비즈니스 영어 마스터
+                    </h3>
+                    <div class="content-meta">
+                        <span class="difficulty-badge">고급</span>
+                        <span>수강생 1.5만명</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

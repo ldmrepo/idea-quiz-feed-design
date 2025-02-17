@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>QuizShare - 소셜 러닝</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, Helvetica, Arial, sans-serif;
+                background-color: #f0f2f5;
+                color: #1c1e21;
+            }
+
+            .app-container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 80px 16px 16px;
+            }
+
+            /* 크리에이터 카드 */
+            .creator-card {
+                background: white;
+                border-radius: 12px;
+                padding: 20px;
+                margin-bottom: 20px;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            }
+
+            .creator-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 16px;
+            }
+
+            .creator-info {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .creator-avatar {
+                width: 48px;
+                height: 48px;
+                border-radius: 24px;
+                background: #eee;
+            }
+
+            .creator-stats {
+                display: flex;
+                gap: 16px;
+                margin-top: 16px;
+                padding-top: 16px;
+                border-top: 1px solid #eee;
+            }
+
+            /* 문제 카드 */
+            .question-card {
+                background: white;
+                border-radius: 12px;
+                margin-bottom: 20px;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+                overflow: hidden;
+            }
+
+            .card-header {
+                padding: 16px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .premium-badge {
+                background: linear-gradient(45deg, #ffd700, #ffa500);
+                color: white;
+                padding: 4px 12px;
+                border-radius: 16px;
+                font-size: 12px;
+                font-weight: 600;
+            }
+
+            .question-content {
+                padding: 20px;
+            }
+
+            .question-type {
+                display: inline-block;
+                padding: 4px 12px;
+                border-radius: 16px;
+                font-size: 14px;
+                margin-bottom: 12px;
+                background: #e8f0fe;
+                color: #1a73e8;
+            }
+
+            .engagement-bar {
+                display: flex;
+                padding: 12px 16px;
+                border-top: 1px solid #eee;
+                gap: 16px;
+            }
+
+            .action-btn {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 8px 16px;
+                border: none;
+                border-radius: 20px;
+                font-size: 14px;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .primary-btn {
+                background: #1a73e8;
+                color: white;
+            }
+
+            .secondary-btn {
+                background: #f0f2f5;
+                color: #1c1e21;
+            }
+
+            .secondary-btn:hover {
+                background: #e4e6eb;
+            }
+
+            .comments-section {
+                padding: 16px;
+                background: #f8f9fa;
+                border-top: 1px solid #eee;
+            }
+
+            .comment {
+                display: flex;
+                gap: 12px;
+                margin-bottom: 12px;
+            }
+
+            .comment-avatar {
+                width: 32px;
+                height: 32px;
+                border-radius: 16px;
+                background: #eee;
+            }
+
+            @media (max-width: 640px) {
+                .app-container {
+                    padding: 70px 8px 16px;
+                }
+
+                .engagement-bar {
+                    flex-wrap: wrap;
+                }
+
+                .action-btn {
+                    flex: 1;
+                    justify-content: center;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="app-container">
+            <!-- 크리에이터 카드 -->
+            <div class="creator-card">
+                <div class="creator-header">
+                    <div class="creator-info">
+                        <div class="creator-avatar"></div>
+                        <div>
+                            <h2>수학의 정석</h2>
+                            <div style="color: #666; font-size: 14px">
+                                프리미엄 크리에이터
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 8px">
+                        <button class="action-btn secondary-btn">
+                            🔔 알림 설정
+                        </button>
+                        <button class="action-btn primary-btn">구독하기</button>
+                    </div>
+                </div>
+                <div>수학을 쉽고 재미있게 배우는 방법을 공유합니다.</div>
+                <div class="creator-stats">
+                    <div>
+                        <div style="font-weight: 600">25.3만</div>
+                        <div style="font-size: 14px; color: #666">구독자</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600">1.2만</div>
+                        <div style="font-size: 14px; color: #666">문제 수</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600">98%</div>
+                        <div style="font-size: 14px; color: #666">
+                            평균 만족도
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 프리미엄 문제 카드 -->
+            <div class="question-card">
+                <div class="card-header">
+                    <div style="display: flex; align-items: center; gap: 8px">
+                        <div
+                            class="creator-avatar"
+                            style="width: 40px; height: 40px"
+                        ></div>
+                        <div>
+                            <div style="font-weight: 600">수학의 정석</div>
+                            <div style="font-size: 14px; color: #666">
+                                1시간 전
+                            </div>
+                        </div>
+                    </div>
+                    <span class="premium-badge">프리미엄</span>
+                </div>
+                <div class="question-content">
+                    <span class="question-type">고급 미적분</span>
+                    <h3>테일러 급수 응용 문제</h3>
+                    <p style="color: #666; margin: 12px 0">
+                        실생활에서 마주하는 테일러 급수의 활용 사례와 함께
+                        상세한 해설을 제공합니다.
+                    </p>
+                    <button
+                        class="action-btn primary-btn"
+                        style="margin-top: 12px"
+                    >
+                        프리미엄 구독하고 보기
+                    </button>
+                </div>
+                <div class="engagement-bar">
+                    <button class="action-btn secondary-btn">
+                        👍 도움됨 2.3천
+                    </button>
+                    <button class="action-btn secondary-btn">💬 댓글 45</button>
+                    <button class="action-btn secondary-btn">🔖 저장</button>
+                    <button class="action-btn secondary-btn">↗️ 공유</button>
+                </div>
+                <div class="comments-section">
+                    <div class="comment">
+                        <div class="comment-avatar"></div>
+                        <div>
+                            <div style="font-weight: 500">민지</div>
+                            <div style="font-size: 14px">
+                                이전 설명이 너무 좋았어요! 이것도 꼭 보고 싶네요
+                                👍
+                            </div>
+                            <div
+                                style="
+                                    font-size: 12px;
+                                    color: #666;
+                                    margin-top: 4px;
+                                "
+                            >
+                                좋아요 28 · 답글
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 일반 문제 카드 -->
+            <div class="question-card">
+                <div class="card-header">
+                    <div style="display: flex; align-items: center; gap: 8px">
+                        <div
+                            class="creator-avatar"
+                            style="width: 40px; height: 40px"
+                        ></div>
+                        <div>
+                            <div style="font-weight: 600">수학의 정석</div>
+                            <div style="font-size: 14px; color: #666">
+                                2시간 전
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="question-content">
+                    <span class="question-type">기초 미적분</span>
+                    <h3>미분의 기본 개념 이해하기</h3>
+                    <p style="color: #666; margin: 12px 0">
+                        일상생활에서 볼 수 있는 미분의 예시와 함께 개념을 쉽게
+                        설명합니다.
+                    </p>
+                    <div
+                        style="
+                            margin-top: 16px;
+                            padding: 16px;
+                            background: #f8f9fa;
+                            border-radius: 8px;
+                        "
+                    >
+                        문제 미리보기...
+                    </div>
+                </div>
+                <div class="engagement-bar">
+                    <button class="action-btn secondary-btn">
+                        👍 도움됨 1.8천
+                    </button>
+                    <button class="action-btn secondary-btn">💬 댓글 32</button>
+                    <button class="action-btn secondary-btn">🔖 저장</button>
+                    <button class="action-btn secondary-btn">↗️ 공유</button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
