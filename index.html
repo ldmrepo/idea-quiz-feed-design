@@ -1,18 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Portfolio</title>
+        <title>문항 소셜 플랫폼</title>
         <style>
-            /* 기본 스타일 */
             body {
                 margin: 0;
                 padding: 0;
                 font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
                 background-color: #f0f0f0;
             }
-            /* 헤더 스타일 */
             header {
                 background: #1a73e8;
                 color: #fff;
@@ -23,35 +21,50 @@
                 margin: 0;
                 font-size: 36px;
             }
-            /* 포트폴리오 컨테이너 */
             .portfolio-container {
-                max-width: 1000px;
+                max-width: 1200px;
                 margin: 40px auto;
                 padding: 20px;
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-                gap: 20px;
             }
-            /* 포트폴리오 아이템(카드) */
-            .portfolio-item {
+            .section {
                 background: #fff;
-                padding: 20px;
+                margin-bottom: 30px;
                 border-radius: 8px;
-                text-align: center;
+                padding: 20px;
                 box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            }
+            .section h2 {
+                color: #1a73e8;
+                margin-top: 0;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #1a73e8;
+            }
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 20px;
+                margin-top: 20px;
+            }
+            .portfolio-item {
+                background: #f8f9fa;
+                padding: 15px;
+                border-radius: 6px;
                 transition: transform 0.3s, box-shadow 0.3s;
             }
             .portfolio-item a {
                 text-decoration: none;
                 color: #1a73e8;
-                font-size: 18px;
-                font-weight: 600;
+                font-size: 16px;
+                font-weight: 500;
                 display: block;
-                padding: 10px 0;
             }
             .portfolio-item:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                transform: translateY(-3px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+            .md-link {
+                color: #666;
+                font-style: italic;
             }
         </style>
     </head>
@@ -60,33 +73,665 @@
             <h1>문항 소셜 플랫폼</h1>
         </header>
         <div class="portfolio-container">
-            <div class="portfolio-item">
-                <a href="./01 학습플랫폼/레이아웃.html">로그인</a>
-            </div>
-            <div class="portfolio-item">
-                <a href="./01 학습플랫폼/01 피드.html">피드 #1</a>
-            </div>
-            <div class="portfolio-item">
-                <a href="./01 학습플랫폼/02 피드.html">피드 #2</a>
-            </div>
-            <div class="portfolio-item">
-                <a href="./01 학습플랫폼/03 피드.html">피드 #3</a>
-            </div>
-            <div class="portfolio-item">
-                <a href="./01 학습플랫폼/04 피드.html">피드 #4</a>
-            </div>
-            <div class="portfolio-item">
-                <a href="./01 학습플랫폼/05 피드.html">피드 #5</a>
-            </div>
-            <div class="portfolio-item">
-                <a href="./01 학습플랫폼/06 피드.html">피드 #6</a>
-            </div>
-            <div class="portfolio-item">
-                <a href="./01 학습플랫폼/07 피드.html">피드 #7</a>
-            </div>
-            <div class="portfolio-item">
-                <a href="./01 학습플랫폼/08 피드.html">피드 #7</a>
-            </div>
+            <!-- 학습 플랫폼 섹션 -->
+            <section class="section">
+                <h2>학습 플랫폼</h2>
+                <div class="grid">
+                    <div class="portfolio-item">
+                        <a href="./01 학습플랫폼/레이아웃.html">레이아웃</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./01 학습플랫폼/01 피드.html">피드 #1</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./01 학습플랫폼/02 피드.html">피드 #2</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./01 학습플랫폼/03 피드.html">피드 #3</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./01 학습플랫폼/04 피드.html">피드 #4</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./01 학습플랫폼/05 피드.html">피드 #5</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./01 학습플랫폼/06 피드.html">피드 #6</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./01 학습플랫폼/07 피드.html">피드 #7</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./01 학습플랫폼/08 피드.html">피드 #8</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./01 학습플랫폼/구성.md" class="md-link"
+                            >구성 문서</a
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <!-- 아이디어1 - 핵심 기능 -->
+            <section class="section">
+                <h2>아이디어1 - 핵심 기능</h2>
+                <div class="grid">
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 메인 홈페이지.html"
+                            >메인 홈페이지</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 로그인.html">로그인</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/02 로그인.html">로그인 v2</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 시작하기.html">시작하기</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 검색.html">검색</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 결과.html">결과</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 홈페이지.html">홈페이지</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 피드.html">피드</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 알림.html">알림</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 프로필.html">프로필</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 프로필 꾸미기.html"
+                            >프로필 꾸미기</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 설정.html">설정</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 아이디어1 - 학습 기능 -->
+            <section class="section">
+                <h2>아이디어1 - 학습 기능</h2>
+                <div class="grid">
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 목표 설정.html">목표 설정</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 학습 문항.html">학습 문항</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 문항 작성.html">문항 작성</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 문항 피드.html">문항 피드</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 퀴즈 만들기.html"
+                            >퀴즈 만들기</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 퀴즈 풀이.html">퀴즈 풀이</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 퀴즈메이커.html">퀴즈메이커</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 퀴즈탐색.html">퀴즈탐색</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 학습결과.html">학습결과</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 학습 통계.html">학습 통계</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 학습 캘린더.html"
+                            >학습 캘린더</a
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <!-- 아이디어1 - 상호작용 기능 -->
+            <section class="section">
+                <h2>아이디어1 - 상호작용 기능</h2>
+                <div class="grid">
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 스터디 그룹.html"
+                            >스터디 그룹</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 그룹 상세.html">그룹 상세</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 그룹 문제.html">그룹 문제</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 그룹 토론.html">그룹 토론</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/02 그룹 토론.html">그룹 토론 v2</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 그룹 채팅.html">그룹 채팅</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 그룹 활동.html">그룹 활동</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 실시간 퀴즈 대결.html"
+                            >실시간 퀴즈 대결</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 배틀 매칭.html">배틀 매칭</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 퀴즈배틀.html">퀴즈배틀</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 토너먼트 대진표.html"
+                            >토너먼트 대진표</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 랭킹_리더보드.html"
+                            >랭킹/리더보드</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 성취_보상 .html">성취/보상</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 아이디어1 - 에디터 -->
+            <section class="section">
+                <h2>아이디어1 - 에디터</h2>
+                <div class="grid">
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 에디터.html">에디터 v1</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/02 에디터.html">에디터 v2</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/03 에디터.html">에디터 v3</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/04 에디터.html">에디터 v4</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 아이디어1 - 선택형 문항 -->
+            <section class="section">
+                <h2>아이디어1 - 선택형 문항</h2>
+                <div class="grid">
+                    <!-- 기본 -->
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어1/선택형/기본/객관식_문항_템플릿.html"
+                            >객관식 문항 템플릿</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/선택형/기본/선택형_종합.html"
+                            >선택형 종합</a
+                        >
+                    </div>
+
+                    <!-- 표준형 -->
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/선택형/표준형/기본.html"
+                            >표준형 기본</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/선택형/표준형/순서배열형.html"
+                            >순서배열형</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/선택형/표준형/짝맞추기.html"
+                            >짝맞추기</a
+                        >
+                    </div>
+
+                    <!-- 창의적 -->
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/선택형/창의적/맥락형.html"
+                            >맥락형</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/선택형/창의적/시각적.html"
+                            >시각적</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/선택형/창의적/인터랙티브.html"
+                            >인터랙티브</a
+                        >
+                    </div>
+
+                    <!-- 추가 -->
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/선택형/추가/동적 선택형 문제.html"
+                            >동적 선택형 문제</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어1/선택형/추가/사고과정 중심형 문제.html"
+                            >사고과정 중심형 문제</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/선택형/추가/시간 제약 선택형.html"
+                            >시간 제약 선택형</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어1/선택형/추가/진화형 선택형 문제.html"
+                            >진화형 선택형 문제</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/선택형/추가/팀 기반 선택형.html"
+                            >팀 기반 선택형</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어1/선택형/추가/학습자 맞춤형 문제.html"
+                            >학습자 맞춤형 문제</a
+                        >
+                    </div>
+
+                    <!-- 특수목적 -->
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어1/선택형/특수목적/AR 선택형 문제.html"
+                            >AR 선택형 문제</a
+                        >
+                    </div>
+
+                    <!-- 혁신적 -->
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/선택형/혁신적/AI 지원 선택형.html"
+                            >AI 지원 선택형</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어1/선택형/혁신적/데이터 분석형 문제.html"
+                            >데이터 분석형 문제</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/선택형/혁신적/복합.html">복합</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어1/선택형/혁신적/소셜 인터랙션 문제.html"
+                            >소셜 인터랙션 문제</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/선택형/혁신적/프로세스.html"
+                            >프로세스</a
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <!-- 아이디어2 - 기본 평가형 -->
+            <section class="section">
+                <h2>아이디어2 - 기본 평가형</h2>
+                <div class="grid">
+                    <div class="portfolio-item">
+                        <a href="./아이디어2/기본 평가형/단답형.html">단답형</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어2/기본 평가형/단답형.md"
+                            class="md-link"
+                            >단답형 문서</a
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <!-- 아이디어2 - 데이터 분석형 -->
+            <section class="section">
+                <h2>아이디어2 - 데이터 분석형</h2>
+                <div class="grid">
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어2/데이터 분석형/데이터 분석형 문제.html"
+                            >데이터 분석형 문제</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어2/데이터 분석형/데이터 분석형 문제.md"
+                            class="md-link"
+                            >데이터 분석형 문서</a
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <!-- 아이디어2 - 맥락형 -->
+            <section class="section">
+                <h2>아이디어2 - 맥락형</h2>
+                <div class="grid">
+                    <div class="portfolio-item">
+                        <a href="./아이디어2/맥락형/맥락형 시나리오.html"
+                            >맥락형 시나리오</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어2/맥락형/사례 분석 선택형.html"
+                            >사례 분석 선택형</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어2/맥락형/역할 기반 의사결정 시나리오.html"
+                            >역할 기반 의사결정 시나리오</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어2/맥락형/역할 기반 의사결정 시나리오 편집기.html"
+                            >역할 기반 의사결정 시나리오 편집기</a
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <!-- 아이디어2 - 시각 기반형 -->
+            <section class="section">
+                <h2>아이디어2 - 시각 기반형</h2>
+                <div class="grid">
+                    <div class="portfolio-item">
+                        <a href="./아이디어2/시각 기반형/다이어그램 완성형.html"
+                            >다이어그램 완성형</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어2/시각 기반형/다이어그램 완성형 편집기.html"
+                            >다이어그램 완성형 편집기</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어2/시각 기반형/이미지 영역 선택형.html"
+                            >이미지 영역 선택형</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어2/시각 기반형/차트 그래프 분석형.html"
+                            >차트 그래프 분석형</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어2/시각 기반형/차트 그래프 분석형 문제 편집.html"
+                            >차트 그래프 분석형 문제 편집</a
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <!-- 아이디어2 - 시각 상호작용형 -->
+            <section class="section">
+                <h2>아이디어2 - 시각 상호작용형</h2>
+                <div class="grid">
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어2/시각 상호작용형/시각 상호작용형.html"
+                            >시각 상호작용형</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어2/시각 상호작용형/이미지 영역 선택형.html"
+                            >이미지 영역 선택형</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어2/시각 상호작용형/이미지 영역 선택형 편집기.html"
+                            >이미지 영역 선택형 편집기</a
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <!-- 아이디어2 - 시간 기반형 -->
+            <section class="section">
+                <h2>아이디어2 - 시간 기반형</h2>
+                <div class="grid">
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어2/시간 기반형/리듬 기반 선택형 평가.html"
+                            >리듬 기반 선택형 평가</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어2/시간 기반형/리듬 기반 선택형 평가.md"
+                            class="md-link"
+                            >리듬 기반 선택형 평가 문서</a
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <!-- 아이디어2 - 창의 제작형 -->
+            <section class="section">
+                <h2>아이디어2 - 창의 제작형</h2>
+                <div class="grid">
+                    <div class="portfolio-item">
+                        <a href="./아이디어2/창의 제작형/콘텐츠 제작 과제.html"
+                            >콘텐츠 제작 과제</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어2/창의 제작형/콘텐츠 제작 과제 편집기.html"
+                            >콘텐츠 제작 과제 편집기</a
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <!-- 아이디어2 - 팀 활동형 -->
+            <section class="section">
+                <h2>아이디어2 - 팀 활동형</h2>
+                <div class="grid">
+                    <div class="portfolio-item">
+                        <a href="./아이디어2/팀 활동형/팀 활동형 대시보드.html"
+                            >팀 활동형 대시보드</a
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <!-- 아이디어2 - 학습 기록형 -->
+            <section class="section">
+                <h2>아이디어2 - 학습 기록형</h2>
+                <div class="grid">
+                    <div class="portfolio-item">
+                        <a href="./아이디어2/학습 기록형/성찰 일기.html"
+                            >성찰 일기</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어2/학습 기록형/연구 노트 편집.html"
+                            >연구 노트 편집</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어2/학습 기록형/진도 관리.html"
+                            >진도 관리</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어2/학습 기록형/학습 일지.html"
+                            >학습 일지</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어2/학습 기록형/활동 기록.html"
+                            >활동 기록</a
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <!-- 피드 페이지 -->
+            <section class="section">
+                <h2>피드 페이지</h2>
+                <div class="grid">
+                    <div class="portfolio-item">
+                        <a href="./피드페이지/피드1.html">피드 1</a>
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./피드페이지/피드2.html">피드 2</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 문서 파일 모음 -->
+            <section class="section">
+                <h2>문서 파일</h2>
+                <div class="grid">
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 페이지 흐름.md" class="md-link"
+                            >페이지 흐름</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 idea.md" class="md-link"
+                            >아이디어</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 메인 홈.md" class="md-link"
+                            >메인 홈</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어1/01 사용자 동기부여와 참여도를 높이기.md"
+                            class="md-link"
+                            >사용자 동기부여와 참여도</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어1/01 서비스 페이지 구조도.md"
+                            class="md-link"
+                            >서비스 페이지 구조도</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어1/02 서비스 페이지 구조도.md"
+                            class="md-link"
+                            >서비스 페이지 구조도 v2</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어1/01 시스템 연계성.md"
+                            class="md-link"
+                            >시스템 연계성</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어1/01 페이지 간 연계성.md"
+                            class="md-link"
+                            >페이지 간 연계성</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어1/02 페이지 간 연계성.md"
+                            class="md-link"
+                            >페이지 간 연계성 v2</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어1/01 페이지 간의 연결 관계.md"
+                            class="md-link"
+                            >페이지 간의 연결 관계</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/01 페이지정리.md" class="md-link"
+                            >페이지정리</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어1/문항유형.md" class="md-link"
+                            >문항유형</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어1/선택형/선택형 문제 검토.md"
+                            class="md-link"
+                            >선택형 문제 검토</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어1/선택형/온라인 문항유형.md"
+                            class="md-link"
+                            >온라인 문항유형</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어2/문항유형v1.md" class="md-link"
+                            >문항유형 v1</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a href="./아이디어2/선택형구현예시.md" class="md-link"
+                            >선택형 구현예시</a
+                        >
+                    </div>
+                    <div class="portfolio-item">
+                        <a
+                            href="./아이디어2/서술_분석형구현예시.md"
+                            class="md-link"
+                            >서술/분석형 구현예시</a
+                        >
+                    </div>
+                </div>
+            </section>
         </div>
     </body>
 </html>
