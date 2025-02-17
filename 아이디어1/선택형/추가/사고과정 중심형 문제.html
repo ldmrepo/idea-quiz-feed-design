@@ -1,0 +1,385 @@
+<!-- 주요 구현 특징:
+
+1. 문제해결 전략 선택
+- 단계별 진행 표시
+- 전략 옵션 제시
+- 시각적 피드백
+
+2. 학습방법 선택
+- 개인화된 옵션
+- 방법별 장단점
+- 선택 가이드
+
+3. 자기평가 선택
+- 체크리스트
+- 반영 노트
+- 진행 상황 확인
+
+4. 피드백 활용
+- 구조화된 피드백
+- 개선점 제시
+- 실행 가이드
+
+모바일 최적화:
+- 터치 인터페이스
+- 반응형 디자인
+- 사용성 개선 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>사고과정 중심형 문제</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --success: #22c55e;
+                --warning: #f59e0b;
+                --error: #ef4444;
+                --gray-50: #f9fafb;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, system-ui, sans-serif;
+                background: var(--gray-50);
+                padding: 16px;
+            }
+
+            /* 사고 과정 카드 */
+            .thinking-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+            }
+
+            .card-header {
+                padding: 16px;
+                border-bottom: 1px solid var(--gray-200);
+            }
+
+            .card-title {
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .card-description {
+                font-size: 14px;
+                color: var(--gray-700);
+            }
+
+            /* 과정 단계 표시 */
+            .process-steps {
+                display: flex;
+                padding: 12px;
+                gap: 8px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .step-item {
+                flex: 0 0 auto;
+                padding: 8px 16px;
+                background: var(--gray-50);
+                border-radius: 20px;
+                font-size: 14px;
+                white-space: nowrap;
+            }
+
+            .step-item.active {
+                background: var(--primary);
+                color: white;
+            }
+
+            /* 전략 선택 영역 */
+            .strategy-selector {
+                padding: 16px;
+            }
+
+            .strategy-option {
+                padding: 16px;
+                background: var(--gray-50);
+                border-radius: 8px;
+                margin-bottom: 12px;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .strategy-option:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .strategy-title {
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+
+            .strategy-description {
+                font-size: 14px;
+                color: var(--gray-700);
+            }
+
+            /* 자기평가 체크리스트 */
+            .self-evaluation {
+                padding: 16px;
+            }
+
+            .evaluation-item {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px;
+                border-bottom: 1px solid var(--gray-200);
+            }
+
+            .check-input {
+                width: 20px;
+                height: 20px;
+            }
+
+            .check-label {
+                flex: 1;
+                font-size: 14px;
+            }
+
+            /* 피드백 영역 */
+            .feedback-area {
+                padding: 16px;
+                background: var(--gray-50);
+                margin: 16px;
+                border-radius: 8px;
+            }
+
+            .feedback-message {
+                display: flex;
+                gap: 12px;
+                align-items: flex-start;
+                margin-bottom: 12px;
+            }
+
+            .feedback-icon {
+                width: 24px;
+                height: 24px;
+                background: var(--primary);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                flex-shrink: 0;
+            }
+
+            .feedback-content {
+                flex: 1;
+                font-size: 14px;
+            }
+
+            /* 반영 노트 */
+            .reflection-note {
+                padding: 16px;
+            }
+
+            .note-input {
+                width: 100%;
+                min-height: 120px;
+                padding: 12px;
+                border: 1px solid var(--gray-200);
+                border-radius: 8px;
+                resize: vertical;
+                margin-bottom: 12px;
+            }
+
+            /* 진행 표시기 */
+            .progress-indicator {
+                position: fixed;
+                top: 16px;
+                right: 16px;
+                background: white;
+                padding: 8px 16px;
+                border-radius: 20px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                z-index: 100;
+            }
+
+            .progress-step {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: var(--gray-200);
+            }
+
+            .progress-step.active {
+                background: var(--primary);
+            }
+
+            /* 하단 네비게이션 */
+            .bottom-nav {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 16px;
+                background: white;
+                border-top: 1px solid var(--gray-200);
+                display: flex;
+                gap: 12px;
+                z-index: 100;
+            }
+
+            .nav-button {
+                flex: 1;
+                padding: 14px;
+                border-radius: 8px;
+                font-size: 15px;
+                font-weight: 600;
+                border: none;
+                cursor: pointer;
+            }
+
+            .primary-button {
+                background: var(--primary);
+                color: white;
+            }
+
+            .secondary-button {
+                background: var(--gray-50);
+                color: var(--gray-700);
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 진행 표시기 -->
+        <div class="progress-indicator">
+            <div class="progress-step active"></div>
+            <div class="progress-step"></div>
+            <div class="progress-step"></div>
+            <div class="progress-step"></div>
+        </div>
+
+        <!-- 문제해결 전략 선택 -->
+        <div class="thinking-card">
+            <div class="card-header">
+                <h2 class="card-title">문제해결 전략 선택</h2>
+                <p class="card-description">
+                    과제 해결을 위한 적절한 전략을 선택하세요.
+                </p>
+            </div>
+            <div class="process-steps">
+                <div class="step-item active">문제 파악</div>
+                <div class="step-item">전략 수립</div>
+                <div class="step-item">실행</div>
+                <div class="step-item">검토</div>
+            </div>
+            <div class="strategy-selector">
+                <div class="strategy-option">
+                    <h3 class="strategy-title">단계적 분석</h3>
+                    <p class="strategy-description">
+                        문제를 작은 단위로 나누어 분석합니다.
+                    </p>
+                </div>
+                <div class="strategy-option">
+                    <h3 class="strategy-title">유추법</h3>
+                    <p class="strategy-description">
+                        유사한 문제의 해결 방법을 참고합니다.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 학습방법 선택 -->
+        <div class="thinking-card">
+            <div class="card-header">
+                <h2 class="card-title">학습방법 선택</h2>
+                <p class="card-description">
+                    자신에게 맞는 학습 방법을 선택하세요.
+                </p>
+            </div>
+            <div class="strategy-selector">
+                <div class="strategy-option">
+                    <h3 class="strategy-title">개념 맵 작성</h3>
+                    <p class="strategy-description">
+                        주요 개념을 시각적으로 정리합니다.
+                    </p>
+                </div>
+                <div class="strategy-option">
+                    <h3 class="strategy-title">실습 중심</h3>
+                    <p class="strategy-description">
+                        직접 문제를 풀어보며 학습합니다.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 자기평가 선택 -->
+        <div class="thinking-card">
+            <div class="card-header">
+                <h2 class="card-title">자기평가</h2>
+                <p class="card-description">학습 과정을 스스로 평가해보세요.</p>
+            </div>
+            <div class="self-evaluation">
+                <div class="evaluation-item">
+                    <input type="checkbox" class="check-input" id="check1" />
+                    <label class="check-label" for="check1"
+                        >문제의 핵심을 정확히 파악했나요?</label
+                    >
+                </div>
+                <div class="evaluation-item">
+                    <input type="checkbox" class="check-input" id="check2" />
+                    <label class="check-label" for="check2"
+                        >적절한 해결 전략을 선택했나요?</label
+                    >
+                </div>
+            </div>
+            <div class="reflection-note">
+                <textarea
+                    class="note-input"
+                    placeholder="자기평가 내용을 작성하세요..."
+                ></textarea>
+            </div>
+        </div>
+
+        <!-- 피드백 활용 -->
+        <div class="thinking-card">
+            <div class="card-header">
+                <h2 class="card-title">피드백 활용</h2>
+                <p class="card-description">
+                    받은 피드백을 검토하고 적용하세요.
+                </p>
+            </div>
+            <div class="feedback-area">
+                <div class="feedback-message">
+                    <div class="feedback-icon">✓</div>
+                    <div class="feedback-content">
+                        <strong>강점:</strong> 문제 분석이 체계적입니다.
+                    </div>
+                </div>
+                <div class="feedback-message">
+                    <div class="feedback-icon">!</div>
+                    <div class="feedback-content">
+                        <strong>개선점:</strong> 시간 관리가 필요합니다.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 하단 네비게이션 -->
+        <div class="bottom-nav">
+            <button class="nav-button secondary-button">이전</button>
+            <button class="nav-button primary-button">다음</button>
+        </div>
+    </body>
+</html>

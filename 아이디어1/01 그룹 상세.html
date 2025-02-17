@@ -1,0 +1,443 @@
+<!-- 그룹 상세 페이지의 주요 특징을 설명드리겠습니다:
+
+1. 그룹 정보 헤더:
+- 그룹 이름과 소개
+- 멤버 수와 활동 통계
+- 가입/공유 버튼
+- 그룹 프로필 이미지
+
+2. 탭 네비게이션:
+- 학습자료
+- 공지사항
+- 일정
+- 토론
+
+3. 학습자료 섹션:
+- 자료 카드 그리드
+- 작성자 정보
+- 좋아요/댓글 수
+- 생성 시간
+
+4. 멤버 리스트:
+- 멤버 프로필
+- 역할 표시
+- 온라인 상태
+- 빠른 접근
+
+5. 활동 피드:
+- 실시간 업데이트
+- 활동 내역
+- 시간 표시
+- 멤버 활동 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>그룹 상세</title>
+        <style>
+            :root {
+                --primary-color: #6c5ce7;
+                --primary-light: #a29bfe;
+                --success-color: #00b894;
+                --warning-color: #fdcb6e;
+                --danger-color: #ff7675;
+                --surface-color: #ffffff;
+                --background-color: #f8f9fa;
+                --text-primary: #2d3436;
+                --text-secondary: #636e72;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+            }
+
+            /* Group Header */
+            .group-header {
+                background: var(--surface-color);
+                padding: 32px 0;
+                margin-bottom: 24px;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .header-content {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 24px;
+                display: flex;
+                gap: 32px;
+                align-items: center;
+            }
+
+            .group-avatar {
+                width: 120px;
+                height: 120px;
+                border-radius: 24px;
+                background: var(--primary-light);
+            }
+
+            .group-info {
+                flex: 1;
+            }
+
+            .group-name {
+                font-size: 32px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .group-meta {
+                display: flex;
+                gap: 24px;
+                color: var(--text-secondary);
+                margin-bottom: 16px;
+            }
+
+            .group-description {
+                margin-bottom: 16px;
+                max-width: 600px;
+            }
+
+            .group-actions {
+                display: flex;
+                gap: 12px;
+            }
+
+            .action-button {
+                padding: 8px 16px;
+                border-radius: 8px;
+                font-weight: 500;
+                cursor: pointer;
+            }
+
+            .primary-button {
+                background: var(--primary-color);
+                color: white;
+                border: none;
+            }
+
+            .secondary-button {
+                background: none;
+                border: 1px solid var(--primary-color);
+                color: var(--primary-color);
+            }
+
+            /* Main Container */
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 24px;
+                display: grid;
+                grid-template-columns: 1fr 300px;
+                gap: 24px;
+            }
+
+            /* Group Tabs */
+            .group-tabs {
+                display: flex;
+                gap: 0;
+                margin-bottom: 24px;
+                background: var(--surface-color);
+                border-radius: 12px;
+                padding: 4px;
+            }
+
+            .tab {
+                flex: 1;
+                padding: 12px;
+                text-align: center;
+                cursor: pointer;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+            }
+
+            .tab.active {
+                background: var(--primary-color);
+                color: white;
+            }
+
+            /* Study Materials */
+            .materials-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 20px;
+                margin-bottom: 24px;
+            }
+
+            .material-card {
+                background: var(--surface-color);
+                border-radius: 12px;
+                padding: 16px;
+            }
+
+            .material-title {
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .material-meta {
+                font-size: 14px;
+                color: var(--text-secondary);
+                margin-bottom: 12px;
+            }
+
+            .material-stats {
+                display: flex;
+                justify-content: space-between;
+                font-size: 14px;
+                color: var(--text-secondary);
+            }
+
+            /* Member List */
+            .member-list {
+                background: var(--surface-color);
+                border-radius: 12px;
+                padding: 20px;
+            }
+
+            .member-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 16px;
+            }
+
+            .member-title {
+                font-weight: 600;
+            }
+
+            .member-items {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .member-item {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 8px;
+                border-radius: 8px;
+            }
+
+            .member-item:hover {
+                background: var(--background-color);
+            }
+
+            .member-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 20px;
+                background: var(--primary-light);
+            }
+
+            .member-info {
+                flex: 1;
+            }
+
+            .member-name {
+                font-weight: 500;
+                margin-bottom: 2px;
+            }
+
+            .member-role {
+                font-size: 12px;
+                color: var(--text-secondary);
+            }
+
+            /* Activity Feed */
+            .activity-feed {
+                margin-top: 24px;
+                background: var(--surface-color);
+                border-radius: 12px;
+                padding: 20px;
+            }
+
+            .feed-header {
+                margin-bottom: 16px;
+                font-weight: 600;
+            }
+
+            .feed-items {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .feed-item {
+                display: flex;
+                gap: 12px;
+                padding: 12px;
+                background: var(--background-color);
+                border-radius: 8px;
+            }
+
+            .feed-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 20px;
+                background: var(--primary-light);
+            }
+
+            .feed-content {
+                flex: 1;
+            }
+
+            .feed-text {
+                margin-bottom: 4px;
+            }
+
+            .feed-time {
+                font-size: 12px;
+                color: var(--text-secondary);
+            }
+
+            @media (max-width: 968px) {
+                .container {
+                    grid-template-columns: 1fr;
+                }
+
+                .header-content {
+                    flex-direction: column;
+                    text-align: center;
+                }
+
+                .group-meta {
+                    justify-content: center;
+                }
+
+                .group-actions {
+                    justify-content: center;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Group Header -->
+        <div class="group-header">
+            <div class="header-content">
+                <div class="group-avatar"></div>
+                <div class="group-info">
+                    <h1 class="group-name">수능 수학 스터디</h1>
+                    <div class="group-meta">
+                        <span>👥 멤버 24명</span>
+                        <span>📚 학습자료 128개</span>
+                        <span>⭐ 평점 4.8</span>
+                    </div>
+                    <p class="group-description">
+                        수능 수학 고득점을 위한 스터디 그룹입니다. 매주 화/목
+                        저녁 8시에 실시간 스터디를 진행합니다.
+                    </p>
+                    <div class="group-actions">
+                        <button class="action-button primary-button">
+                            가입하기
+                        </button>
+                        <button class="action-button secondary-button">
+                            공유하기
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Tabs -->
+                <div class="group-tabs">
+                    <div class="tab active">학습자료</div>
+                    <div class="tab">공지사항</div>
+                    <div class="tab">일정</div>
+                    <div class="tab">토론</div>
+                </div>
+
+                <!-- Study Materials -->
+                <div class="materials-grid">
+                    <div class="material-card">
+                        <h3 class="material-title">미적분 기출 문제</h3>
+                        <div class="material-meta">수학왕 · 2시간 전</div>
+                        <div class="material-stats">
+                            <span>👍 24</span>
+                            <span>💬 8</span>
+                        </div>
+                    </div>
+
+                    <div class="material-card">
+                        <h3 class="material-title">확률과 통계 요약</h3>
+                        <div class="material-meta">수학달인 · 3시간 전</div>
+                        <div class="material-stats">
+                            <span>👍 18</span>
+                            <span>💬 5</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Feed -->
+                <div class="activity-feed">
+                    <h3 class="feed-header">최근 활동</h3>
+                    <div class="feed-items">
+                        <div class="feed-item">
+                            <div class="feed-avatar"></div>
+                            <div class="feed-content">
+                                <div class="feed-text">
+                                    <strong>수학왕</strong>님이 새로운 문제를
+                                    공유했습니다.
+                                </div>
+                                <div class="feed-time">10분 전</div>
+                            </div>
+                        </div>
+
+                        <div class="feed-item">
+                            <div class="feed-avatar"></div>
+                            <div class="feed-content">
+                                <div class="feed-text">
+                                    <strong>과학달인</strong>님이 그룹에
+                                    참여했습니다.
+                                </div>
+                                <div class="feed-time">30분 전</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Member List -->
+                <div class="member-list">
+                    <div class="member-header">
+                        <h3 class="member-title">멤버</h3>
+                        <span>24명</span>
+                    </div>
+                    <div class="member-items">
+                        <div class="member-item">
+                            <div class="member-avatar"></div>
+                            <div class="member-info">
+                                <div class="member-name">수학왕</div>
+                                <div class="member-role">관리자</div>
+                            </div>
+                        </div>
+                        <div class="member-item">
+                            <div class="member-avatar"></div>
+                            <div class="member-info">
+                                <div class="member-name">수학달인</div>
+                                <div class="member-role">멤버</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

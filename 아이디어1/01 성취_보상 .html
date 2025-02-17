@@ -1,0 +1,458 @@
+<!-- 성취/보상 시스템 페이지의 주요 특징을 설명드리겠습니다:
+
+1. 레벨 시스템:
+- 현재 레벨 표시
+- 경험치 진행바
+- 레벨 칭호
+- 다음 레벨 정보
+
+2. 배지 컬렉션:
+- 획득한 배지
+- 달성 조건
+- 진행 상태
+- 잠금 해제 상태
+
+3. 보상 상점:
+- 사용 가능 포인트
+- 구매 가능 아이템
+- 가격 정보
+- 구매 버튼
+
+4. 성취 타임라인:
+- 최근 성취 내역
+- 획득 시간
+- 보상 정보
+- 시각적 표시
+
+5. 시각적 요소:
+- 배지 아이콘
+- 진행 바
+- 타임라인
+- 보상 이미지 -->
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>성취 & 보상</title>
+        <style>
+            :root {
+                --primary-color: #6c5ce7;
+                --primary-light: #a29bfe;
+                --gold-color: #ffd700;
+                --silver-color: #c0c0c0;
+                --bronze-color: #cd7f32;
+                --surface-color: #ffffff;
+                --background-color: #f8f9fa;
+                --text-primary: #2d3436;
+                --text-secondary: #636e72;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 24px;
+            }
+
+            /* Level Summary */
+            .level-summary {
+                background: var(--surface-color);
+                border-radius: 24px;
+                padding: 32px;
+                text-align: center;
+                margin-bottom: 32px;
+                background-image: linear-gradient(
+                    135deg,
+                    #6c5ce7 0%,
+                    #a29bfe 100%
+                );
+                color: white;
+            }
+
+            .level-info {
+                margin-bottom: 24px;
+            }
+
+            .current-level {
+                font-size: 48px;
+                font-weight: 700;
+                margin-bottom: 8px;
+            }
+
+            .level-title {
+                font-size: 18px;
+                opacity: 0.9;
+            }
+
+            .exp-progress {
+                width: 100%;
+                max-width: 400px;
+                margin: 0 auto;
+            }
+
+            .progress-bar {
+                height: 8px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 4px;
+                overflow: hidden;
+                margin-bottom: 8px;
+            }
+
+            .progress-fill {
+                height: 100%;
+                background: white;
+                width: 75%;
+                border-radius: 4px;
+                transition: width 0.3s ease;
+            }
+
+            .progress-text {
+                font-size: 14px;
+                opacity: 0.9;
+            }
+
+            /* Badge Collection */
+            .badge-collection {
+                background: var(--surface-color);
+                border-radius: 24px;
+                padding: 32px;
+                margin-bottom: 32px;
+            }
+
+            .section-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 24px;
+            }
+
+            .section-title {
+                font-size: 24px;
+                font-weight: 600;
+            }
+
+            .badge-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 24px;
+            }
+
+            .badge-card {
+                background: var(--background-color);
+                border-radius: 16px;
+                padding: 24px;
+                text-align: center;
+                transition: transform 0.3s ease;
+                cursor: pointer;
+            }
+
+            .badge-card:hover {
+                transform: translateY(-4px);
+            }
+
+            .badge-icon {
+                width: 80px;
+                height: 80px;
+                margin: 0 auto 16px;
+                background: var(--primary-light);
+                border-radius: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 32px;
+            }
+
+            .badge-locked .badge-icon {
+                opacity: 0.5;
+                background: var(--text-secondary);
+            }
+
+            .badge-name {
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .badge-description {
+                font-size: 14px;
+                color: var(--text-secondary);
+                margin-bottom: 12px;
+            }
+
+            .badge-progress {
+                font-size: 14px;
+                color: var(--primary-color);
+            }
+
+            .badge-locked .badge-progress {
+                color: var(--text-secondary);
+            }
+
+            /* Rewards Shop */
+            .rewards-shop {
+                background: var(--surface-color);
+                border-radius: 24px;
+                padding: 32px;
+                margin-bottom: 32px;
+            }
+
+            .shop-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 24px;
+            }
+
+            .reward-card {
+                background: var(--background-color);
+                border-radius: 16px;
+                overflow: hidden;
+            }
+
+            .reward-image {
+                height: 150px;
+                background: var(--primary-light);
+            }
+
+            .reward-content {
+                padding: 20px;
+            }
+
+            .reward-name {
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .reward-price {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 16px;
+                color: var(--gold-color);
+                font-weight: 600;
+            }
+
+            .buy-button {
+                width: 100%;
+                padding: 12px;
+                background: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: background 0.2s ease;
+            }
+
+            .buy-button:hover {
+                background: var(--primary-light);
+            }
+
+            .buy-button:disabled {
+                background: var(--text-secondary);
+                cursor: not-allowed;
+            }
+
+            /* Achievement Timeline */
+            .achievement-timeline {
+                background: var(--surface-color);
+                border-radius: 24px;
+                padding: 32px;
+            }
+
+            .timeline {
+                position: relative;
+                padding-left: 32px;
+            }
+
+            .timeline::before {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                width: 2px;
+                background: var(--border-color);
+            }
+
+            .timeline-item {
+                position: relative;
+                margin-bottom: 24px;
+            }
+
+            .timeline-item::before {
+                content: "";
+                position: absolute;
+                left: -32px;
+                top: 0;
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                background: var(--primary-color);
+            }
+
+            .timeline-content {
+                background: var(--background-color);
+                border-radius: 12px;
+                padding: 16px;
+            }
+
+            .timeline-date {
+                font-size: 14px;
+                color: var(--text-secondary);
+                margin-bottom: 8px;
+            }
+
+            .timeline-title {
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .timeline-reward {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 14px;
+                color: var(--gold-color);
+            }
+
+            @media (max-width: 768px) {
+                .badge-grid,
+                .shop-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Level Summary -->
+            <div class="level-summary">
+                <div class="level-info">
+                    <div class="current-level">Level 42</div>
+                    <div class="level-title">지식의 탐험가</div>
+                </div>
+                <div class="exp-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <div class="progress-text">
+                        다음 레벨까지 2,500 EXP 남음
+                    </div>
+                </div>
+            </div>
+
+            <!-- Badge Collection -->
+            <div class="badge-collection">
+                <div class="section-header">
+                    <h2 class="section-title">획득한 배지</h2>
+                    <span>15/30</span>
+                </div>
+                <div class="badge-grid">
+                    <div class="badge-card">
+                        <div class="badge-icon">🏆</div>
+                        <div class="badge-name">학습왕</div>
+                        <div class="badge-description">1,000문제 해결 달성</div>
+                        <div class="badge-progress">달성 완료!</div>
+                    </div>
+
+                    <div class="badge-card">
+                        <div class="badge-icon">⚡</div>
+                        <div class="badge-name">스피드스타</div>
+                        <div class="badge-description">
+                            평균 풀이 시간 5분 이하
+                        </div>
+                        <div class="badge-progress">달성 완료!</div>
+                    </div>
+
+                    <div class="badge-card badge-locked">
+                        <div class="badge-icon">🎯</div>
+                        <div class="badge-name">정확도의 달인</div>
+                        <div class="badge-description">연속 50문제 정답</div>
+                        <div class="badge-progress">32/50 달성</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rewards Shop -->
+            <div class="rewards-shop">
+                <div class="section-header">
+                    <h2 class="section-title">보상 상점</h2>
+                    <span>보유 포인트: 2,500</span>
+                </div>
+                <div class="shop-grid">
+                    <div class="reward-card">
+                        <div class="reward-image"></div>
+                        <div class="reward-content">
+                            <div class="reward-name">프리미엄 테마</div>
+                            <div class="reward-price">
+                                <span>⭐</span>
+                                <span>1,000</span>
+                            </div>
+                            <button class="buy-button">구매하기</button>
+                        </div>
+                    </div>
+
+                    <div class="reward-card">
+                        <div class="reward-image"></div>
+                        <div class="reward-content">
+                            <div class="reward-name">특별 배지</div>
+                            <div class="reward-price">
+                                <span>⭐</span>
+                                <span>2,000</span>
+                            </div>
+                            <button class="buy-button" disabled>
+                                포인트 부족
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achievement Timeline -->
+            <div class="achievement-timeline">
+                <div class="section-header">
+                    <h2 class="section-title">최근 성취</h2>
+                </div>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-date">오늘</div>
+                            <div class="timeline-title">
+                                연속 학습 30일 달성!
+                            </div>
+                            <div class="timeline-reward">
+                                <span>⭐</span>
+                                <span>500 포인트 획득</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-date">어제</div>
+                            <div class="timeline-title">
+                                평균 정답률 90% 달성
+                            </div>
+                            <div class="timeline-reward">
+                                <span>⭐</span>
+                                <span>300 포인트 획득</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,447 @@
+<!-- 스터디 그룹 페이지의 주요 특징을 설명드리겠습니다:
+
+1. 레이아웃 구성:
+- 그룹 헤더: 커버 이미지와 기본 정보
+- 왼쪽 사이드바: 멤버 목록
+- 메인 콘텐츠: 게시물 피드
+- 오른쪽 사이드바: 스터디 일정
+
+2. 소셜 기능:
+- 게시물 작성
+- 좋아요/댓글
+- 파일 공유
+- 멤버 상호작용
+
+3. 스터디 관리 기능:
+- 일정 관리
+- 실시간 참여 현황
+- 멤버 역할 표시
+- 공지사항
+
+4. 디자인 요소:
+- 부드러운 색상
+- 친근한 이모지
+- 카드 기반 레이아웃
+- 반응형 디자인
+
+5. 인터랙션:
+- 게시물 작성 도구
+- 일정 확인
+- 멤버 프로필
+- 소셜 액션 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>스터디 그룹</title>
+        <style>
+            :root {
+                --primary-color: #6c5ce7;
+                --primary-light: #a29bfe;
+                --success-color: #00b894;
+                --warning-color: #fdcb6e;
+                --danger-color: #ff7675;
+                --border-color: #e5e7eb;
+                --background-color: #f8f9fa;
+                --surface-color: #ffffff;
+                --text-primary: #2d3436;
+                --text-secondary: #636e72;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+                display: grid;
+                grid-template-columns: 280px 1fr 300px;
+                gap: 24px;
+            }
+
+            /* Group Header */
+            .group-header {
+                background: var(--surface-color);
+                padding: 24px;
+                border-radius: 16px;
+                margin-bottom: 24px;
+                text-align: center;
+                grid-column: 1 / -1;
+            }
+
+            .group-cover {
+                width: 100%;
+                height: 200px;
+                background: linear-gradient(
+                    45deg,
+                    var(--primary-light),
+                    var(--primary-color)
+                );
+                border-radius: 12px;
+                margin-bottom: 16px;
+            }
+
+            .group-info {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .group-title {
+                font-size: 24px;
+                font-weight: 700;
+                color: var(--text-primary);
+            }
+
+            .group-meta {
+                display: flex;
+                gap: 16px;
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+            .group-description {
+                margin: 16px 0;
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+            /* Left Sidebar - Members */
+            .members-panel {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 20px;
+            }
+
+            .panel-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 16px;
+            }
+
+            .panel-title {
+                font-weight: 600;
+                font-size: 16px;
+            }
+
+            .member-list {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .member-item {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 8px;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+            }
+
+            .member-item:hover {
+                background: var(--background-color);
+            }
+
+            .member-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 20px;
+                background: var(--primary-light);
+            }
+
+            .member-info {
+                flex: 1;
+            }
+
+            .member-name {
+                font-size: 14px;
+                font-weight: 500;
+            }
+
+            .member-role {
+                font-size: 12px;
+                color: var(--text-secondary);
+            }
+
+            /* Main Content */
+            .main-content {
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            .post-card {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 20px;
+            }
+
+            .post-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 16px;
+            }
+
+            .post-content {
+                margin-bottom: 16px;
+            }
+
+            .post-actions {
+                display: flex;
+                gap: 16px;
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+            .action-button {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                cursor: pointer;
+            }
+
+            /* Right Sidebar - Schedule */
+            .schedule-panel {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 20px;
+            }
+
+            .schedule-item {
+                padding: 12px;
+                border-radius: 8px;
+                background: var(--background-color);
+                margin-bottom: 12px;
+            }
+
+            .schedule-date {
+                font-size: 12px;
+                color: var(--text-secondary);
+                margin-bottom: 4px;
+            }
+
+            .schedule-title {
+                font-size: 14px;
+                font-weight: 500;
+                margin-bottom: 4px;
+            }
+
+            .schedule-meta {
+                font-size: 12px;
+                color: var(--text-secondary);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            /* Create Post */
+            .create-post {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 20px;
+                margin-bottom: 24px;
+            }
+
+            .post-input {
+                width: 100%;
+                padding: 12px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                margin-bottom: 12px;
+                resize: none;
+            }
+
+            .post-tools {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .tool-buttons {
+                display: flex;
+                gap: 12px;
+            }
+
+            .tool-button {
+                padding: 8px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .tool-button:hover {
+                background: var(--background-color);
+            }
+
+            .post-button {
+                padding: 8px 16px;
+                background: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 500;
+            }
+
+            @media (max-width: 1200px) {
+                .container {
+                    grid-template-columns: 1fr;
+                }
+
+                .members-panel,
+                .schedule-panel {
+                    display: none;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Group Header -->
+            <div class="group-header">
+                <div class="group-cover"></div>
+                <div class="group-info">
+                    <h1 class="group-title">수능 수학 스터디 그룹 🎯</h1>
+                    <div class="group-meta">
+                        <span>멤버 24명</span>
+                        <span>게시물 128개</span>
+                    </div>
+                    <p class="group-description">
+                        함께 성장하는 수학 스터디 그룹입니다. 매주 화/목 저녁
+                        8시 스터디 진행!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Left Sidebar - Members -->
+            <div class="members-panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">멤버</h2>
+                    <span>24명</span>
+                </div>
+                <div class="member-list">
+                    <div class="member-item">
+                        <div class="member-avatar"></div>
+                        <div class="member-info">
+                            <div class="member-name">김수학</div>
+                            <div class="member-role">스터디장</div>
+                        </div>
+                    </div>
+                    <div class="member-item">
+                        <div class="member-avatar"></div>
+                        <div class="member-info">
+                            <div class="member-name">이미적</div>
+                            <div class="member-role">멤버</div>
+                        </div>
+                    </div>
+                    <div class="member-item">
+                        <div class="member-avatar"></div>
+                        <div class="member-info">
+                            <div class="member-name">박문제</div>
+                            <div class="member-role">멤버</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Create Post -->
+                <div class="create-post">
+                    <textarea
+                        class="post-input"
+                        placeholder="스터디 그룹에 공유할 내용을 작성해보세요..."
+                    ></textarea>
+                    <div class="post-tools">
+                        <div class="tool-buttons">
+                            <div class="tool-button">📷</div>
+                            <div class="tool-button">📎</div>
+                            <div class="tool-button">📝</div>
+                        </div>
+                        <button class="post-button">공유하기</button>
+                    </div>
+                </div>
+
+                <!-- Posts -->
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="member-avatar"></div>
+                        <div class="member-info">
+                            <div class="member-name">김수학</div>
+                            <div class="member-role">2시간 전</div>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        오늘 스터디에서 다룰 문제들입니다! 미리 풀어보시고
+                        오세요 📚
+                    </div>
+                    <div class="post-actions">
+                        <div class="action-button">👍 좋아요 12</div>
+                        <div class="action-button">💬 댓글 5</div>
+                        <div class="action-button">🔖 저장</div>
+                    </div>
+                </div>
+
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="member-avatar"></div>
+                        <div class="member-info">
+                            <div class="member-name">이미적</div>
+                            <div class="member-role">4시간 전</div>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        이번 주 스터디 문제 풀이 영상 공유드립니다 ✨
+                    </div>
+                    <div class="post-actions">
+                        <div class="action-button">👍 좋아요 8</div>
+                        <div class="action-button">💬 댓글 3</div>
+                        <div class="action-button">🔖 저장</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar - Schedule -->
+            <div class="schedule-panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">스터디 일정</h2>
+                </div>
+                <div class="schedule-item">
+                    <div class="schedule-date">오늘 20:00</div>
+                    <div class="schedule-title">수열과 극한 스터디</div>
+                    <div class="schedule-meta">
+                        <span>👥 18명 참여</span>
+                        <span>🎯 실시간</span>
+                    </div>
+                </div>
+                <div class="schedule-item">
+                    <div class="schedule-date">목요일 20:00</div>
+                    <div class="schedule-title">미분 개념 정리</div>
+                    <div class="schedule-meta">
+                        <span>👥 15명 참여</span>
+                        <span>🎯 실시간</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

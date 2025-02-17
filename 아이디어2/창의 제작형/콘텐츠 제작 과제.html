@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <title>콘텐츠 제작 과제</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --gray-100: #f3f4f6;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+                --gray-900: #111827;
+            }
+            body {
+                font-family: -apple-system, sans-serif;
+                margin: 0;
+                background: var(--gray-100);
+            }
+            .header {
+                background: white;
+                padding: 16px;
+                border-bottom: 1px solid var(--gray-200);
+            }
+            .header .title {
+                font-size: 18px;
+                font-weight: 600;
+            }
+            .container {
+                max-width: 720px;
+                margin: 16px auto;
+                padding: 0 16px;
+            }
+            .project-details,
+            .submission-list,
+            .upload-box {
+                background: white;
+                border: 1px solid var(--gray-200);
+                border-radius: 6px;
+                padding: 16px;
+                margin-bottom: 16px;
+            }
+            .project-details .title {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+            .req-list {
+                margin-left: 20px;
+            }
+            .upload-box label {
+                display: block;
+                margin-top: 8px;
+                font-weight: 600;
+            }
+            .submission-item {
+                border-bottom: 1px solid var(--gray-200);
+                padding: 8px 0;
+            }
+            .feedback-block {
+                background: var(--gray-100);
+                margin-top: 8px;
+                padding: 8px;
+                border-radius: 4px;
+            }
+            .action-btn {
+                background: var(--primary);
+                color: #fff;
+                border: none;
+                padding: 10px 16px;
+                border-radius: 6px;
+                cursor: pointer;
+                margin-top: 8px;
+                display: inline-block;
+            }
+            .action-btn:hover {
+                opacity: 0.9;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <div class="title">콘텐츠 제작: "AI 기술 소개 영상"</div>
+        </div>
+        <div class="container">
+            <!-- 프로젝트 상세 -->
+            <div class="project-details" id="projectDetails">
+                <!-- JS로 렌더링 -->
+            </div>
+
+            <!-- 제출물 목록 -->
+            <div class="submission-list">
+                <h3>내 제출물</h3>
+                <div id="submissionList"></div>
+            </div>
+
+            <!-- 업로드 폼 -->
+            <div class="upload-box">
+                <h3>새 제출물 업로드</h3>
+                <label for="fileInput">파일 선택</label>
+                <input type="file" id="fileInput" />
+                <label for="descInput">설명</label>
+                <textarea
+                    id="descInput"
+                    rows="3"
+                    style="width: 100%"
+                ></textarea>
+                <button class="action-btn" id="uploadBtn">제출하기</button>
+            </div>
+        </div>
+
+        <script>
+            // 예시 데이터
+            const projectData = {
+                project_id: 1001,
+                title: "AI 기술 소개 영상 제작",
+                description:
+                    "2분 이내로 AI 기술을 소개하는 영상을 만들어보세요.",
+                deadline: "2025-12-31",
+                requirements: [
+                    "영상 길이: 2분 내외",
+                    "자막 or 내레이션 반드시 포함",
+                    "AI 활용 사례 최소 2개 이상",
+                ],
+            }
+
+            let submissions = [
+                {
+                    submission_id: 501,
+                    user_id: 10,
+                    file_url: "/uploads/ai_intro_v1.mp4",
+                    description: "첫 번째 버전. AI 스피커 사례만 포함.",
+                    version: 1,
+                    feedbacks: [
+                        {
+                            feedback_id: 100,
+                            comment_text:
+                                "AI 스피커 말고 자율주행차 사례 추가하면 좋을 듯",
+                            score: 7,
+                        },
+                    ],
+                    created_at: "2025-10-01T10:00:00",
+                },
+                {
+                    submission_id: 502,
+                    user_id: 10,
+                    file_url: "/uploads/ai_intro_v2.mp4",
+                    description: "자율주행차 사례를 추가했습니다. 자막 추가",
+                    version: 2,
+                    feedbacks: [],
+                    created_at: "2025-10-05T15:30:00",
+                },
+            ]
+
+            const projectDetailsEl = document.getElementById("projectDetails")
+            const submissionListEl = document.getElementById("submissionList")
+            const fileInputEl = document.getElementById("fileInput")
+            const descInputEl = document.getElementById("descInput")
+            const uploadBtn = document.getElementById("uploadBtn")
+
+            // 1) 프로젝트 상세 렌더
+            function renderProjectDetails() {
+                let reqListHtml = projectData.requirements
+                    .map((r) => `<li>${r}</li>`)
+                    .join("")
+                let html = `
+        <div class="title">${projectData.title}</div>
+        <div>마감일: ${projectData.deadline}</div>
+        <div style="margin-top:8px;">${projectData.description}</div>
+        <ul class="req-list">
+          ${reqListHtml}
+        </ul>
+      `
+                projectDetailsEl.innerHTML = html
+            }
+
+            // 2) 제출물 목록 렌더
+            function renderSubmissions() {
+                submissionListEl.innerHTML = ""
+                submissions.forEach((sub) => {
+                    const item = document.createElement("div")
+                    item.className = "submission-item"
+                    let fbHtml = ""
+                    if (sub.feedbacks.length > 0) {
+                        fbHtml += `<div class="feedback-block">`
+                        sub.feedbacks.forEach((fb) => {
+                            fbHtml += `<p>피드백: ${fb.comment_text} (점수: ${
+                                fb.score || "N/A"
+                            })</p>`
+                        })
+                        fbHtml += `</div>`
+                    }
+                    item.innerHTML = `
+          <div><strong>버전 ${sub.version}</strong> / 업로드: ${sub.created_at}</div>
+          <div>파일: <a href="${sub.file_url}" target="_blank">${sub.file_url}</a></div>
+          <div>설명: ${sub.description}</div>
+          ${fbHtml}
+        `
+                    submissionListEl.appendChild(item)
+                })
+            }
+
+            // 3) 업로드 처리 (간단 시뮬레이션)
+            uploadBtn.addEventListener("click", () => {
+                const file = fileInputEl.files[0]
+                const desc = descInputEl.value.trim()
+                if (!file) {
+                    alert("파일을 선택하세요.")
+                    return
+                }
+                // 실제론 서버에 업로드 → 응답에서 file_url 획득
+                const newSubmission = {
+                    submission_id: Date.now(),
+                    user_id: 10, // 현재 사용자
+                    file_url: "/uploads/" + file.name, // 예시
+                    description: desc,
+                    version: submissions.length + 1,
+                    feedbacks: [],
+                    created_at: new Date().toISOString(),
+                }
+                submissions.unshift(newSubmission)
+                renderSubmissions()
+                fileInputEl.value = ""
+                descInputEl.value = ""
+                alert("업로드 완료! 피드백을 기다려보세요.")
+            })
+
+            // 초기 렌더
+            renderProjectDetails()
+            renderSubmissions()
+        </script>
+    </body>
+</html>

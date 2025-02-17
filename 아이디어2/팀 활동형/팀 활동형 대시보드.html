@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <title>팀 활동형 대시보드</title>
+        <style>
+            body {
+                font-family: -apple-system, sans-serif;
+                margin: 0;
+                padding: 16px;
+                background: #f9fafb;
+            }
+            .container {
+                max-width: 720px;
+                margin: 0 auto;
+            }
+
+            .team-info,
+            .task-board,
+            .decision-board {
+                background: white;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                padding: 16px;
+                margin-bottom: 16px;
+            }
+            .team-info h2 {
+                margin-top: 0;
+            }
+            .members-list {
+                display: flex;
+                gap: 8px;
+                margin-bottom: 8px;
+            }
+            .member-card {
+                background: #f3f4f6;
+                border-radius: 4px;
+                padding: 8px;
+                font-size: 14px;
+            }
+            .task-list {
+                display: flex;
+                gap: 16px;
+            }
+            .task-column {
+                flex: 1;
+                background: #f9fafb;
+                border: 1px solid #eee;
+                border-radius: 6px;
+                padding: 8px;
+            }
+            .task-item {
+                background: white;
+                margin-bottom: 8px;
+                padding: 8px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-size: 14px;
+            }
+            .decision-board .proposal-item {
+                border-bottom: 1px solid #eee;
+                padding-bottom: 8px;
+                margin-bottom: 8px;
+            }
+            .option-btn {
+                background: #2563eb;
+                color: #fff;
+                border: none;
+                padding: 6px 10px;
+                border-radius: 4px;
+                cursor: pointer;
+                margin-right: 4px;
+                font-size: 13px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="team-info">
+                <h2 id="teamName"></h2>
+                <div>프로젝트 목표: <span id="teamGoal"></span></div>
+                <h4>팀원 / 역할</h4>
+                <div class="members-list" id="membersList"></div>
+            </div>
+
+            <div class="task-board">
+                <h3>Task Board</h3>
+                <div class="task-list">
+                    <div class="task-column" id="todoCol">
+                        <h4>To Do</h4>
+                    </div>
+                    <div class="task-column" id="inProgressCol">
+                        <h4>In Progress</h4>
+                    </div>
+                    <div class="task-column" id="doneCol">
+                        <h4>Done</h4>
+                    </div>
+                </div>
+            </div>
+
+            <div class="decision-board">
+                <h3>의사결정</h3>
+                <div id="decisionList"></div>
+            </div>
+        </div>
+
+        <script>
+            // 예시 데이터
+            const teamData = {
+                team_id: 101,
+                team_name: "AI 프로젝트 팀",
+                goal: "간단한 AI 앱 시연",
+                members: [
+                    { user_id: 10, name: "홍길동", role: "팀장" },
+                    { user_id: 11, name: "김개발", role: "개발자" },
+                    { user_id: 12, name: "이디자", role: "디자이너" },
+                ],
+                tasks: [
+                    {
+                        task_id: 501,
+                        title: "데이터셋 수집",
+                        assigned_to: 11,
+                        status: "to_do",
+                    },
+                    {
+                        task_id: 502,
+                        title: "UI 시안 제작",
+                        assigned_to: 12,
+                        status: "to_do",
+                    },
+                    {
+                        task_id: 503,
+                        title: "모델 구조 설계",
+                        assigned_to: 11,
+                        status: "in_progress",
+                    },
+                ],
+                decisions: [
+                    {
+                        decision_id: 301,
+                        proposal: "UI 메인 색상 결정",
+                        options: [
+                            {
+                                option_id: "opt1",
+                                text: "파란색 테마",
+                                votes: 2,
+                            },
+                            {
+                                option_id: "opt2",
+                                text: "초록색 테마",
+                                votes: 1,
+                            },
+                        ],
+                        final_option: "opt1",
+                        notes: "유저 선호 조사 결과 파란색이 호응도 높음",
+                    },
+                ],
+            }
+
+            // DOM 참조
+            const teamNameEl = document.getElementById("teamName")
+            const teamGoalEl = document.getElementById("teamGoal")
+            const membersListEl = document.getElementById("membersList")
+            const todoColEl = document.getElementById("todoCol")
+            const inProgressColEl = document.getElementById("inProgressCol")
+            const doneColEl = document.getElementById("doneCol")
+            const decisionListEl = document.getElementById("decisionList")
+
+            // 1) 팀 정보 렌더
+            function renderTeamInfo() {
+                teamNameEl.textContent = teamData.team_name
+                teamGoalEl.textContent = teamData.goal
+                membersListEl.innerHTML = ""
+                teamData.members.forEach((m) => {
+                    const card = document.createElement("div")
+                    card.className = "member-card"
+                    card.innerHTML = `<div>${m.name} (${m.role})</div>`
+                    membersListEl.appendChild(card)
+                })
+            }
+
+            // 2) Task 보드 렌더
+            function renderTasks() {
+                todoColEl.innerHTML = "<h4>To Do</h4>"
+                inProgressColEl.innerHTML = "<h4>In Progress</h4>"
+                doneColEl.innerHTML = "<h4>Done</h4>"
+
+                teamData.tasks.forEach((task) => {
+                    const item = document.createElement("div")
+                    item.className = "task-item"
+                    item.textContent = `${task.title} (담당: user ${task.assigned_to})`
+                    // 상태별로 칼럼에 추가
+                    if (task.status === "to_do") {
+                        todoColEl.appendChild(item)
+                    } else if (task.status === "in_progress") {
+                        inProgressColEl.appendChild(item)
+                    } else if (task.status === "done") {
+                        doneColEl.appendChild(item)
+                    }
+                })
+            }
+
+            // 3) 의사결정 목록
+            function renderDecisions() {
+                decisionListEl.innerHTML = ""
+                teamData.decisions.forEach((dec) => {
+                    const div = document.createElement("div")
+                    div.className = "proposal-item"
+                    let optionsHtml = ""
+                    dec.options.forEach((opt) => {
+                        // 투표 버튼 or 결과 표시
+                        optionsHtml += `
+          <button class="option-btn" onclick="voteOption(${dec.decision_id}, '${opt.option_id}')">
+            ${opt.text} (votes: ${opt.votes})
+          </button>
+        `
+                    })
+                    div.innerHTML = `
+        <h4>의제: ${dec.proposal}</h4>
+        <p>최종 선택: ${dec.final_option || "미정"}</p>
+        <div>${optionsHtml}</div>
+        <div style="margin-top:8px; font-size:13px; color:#666;">
+          비고: ${dec.notes || "N/A"}
+        </div>
+      `
+                    decisionListEl.appendChild(div)
+                })
+            }
+
+            // 투표 기능 (간단 시뮬레이션)
+            function voteOption(decisionId, optionId) {
+                const dec = teamData.decisions.find(
+                    (d) => d.decision_id === decisionId
+                )
+                const opt = dec.options.find((o) => o.option_id === optionId)
+                if (opt) {
+                    opt.votes += 1
+                }
+                // 나름의 로직으로 final_option 갱신 or 투표 마감 시점에 결정
+                // 여기서는 단순히 표 가장 많은 항목을 final_option
+                let maxOpt = dec.options[0]
+                dec.options.forEach((o) => {
+                    if (o.votes > maxOpt.votes) maxOpt = o
+                })
+                dec.final_option = maxOpt.option_id
+                renderDecisions()
+            }
+
+            // 초기 렌더
+            renderTeamInfo()
+            renderTasks()
+            renderDecisions()
+        </script>
+    </body>
+</html>

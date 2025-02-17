@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <title>콘텐츠 제작 에디터</title>
+        <style>
+            body {
+                margin: 0;
+                font-family: -apple-system, sans-serif;
+                background: #f9fafb;
+            }
+            .header {
+                background: #2563eb;
+                color: white;
+                padding: 16px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .header h1 {
+                font-size: 20px;
+            }
+            .sidebar {
+                width: 200px;
+                background: #fff;
+                border-right: 1px solid #ddd;
+                padding: 16px;
+                overflow-y: auto;
+            }
+            .content {
+                flex: 1;
+                padding: 16px;
+                position: relative;
+            }
+            .editor-container {
+                display: flex;
+                height: calc(100vh - 64px);
+            }
+            .canvas {
+                flex: 1;
+                background: white;
+                border: 1px solid #ddd;
+                position: relative;
+            }
+            .element {
+                position: absolute;
+                border: 1px dashed #2563eb;
+                padding: 8px;
+                cursor: move;
+            }
+            .footer {
+                background: #fff;
+                padding: 8px 16px;
+                border-top: 1px solid #ddd;
+                text-align: right;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <h1>콘텐츠 제작 에디터</h1>
+            <button
+                style="
+                    background: white;
+                    color: #2563eb;
+                    border: none;
+                    padding: 8px 12px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                "
+            >
+                저장
+            </button>
+        </div>
+        <div class="editor-container">
+            <div class="sidebar">
+                <h3>컴포넌트</h3>
+                <button onclick="addElement('텍스트 블록')">텍스트 블록</button
+                ><br /><br />
+                <button onclick="addElement('이미지 블록')">이미지 블록</button>
+            </div>
+            <div class="content">
+                <div
+                    class="canvas"
+                    id="canvas"
+                    ondrop="dropHandler(event)"
+                    ondragover="dragOverHandler(event)"
+                >
+                    <!-- 사용자가 추가하는 콘텐츠 요소들이 위치하는 영역 -->
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <button
+                style="
+                    background: #2563eb;
+                    color: white;
+                    border: none;
+                    padding: 8px 12px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                "
+            >
+                미리보기
+            </button>
+        </div>
+
+        <script>
+            function addElement(text) {
+                const canvas = document.getElementById("canvas")
+                const el = document.createElement("div")
+                el.className = "element"
+                el.draggable = true
+                el.innerText = text
+                el.style.top = "50px"
+                el.style.left = "50px"
+                el.addEventListener("dragstart", dragStartHandler)
+                canvas.appendChild(el)
+            }
+
+            function dragStartHandler(e) {
+                e.dataTransfer.setData("text/plain", null)
+                // 현재 요소의 ID 또는 참조를 저장할 수 있음 (여기서는 간단하게)
+                e.dataTransfer.setDragImage(e.target, 0, 0)
+                window.draggedElement = e.target
+            }
+
+            function dragOverHandler(e) {
+                e.preventDefault()
+            }
+
+            function dropHandler(e) {
+                e.preventDefault()
+                if (window.draggedElement) {
+                    const canvasRect = document
+                        .getElementById("canvas")
+                        .getBoundingClientRect()
+                    window.draggedElement.style.left =
+                        e.clientX - canvasRect.left + "px"
+                    window.draggedElement.style.top =
+                        e.clientY - canvasRect.top + "px"
+                }
+            }
+        </script>
+    </body>
+</html>

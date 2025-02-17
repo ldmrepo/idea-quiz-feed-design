@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <title>차트/그래프 분석형 문제 편집기</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --gray-100: #f3f4f6;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+                --bg: #f9fafb;
+            }
+            body {
+                font-family: -apple-system, sans-serif;
+                background: var(--bg);
+                margin: 0;
+                padding: 16px;
+            }
+            .header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 16px;
+            }
+            .header h1 {
+                font-size: 20px;
+                margin: 0;
+            }
+            .btn {
+                padding: 8px 16px;
+                background: var(--primary);
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 14px;
+                margin-left: 8px;
+            }
+            .editor-container {
+                display: flex;
+                gap: 16px;
+                flex-wrap: wrap;
+            }
+            .form-area,
+            .preview-area {
+                background: white;
+                border: 1px solid var(--gray-200);
+                border-radius: 6px;
+                padding: 16px;
+                flex: 1;
+                min-width: 300px;
+            }
+            .form-area h2,
+            .preview-area h2 {
+                margin-top: 0;
+                font-size: 18px;
+                margin-bottom: 12px;
+            }
+            .form-group {
+                margin-bottom: 12px;
+            }
+            .form-group label {
+                display: block;
+                margin-bottom: 4px;
+                font-weight: 600;
+                font-size: 14px;
+            }
+            .form-group input[type="text"],
+            .form-group textarea,
+            .form-group select {
+                width: 100%;
+                padding: 8px;
+                font-size: 14px;
+                border: 1px solid var(--gray-200);
+                border-radius: 4px;
+            }
+            .form-group textarea {
+                resize: vertical;
+                min-height: 60px;
+            }
+            .chart-preview {
+                position: relative;
+                width: 100%;
+                height: 300px;
+                border: 1px solid var(--gray-200);
+                border-radius: 6px;
+                background: #fff;
+                padding: 8px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <h1>차트/그래프 분석형 문제 편집기</h1>
+            <div>
+                <button class="btn" id="previewBtn">미리보기</button>
+                <button class="btn" id="saveBtn">저장하기</button>
+            </div>
+        </div>
+
+        <div class="editor-container">
+            <!-- 편집 영역 -->
+            <div class="form-area">
+                <h2>문제 설정</h2>
+                <div class="form-group">
+                    <label for="questionTitle">문제 제목</label>
+                    <input
+                        type="text"
+                        id="questionTitle"
+                        placeholder="예: 2024년 매출 추세 분석"
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="instruction">지시문</label>
+                    <textarea
+                        id="instruction"
+                        placeholder="아래 차트를 보고 2024년 3분기의 매출 급증 원인을 분석하세요."
+                    ></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="chartType">차트 유형</label>
+                    <select id="chartType">
+                        <option value="line">라인 차트</option>
+                        <option value="bar">바 차트</option>
+                        <option value="pie">파이 차트</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="labels">x축 레이블 (쉼표로 구분)</label>
+                    <input
+                        type="text"
+                        id="labels"
+                        placeholder="Jan, Feb, Mar, ..."
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="dataSeries"
+                        >데이터 시리즈 (쉼표로 구분, 숫자만)</label
+                    >
+                    <input
+                        type="text"
+                        id="dataSeries"
+                        placeholder="15, 18, 22, 35, 40, ..."
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="analysisQuestion">분석 질문</label>
+                    <textarea
+                        id="analysisQuestion"
+                        placeholder="예: 2024년 3분기 매출 급증 원인은 무엇인가?"
+                    ></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="correctAnswer">정답 (해설)</label>
+                    <textarea
+                        id="correctAnswer"
+                        placeholder="예: 3분기에 실시한 대규모 프로모션이 주요 원인입니다."
+                    ></textarea>
+                </div>
+            </div>
+
+            <!-- 미리보기 영역 -->
+            <div class="preview-area">
+                <h2>미리보기</h2>
+                <p id="previewQuestion" style="font-weight: 600"></p>
+                <div class="chart-preview">
+                    <canvas id="previewChart"></canvas>
+                </div>
+                <p id="previewInstruction" style="margin-top: 8px"></p>
+                <p
+                    id="previewAnalysisQuestion"
+                    style="margin-top: 8px; font-style: italic"
+                ></p>
+            </div>
+        </div>
+
+        <!-- Chart.js 라이브러리 -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            const previewBtn = document.getElementById("previewBtn")
+            const saveBtn = document.getElementById("saveBtn")
+            const questionTitleEl = document.getElementById("questionTitle")
+            const instructionEl = document.getElementById("instruction")
+            const chartTypeEl = document.getElementById("chartType")
+            const labelsEl = document.getElementById("labels")
+            const dataSeriesEl = document.getElementById("dataSeries")
+            const analysisQuestionEl =
+                document.getElementById("analysisQuestion")
+            const correctAnswerEl = document.getElementById("correctAnswer")
+
+            const previewQuestionEl = document.getElementById("previewQuestion")
+            const previewInstructionEl =
+                document.getElementById("previewInstruction")
+            const previewAnalysisQuestionEl = document.getElementById(
+                "previewAnalysisQuestion"
+            )
+
+            let previewChart = null
+
+            previewBtn.addEventListener("click", () => {
+                // 미리보기 영역 업데이트
+                previewQuestionEl.textContent = questionTitleEl.value
+                previewInstructionEl.textContent = instructionEl.value
+                previewAnalysisQuestionEl.textContent =
+                    "분석 질문: " + analysisQuestionEl.value
+
+                // 차트 데이터 설정
+                const labels = labelsEl.value.split(",").map((s) => s.trim())
+                const dataSeries = dataSeriesEl.value
+                    .split(",")
+                    .map((s) => parseFloat(s.trim()))
+                const chartType = chartTypeEl.value
+
+                // Chart.js 미리보기 생성
+                if (previewChart) {
+                    previewChart.destroy()
+                }
+                const ctx = document
+                    .getElementById("previewChart")
+                    .getContext("2d")
+                previewChart = new Chart(ctx, {
+                    type: chartType,
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: "데이터 값",
+                                data: dataSeries,
+                                borderColor: "#2563eb",
+                                backgroundColor: "rgba(37,99,235,0.1)",
+                                fill: true,
+                                tension: 0.3,
+                            },
+                        ],
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            tooltip: {
+                                enabled: true,
+                            },
+                        },
+                    },
+                })
+            })
+
+            saveBtn.addEventListener("click", () => {
+                // 편집된 내용을 JSON 형태로 저장(실제 구현에서는 서버 API 호출)
+                const problemData = {
+                    question_title: questionTitleEl.value,
+                    instruction: instructionEl.value,
+                    chart_type: chartTypeEl.value,
+                    labels: labelsEl.value.split(",").map((s) => s.trim()),
+                    data_series: dataSeriesEl.value
+                        .split(",")
+                        .map((s) => parseFloat(s.trim())),
+                    analysis_question: analysisQuestionEl.value,
+                    correct_answer: correctAnswerEl.value,
+                }
+                console.log(
+                    "저장된 문제 데이터:",
+                    JSON.stringify(problemData, null, 2)
+                )
+                alert("문제가 저장되었습니다. (콘솔 확인)")
+            })
+        </script>
+    </body>
+</html>

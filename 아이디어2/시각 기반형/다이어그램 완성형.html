@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <title>다이어그램 완성형 예시</title>
+        <style>
+            body {
+                font-family: -apple-system, sans-serif;
+                background: #f9fafb;
+                margin: 0;
+                padding: 16px;
+            }
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+            }
+            .header {
+                text-align: center;
+                margin-bottom: 16px;
+            }
+            #diagramCanvas {
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                background: #fff;
+            }
+            .btn {
+                margin-top: 16px;
+                padding: 10px 20px;
+                background: #2563eb;
+                color: #fff;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+            }
+            .feedback {
+                margin-top: 16px;
+                font-size: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h2 id="questionTitle">회로도 완성</h2>
+                <p>
+                    배터리, 저항, LED를 올바른 순서로 연결하여 회로를
+                    완성하세요.
+                </p>
+            </div>
+            <canvas id="diagramCanvas" width="600" height="400"></canvas>
+            <button class="btn" id="submitBtn">제출하기</button>
+            <div class="feedback" id="feedback"></div>
+        </div>
+
+        <script>
+            // 예시 문제 데이터
+            const questionData = {
+                question_id: 3002,
+                title: "회로도 완성",
+                background_image: "circuit_base.png", // 배경 이미지 (실제 경로)
+                nodes: [
+                    {
+                        node_id: "battery",
+                        label: "배터리",
+                        x: 50,
+                        y: 80,
+                        draggable: true,
+                    },
+                    {
+                        node_id: "resistor",
+                        label: "저항",
+                        x: 120,
+                        y: 80,
+                        draggable: true,
+                    },
+                    {
+                        node_id: "led",
+                        label: "LED",
+                        x: 200,
+                        y: 80,
+                        draggable: true,
+                    },
+                ],
+                correct_connections: [
+                    { from: "battery", to: "resistor" },
+                    { from: "resistor", to: "led" },
+                ],
+            }
+
+            const canvas = document.getElementById("diagramCanvas")
+            const ctx = canvas.getContext("2d")
+            const feedbackEl = document.getElementById("feedback")
+            const questionTitleEl = document.getElementById("questionTitle")
+
+            let nodes = []
+            let connections = []
+            let selectedNode = null
+            let isDrawingLine = false
+            let startNode = null
+
+            // 기본 초기화: 배경, 노드 그리기
+            function initDiagram() {
+                questionTitleEl.textContent = questionData.title
+                // 배경 이미지 (생략, 예시에서는 단색 배경)
+                // 노드 초기화
+                nodes = questionData.nodes.map((nd) => {
+                    return {
+                        ...nd,
+                        currentX: nd.x,
+                        currentY: nd.y,
+                        width: 80,
+                        height: 40,
+                    }
+                })
+                drawDiagram()
+            }
+
+            // 노드 그리기
+            function drawNodes() {
+                nodes.forEach((node) => {
+                    ctx.fillStyle = "#2563eb"
+                    ctx.fillRect(
+                        node.currentX,
+                        node.currentY,
+                        node.width,
+                        node.height
+                    )
+                    ctx.fillStyle = "#fff"
+                    ctx.font = "16px sans-serif"
+                    ctx.fillText(
+                        node.label,
+                        node.currentX + 10,
+                        node.currentY + 25
+                    )
+                })
+            }
+
+            // 연결선 그리기
+            function drawConnections() {
+                ctx.strokeStyle = "#2563eb"
+                ctx.lineWidth = 2
+                connections.forEach((conn) => {
+                    const fromNode = nodes.find((n) => n.node_id === conn.from)
+                    const toNode = nodes.find((n) => n.node_id === conn.to)
+                    if (fromNode && toNode) {
+                        ctx.beginPath()
+                        ctx.moveTo(
+                            fromNode.currentX + fromNode.width,
+                            fromNode.currentY + fromNode.height / 2
+                        )
+                        ctx.lineTo(
+                            toNode.currentX,
+                            toNode.currentY + toNode.height / 2
+                        )
+                        ctx.stroke()
+                    }
+                })
+            }
+
+            // 전체 다이어그램 그리기
+            function drawDiagram() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height)
+                // (배경 이미지 그리기 생략)
+                drawConnections()
+                drawNodes()
+            }
+
+            // 간단 드래그 기능
+            let offsetX, offsetY
+            canvas.addEventListener("mousedown", (e) => {
+                const mousePos = getMousePos(canvas, e)
+                selectedNode = nodes.find(
+                    (n) =>
+                        mousePos.x >= n.currentX &&
+                        mousePos.x <= n.currentX + n.width &&
+                        mousePos.y >= n.currentY &&
+                        mousePos.y <= n.currentY + n.height
+                )
+                if (selectedNode) {
+                    offsetX = mousePos.x - selectedNode.currentX
+                    offsetY = mousePos.y - selectedNode.currentY
+                }
+            })
+
+            canvas.addEventListener("mousemove", (e) => {
+                if (selectedNode) {
+                    const mousePos = getMousePos(canvas, e)
+                    selectedNode.currentX = mousePos.x - offsetX
+                    selectedNode.currentY = mousePos.y - offsetY
+                    drawDiagram()
+                }
+            })
+
+            canvas.addEventListener("mouseup", (e) => {
+                selectedNode = null
+            })
+
+            // 간단한 연결선 그리기: 노드 클릭 후 SHIFT 클릭 시 연결 시작
+            canvas.addEventListener("click", (e) => {
+                const mousePos = getMousePos(canvas, e)
+                const clickedNode = nodes.find(
+                    (n) =>
+                        mousePos.x >= n.currentX &&
+                        mousePos.x <= n.currentX + n.width &&
+                        mousePos.y >= n.currentY &&
+                        mousePos.y <= n.currentY + n.height
+                )
+                if (clickedNode) {
+                    if (!isDrawingLine) {
+                        // 시작 노드 선택
+                        startNode = clickedNode
+                        isDrawingLine = true
+                    } else {
+                        // 두 번째 노드 선택 → 연결 생성
+                        if (startNode.node_id !== clickedNode.node_id) {
+                            connections.push({
+                                from: startNode.node_id,
+                                to: clickedNode.node_id,
+                            })
+                        }
+                        isDrawingLine = false
+                        startNode = null
+                        drawDiagram()
+                    }
+                }
+            })
+
+            // 제출 채점
+            document
+                .getElementById("submitBtn")
+                .addEventListener("click", () => {
+                    let score = 0
+                    // 정답 연결과 학습자가 만든 연결 비교
+                    questionData.correct_connections.forEach((correctConn) => {
+                        const exists = connections.find(
+                            (conn) =>
+                                conn.from === correctConn.from &&
+                                conn.to === correctConn.to
+                        )
+                        if (exists) {
+                            score += 10
+                        }
+                    })
+                    feedbackEl.textContent = `채점 완료! 점수: ${score}점 (정답 연결 ${
+                        questionData.correct_connections.length
+                    }개 중 ${score / 10}개 맞춤)`
+                })
+
+            function getMousePos(canvas, evt) {
+                const rect = canvas.getBoundingClientRect()
+                return {
+                    x: evt.clientX - rect.left,
+                    y: evt.clientY - rect.top,
+                }
+            }
+
+            initDiagram()
+        </script>
+    </body>
+</html>

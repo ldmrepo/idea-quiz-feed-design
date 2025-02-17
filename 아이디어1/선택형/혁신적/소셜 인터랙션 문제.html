@@ -1,0 +1,345 @@
+<!-- 주요 구현 특징:
+
+1. 협업 기반 선택
+- 실시간 팀원 상태
+- 협업 인터페이스
+- 공동 답안 제출
+
+2. 투표 시스템
+- 실시간 투표 현황
+- 시각적 투표 바
+- 통계 표시
+
+3. 실시간 대결
+- 라이브 타이머
+- 팀별 점수
+- 진행 상황
+
+모바일 최적화:
+- 터치 친화적 UI
+- 반응형 레이아웃
+- 실시간 업데이트 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>소셜 인터랙션 문제</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --success: #22c55e;
+                --warning: #f59e0b;
+                --error: #ef4444;
+                --team-a: #3b82f6;
+                --team-b: #ec4899;
+                --gray-50: #f9fafb;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, system-ui, sans-serif;
+                background: var(--gray-50);
+                padding: 16px;
+            }
+
+            /* 협업 기반 선택 스타일 */
+            .collaboration-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+            }
+
+            .team-status {
+                padding: 16px;
+                display: flex;
+                gap: 12px;
+            }
+
+            .team-member {
+                padding: 8px 12px;
+                background: var(--gray-50);
+                border-radius: 20px;
+                font-size: 14px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .member-avatar {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                background: var(--primary);
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 12px;
+            }
+
+            .member-status {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: var(--success);
+            }
+
+            /* 투표 시스템 스타일 */
+            .vote-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+            }
+
+            .vote-option {
+                padding: 16px;
+                border-bottom: 1px solid var(--gray-200);
+            }
+
+            .vote-bar {
+                height: 8px;
+                background: var(--gray-200);
+                border-radius: 4px;
+                margin: 8px 0;
+                overflow: hidden;
+            }
+
+            .vote-progress {
+                height: 100%;
+                background: var(--primary);
+                transition: width 0.3s;
+            }
+
+            .vote-stats {
+                display: flex;
+                justify-content: space-between;
+                font-size: 14px;
+                color: var(--gray-700);
+            }
+
+            /* 실시간 대결 스타일 */
+            .battle-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+            }
+
+            .battle-header {
+                padding: 16px;
+                text-align: center;
+                border-bottom: 1px solid var(--gray-200);
+            }
+
+            .timer {
+                font-size: 24px;
+                font-weight: 600;
+                color: var(--primary);
+                margin-bottom: 8px;
+            }
+
+            .battle-teams {
+                display: flex;
+                padding: 16px;
+                gap: 12px;
+            }
+
+            .team-column {
+                flex: 1;
+                text-align: center;
+            }
+
+            .team-score {
+                font-size: 32px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .team-a {
+                color: var(--team-a);
+            }
+
+            .team-b {
+                color: var(--team-b);
+            }
+
+            .versus {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                font-weight: 600;
+                color: var(--gray-700);
+            }
+
+            .team-members {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                margin-top: 12px;
+            }
+
+            /* 공통 스타일 */
+            .card-header {
+                padding: 16px;
+                border-bottom: 1px solid var(--gray-200);
+            }
+
+            .card-title {
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+
+            .card-subtitle {
+                font-size: 14px;
+                color: var(--gray-700);
+            }
+
+            .action-button {
+                width: 100%;
+                padding: 12px;
+                border: none;
+                border-radius: 8px;
+                font-size: 15px;
+                font-weight: 600;
+                background: var(--primary);
+                color: white;
+                cursor: pointer;
+                margin-top: 12px;
+            }
+
+            .live-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                padding: 4px 8px;
+                background: var(--error);
+                color: white;
+                border-radius: 12px;
+                font-size: 12px;
+                font-weight: 500;
+            }
+
+            .live-badge::before {
+                content: "";
+                width: 6px;
+                height: 6px;
+                background: white;
+                border-radius: 50%;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 협업 기반 선택 -->
+        <div class="collaboration-card">
+            <div class="card-header">
+                <h2 class="card-title">팀 프로젝트 문제</h2>
+                <p class="card-subtitle">팀원들과 함께 해결해보세요</p>
+            </div>
+            <div class="team-status">
+                <div class="team-member">
+                    <div class="member-avatar">J</div>
+                    <span>재민</span>
+                    <div class="member-status"></div>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">S</div>
+                    <span>수진</span>
+                    <div class="member-status"></div>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">H</div>
+                    <span>현우</span>
+                    <div class="member-status"></div>
+                </div>
+            </div>
+            <div style="padding: 16px">
+                <button class="action-button">팀 답안 제출</button>
+            </div>
+        </div>
+
+        <!-- 투표 시스템 -->
+        <div class="vote-card">
+            <div class="card-header">
+                <h2 class="card-title">정답 투표</h2>
+                <p class="card-subtitle">가장 적절한 답안에 투표하세요</p>
+            </div>
+            <div class="vote-option">
+                <h3>답안 A</h3>
+                <div class="vote-bar">
+                    <div class="vote-progress" style="width: 65%"></div>
+                </div>
+                <div class="vote-stats">
+                    <span>65%</span>
+                    <span>42표</span>
+                </div>
+            </div>
+            <div class="vote-option">
+                <h3>답안 B</h3>
+                <div class="vote-bar">
+                    <div class="vote-progress" style="width: 35%"></div>
+                </div>
+                <div class="vote-stats">
+                    <span>35%</span>
+                    <span>23표</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 실시간 대결 -->
+        <div class="battle-card">
+            <div class="card-header">
+                <span class="live-badge">LIVE</span>
+                <h2 class="card-title" style="margin-top: 8px">실시간 대결</h2>
+                <p class="card-subtitle">5문제 스피드 퀴즈</p>
+            </div>
+            <div class="battle-header">
+                <div class="timer">02:45</div>
+                <div>남은 문제 3개</div>
+            </div>
+            <div class="battle-teams">
+                <div class="team-column">
+                    <div class="team-score team-a">2</div>
+                    <div>A팀</div>
+                    <div class="team-members">
+                        <div class="team-member">
+                            <div class="member-avatar">K</div>
+                            <span>김선생</span>
+                        </div>
+                        <div class="team-member">
+                            <div class="member-avatar">L</div>
+                            <span>이학생</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="versus">VS</div>
+                <div class="team-column">
+                    <div class="team-score team-b">1</div>
+                    <div>B팀</div>
+                    <div class="team-members">
+                        <div class="team-member">
+                            <div class="member-avatar">P</div>
+                            <span>박선생</span>
+                        </div>
+                        <div class="team-member">
+                            <div class="member-avatar">C</div>
+                            <span>최학생</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

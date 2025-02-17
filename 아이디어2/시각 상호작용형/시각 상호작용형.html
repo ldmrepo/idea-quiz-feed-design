@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <title>드래그앤드롭 조합형 예시</title>
+        <style>
+            body {
+                font-family: -apple-system, sans-serif;
+                margin: 0;
+                padding: 16px;
+                background: #f9fafb;
+            }
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+            }
+            .instruction {
+                margin-bottom: 8px;
+            }
+            .map-container {
+                position: relative;
+                width: 600px; /* 예시 */
+                height: 400px; /* 예시 */
+                background: url("asia_map.png") no-repeat center/cover;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                margin-bottom: 16px;
+            }
+            .dropzone {
+                position: absolute;
+                border: 2px dashed rgba(0, 0, 0, 0.2);
+            }
+            .draggable-list {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+            .draggable-item {
+                background: #2563eb;
+                color: #fff;
+                border-radius: 4px;
+                padding: 8px 12px;
+                cursor: move;
+                user-select: none;
+                width: max-content;
+            }
+            .dropzone.correct {
+                border-color: green;
+            }
+            .dropzone.wrong {
+                border-color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h2>드래그앤드롭 조합형 예시</h2>
+            <div class="instruction">
+                지도를 보고 아래 나라 이름을 올바른 위치로 드래그하세요.
+            </div>
+
+            <div class="map-container" id="mapContainer">
+                <!-- 드롭존을 JS에서 생성해 배치 -->
+            </div>
+            <div class="draggable-list" id="draggableList"></div>
+        </div>
+
+        <script>
+            // 예시 데이터
+            const questionData = {
+                background_image: "asia_map.png",
+                draggable_items: [
+                    { item_id: "korea", label: "대한민국" },
+                    { item_id: "japan", label: "일본" },
+                    { item_id: "china", label: "중국" },
+                ],
+                drop_zones: [
+                    {
+                        zone_id: "zone_korea",
+                        correct_item: "korea",
+                        x: 200,
+                        y: 150,
+                        width: 60,
+                        height: 40,
+                    },
+                    {
+                        zone_id: "zone_japan",
+                        correct_item: "japan",
+                        x: 300,
+                        y: 130,
+                        width: 60,
+                        height: 40,
+                    },
+                    {
+                        zone_id: "zone_china",
+                        correct_item: "china",
+                        x: 150,
+                        y: 120,
+                        width: 80,
+                        height: 60,
+                    },
+                ],
+            }
+
+            const mapContainer = document.getElementById("mapContainer")
+            const draggableList = document.getElementById("draggableList")
+
+            // 1) 드롭존 생성
+            function renderDropZones() {
+                questionData.drop_zones.forEach((zone) => {
+                    const dz = document.createElement("div")
+                    dz.className = "dropzone"
+                    dz.id = zone.zone_id
+                    dz.style.left = zone.x + "px"
+                    dz.style.top = zone.y + "px"
+                    dz.style.width = zone.width + "px"
+                    dz.style.height = zone.height + "px"
+
+                    // dragover 허용
+                    dz.addEventListener("dragover", (e) => {
+                        e.preventDefault()
+                    })
+                    // drop 이벤트
+                    dz.addEventListener("drop", (e) => {
+                        e.preventDefault()
+                        const data = e.dataTransfer.getData("text/plain")
+                        if (!data) return
+                        // 찾아서 아이템이 correct_item과 일치하는지 검사
+                        if (data === zone.correct_item) {
+                            dz.classList.add("correct")
+                            dz.classList.remove("wrong")
+                            console.log(`정답! ${data} => ${zone.zone_id}`)
+                        } else {
+                            dz.classList.add("wrong")
+                            setTimeout(() => {
+                                dz.classList.remove("wrong")
+                            }, 1000)
+                            console.log(`오답! ${data} => ${zone.zone_id}`)
+                        }
+                    })
+                    mapContainer.appendChild(dz)
+                })
+            }
+
+            // 2) 드래그 가능한 아이템 생성
+            function renderDraggables() {
+                questionData.draggable_items.forEach((item) => {
+                    const div = document.createElement("div")
+                    div.className = "draggable-item"
+                    div.textContent = item.label
+                    // drag 설정
+                    div.draggable = true
+                    div.addEventListener("dragstart", (e) => {
+                        e.dataTransfer.setData("text/plain", item.item_id)
+                    })
+                    draggableList.appendChild(div)
+                })
+            }
+
+            renderDropZones()
+            renderDraggables()
+        </script>
+    </body>
+</html>

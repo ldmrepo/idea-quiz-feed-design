@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
+        <title>기본 선택형 문제 입력기</title>
+        <style>
+            /* ========== 기본 리셋 ========== */
+            :root {
+                --primary: #2563eb;
+                --primary-light: #e0e7ff;
+                --success: #22c55e;
+                --danger: #ef4444;
+                --warning: #f59e0b;
+                --gray-50: #f9fafb;
+                --gray-100: #f3f4f6;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+                --gray-900: #111827;
+            }
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                -webkit-tap-highlight-color: transparent;
+            }
+            body {
+                font-family: -apple-system, system-ui, sans-serif;
+                background: var(--gray-50);
+                color: var(--gray-900);
+                line-height: 1.5;
+                padding-bottom: 80px; /* 하단 버튼 공간 확보 */
+            }
+
+            /* ========== 상단 유형 탭 ========== */
+            .question-type-tabs {
+                position: sticky;
+                top: 0;
+                background: white;
+                padding: 8px;
+                display: flex;
+                gap: 8px;
+                border-bottom: 1px solid var(--gray-200);
+                z-index: 10;
+            }
+            .tab-btn {
+                flex: 1;
+                text-align: center;
+                padding: 8px;
+                font-size: 14px;
+                border-radius: 20px;
+                border: 1px solid var(--gray-200);
+                color: var(--gray-700);
+                background: white;
+                cursor: pointer;
+            }
+            .tab-btn.active {
+                background: var(--primary);
+                color: white;
+                border-color: var(--primary);
+            }
+
+            /* ========== 문항 입력 폼 ========== */
+            .editor-container {
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 16px;
+            }
+            .form-group {
+                margin-bottom: 16px;
+            }
+            label {
+                display: block;
+                font-size: 14px;
+                font-weight: 600;
+                margin-bottom: 6px;
+                color: var(--gray-700);
+            }
+            input[type="text"],
+            textarea {
+                width: 100%;
+                padding: 12px;
+                font-size: 14px;
+                border: 1px solid var(--gray-200);
+                border-radius: 6px;
+                outline: none;
+                transition: border-color 0.2s;
+            }
+            input[type="text"]:focus,
+            textarea:focus {
+                border-color: var(--primary);
+            }
+
+            /* ========== 옵션 리스트 ========== */
+            .option-list {
+                margin-top: 8px;
+            }
+            .option-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 8px;
+            }
+            .option-item input[type="text"] {
+                flex: 1;
+            }
+            .remove-btn {
+                background: var(--danger);
+                color: #fff;
+                border: none;
+                border-radius: 4px;
+                padding: 8px;
+                cursor: pointer;
+            }
+            .remove-btn:hover {
+                opacity: 0.8;
+            }
+
+            .add-option-btn {
+                margin-top: 8px;
+                display: inline-block;
+                padding: 8px 12px;
+                border-radius: 4px;
+                border: 1px solid var(--gray-200);
+                background: var(--gray-100);
+                color: var(--gray-700);
+                cursor: pointer;
+                font-size: 14px;
+            }
+            .add-option-btn:hover {
+                background: var(--gray-200);
+            }
+
+            /* ========== 미리보기 섹션 ========== */
+            .preview-container {
+                margin-top: 24px;
+            }
+            .preview-title {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 8px;
+                color: var(--gray-700);
+            }
+            .preview-card {
+                background: white;
+                border: 1px solid var(--gray-200);
+                border-radius: 8px;
+                padding: 16px;
+            }
+            .preview-question-text {
+                font-size: 15px;
+                margin-bottom: 16px;
+            }
+
+            /* ========== 하단 고정 버튼 ========== */
+            .bottom-buttons {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                border-top: 1px solid var(--gray-200);
+                background: white;
+                display: flex;
+                gap: 12px;
+                padding: 12px;
+                padding-bottom: calc(12px + env(safe-area-inset-bottom));
+                z-index: 20;
+            }
+            .btn {
+                flex: 1;
+                padding: 14px;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                border: none;
+            }
+            .btn-cancel {
+                background: var(--gray-100);
+                color: var(--gray-700);
+            }
+            .btn-save {
+                background: var(--primary);
+                color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 유형 탭 -->
+        <div class="question-type-tabs">
+            <button class="tab-btn active" data-type="4-single">4지선다</button>
+            <button class="tab-btn" data-type="5-single">5지선다</button>
+            <button class="tab-btn" data-type="multi">다중 선택</button>
+            <button class="tab-btn" data-type="ox">OX형</button>
+            <button class="tab-btn" data-type="tf">진위형</button>
+        </div>
+
+        <div class="editor-container">
+            <!-- 문제 텍스트 입력 -->
+            <div class="form-group">
+                <label for="questionText">문제 내용</label>
+                <textarea
+                    id="questionText"
+                    rows="3"
+                    placeholder="문제 설명을 입력하세요"
+                ></textarea>
+            </div>
+
+            <!-- 옵션 입력 (4지/5지/다중 선택형만 표시) -->
+            <div class="form-group" id="optionEditor" style="display: block">
+                <label>선택지 입력</label>
+                <div class="option-list" id="optionList"></div>
+                <button class="add-option-btn" id="addOptionBtn">
+                    + 선택지 추가
+                </button>
+            </div>
+
+            <!-- OX형/진위형은 고정 옵션이므로 별도 UI (자동 미리보기에서 처리) -->
+
+            <!-- 미리보기 -->
+            <div class="preview-container">
+                <div class="preview-title">미리보기</div>
+                <div class="preview-card" id="previewCard">
+                    <p class="preview-question-text" id="previewQuestion">
+                        문제 내용이 여기에 표시됩니다.
+                    </p>
+                    <!-- 미리보기 옵션 영역 -->
+                    <div id="previewOptions"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 하단 고정 버튼 -->
+        <div class="bottom-buttons">
+            <button class="btn btn-cancel">취소</button>
+            <button class="btn btn-save" id="saveBtn">저장하기</button>
+        </div>
+
+        <script>
+            // ========== 전역 상태 ==========
+            let currentType = "4-single" // 기본은 4지선다
+            let options = ["", ""] // 기본 2개 옵션(4지선다는 4개로 시작해도 됨)
+            const questionTextEl = document.getElementById("questionText")
+            const optionListEl = document.getElementById("optionList")
+            const addOptionBtn = document.getElementById("addOptionBtn")
+            const previewQuestionEl = document.getElementById("previewQuestion")
+            const previewOptionsEl = document.getElementById("previewOptions")
+            const optionEditor = document.getElementById("optionEditor")
+
+            // ========== 탭 전환 ==========
+            const tabs = document.querySelectorAll(".tab-btn")
+            tabs.forEach((tab) => {
+                tab.addEventListener("click", () => {
+                    tabs.forEach((t) => t.classList.remove("active"))
+                    tab.classList.add("active")
+                    currentType = tab.dataset.type
+                    refreshUI()
+                })
+            })
+
+            // ========== 옵션 리스트 렌더링 ==========
+            function renderOptions() {
+                optionListEl.innerHTML = "" // 초기화
+
+                // 현재 유형에 따라 기본 옵션 개수 설정
+                // 예: 4지선다 -> 4개, 5지선다 -> 5개 등
+                let requiredCount = 0
+                if (currentType === "4-single") requiredCount = 4
+                else if (currentType === "5-single") requiredCount = 5
+                else if (currentType === "multi") requiredCount = 3 // 예시(기본값)
+
+                // options 배열 길이가 requiredCount보다 작으면 채우기
+                while (options.length < requiredCount) {
+                    options.push("")
+                }
+
+                // OX/TF 유형은 option editor 숨김
+                if (currentType === "ox" || currentType === "tf") {
+                    optionEditor.style.display = "none"
+                    return
+                } else {
+                    optionEditor.style.display = "block"
+                }
+
+                // 옵션 입력칸 생성
+                options.forEach((opt, idx) => {
+                    const item = document.createElement("div")
+                    item.className = "option-item"
+
+                    const inp = document.createElement("input")
+                    inp.type = "text"
+                    inp.value = opt
+                    inp.placeholder = idx + 1 + "번 선택지"
+                    inp.addEventListener("input", (e) => {
+                        options[idx] = e.target.value
+                        updatePreview()
+                    })
+
+                    // 옵션 제거 버튼
+                    const removeBtn = document.createElement("button")
+                    removeBtn.textContent = "x"
+                    removeBtn.className = "remove-btn"
+                    removeBtn.addEventListener("click", () => {
+                        options.splice(idx, 1)
+                        renderOptions()
+                        updatePreview()
+                    })
+
+                    item.appendChild(inp)
+                    item.appendChild(removeBtn)
+                    optionListEl.appendChild(item)
+                })
+            }
+
+            // ========== "선택지 추가" 버튼 ==========
+            addOptionBtn.addEventListener("click", () => {
+                options.push("")
+                renderOptions()
+                updatePreview()
+            })
+
+            // ========== 미리보기 업데이트 ==========
+            function updatePreview() {
+                // 문제 내용
+                const textVal = questionTextEl.value.trim()
+                previewQuestionEl.textContent =
+                    textVal || "문제 내용이 여기에 표시됩니다."
+
+                // 옵션 UI 초기화
+                previewOptionsEl.innerHTML = ""
+
+                // 유형별로 옵션 표시 방법 달리하기
+                if (currentType === "ox") {
+                    // OX형 고정
+                    const oxContainer = document.createElement("div")
+                    oxContainer.style.display = "flex"
+                    oxContainer.style.gap = "8px"
+
+                    const oBtn = document.createElement("button")
+                    oBtn.textContent = "O"
+                    oBtn.style.flex = "1"
+                    oBtn.style.padding = "16px"
+                    oBtn.style.border = "1px solid var(--gray-200)"
+                    oBtn.style.borderRadius = "8px"
+                    oBtn.style.background = "white"
+                    oBtn.style.fontSize = "18px"
+
+                    const xBtn = oBtn.cloneNode(true)
+                    xBtn.textContent = "X"
+
+                    oxContainer.appendChild(oBtn)
+                    oxContainer.appendChild(xBtn)
+                    previewOptionsEl.appendChild(oxContainer)
+                } else if (currentType === "tf") {
+                    // 진위형 고정
+                    const trueBtn = document.createElement("button")
+                    trueBtn.textContent = "참(True)"
+                    trueBtn.style.display = "block"
+                    trueBtn.style.width = "100%"
+                    trueBtn.style.textAlign = "center"
+                    trueBtn.style.padding = "12px"
+                    trueBtn.style.border = "1px solid var(--gray-200)"
+                    trueBtn.style.borderRadius = "8px"
+                    trueBtn.style.background = "white"
+                    trueBtn.style.marginBottom = "8px"
+
+                    const falseBtn = trueBtn.cloneNode(true)
+                    falseBtn.textContent = "거짓(False)"
+
+                    previewOptionsEl.appendChild(trueBtn)
+                    previewOptionsEl.appendChild(falseBtn)
+                } else {
+                    // 4지선다, 5지선다, 다중 선택
+                    options.forEach((optText, idx) => {
+                        const wrap = document.createElement("div")
+                        wrap.style.display = "flex"
+                        wrap.style.alignItems = "center"
+                        wrap.style.marginBottom = "8px"
+
+                        const mark = document.createElement("div")
+                        mark.style.width = "24px"
+                        mark.style.height = "24px"
+                        mark.style.border = "2px solid var(--gray-200)"
+                        mark.style.borderRadius =
+                            currentType === "multi" ? "4px" : "50%"
+                        mark.style.marginRight = "8px"
+
+                        const label = document.createElement("span")
+                        label.textContent = optText || idx + 1 + "번 선택지"
+                        label.style.fontSize = "15px"
+
+                        wrap.appendChild(mark)
+                        wrap.appendChild(label)
+                        previewOptionsEl.appendChild(wrap)
+                    })
+                }
+            }
+
+            // ========== UI 갱신 ==========
+            function refreshUI() {
+                renderOptions()
+                updatePreview()
+            }
+
+            // 초기에 UI 렌더링
+            refreshUI()
+
+            // ========== 저장하기 ==========
+            const saveBtn = document.getElementById("saveBtn")
+            saveBtn.addEventListener("click", () => {
+                const questionData = {
+                    type: currentType,
+                    text: questionTextEl.value.trim(),
+                    options:
+                        currentType === "ox"
+                            ? ["O", "X"]
+                            : currentType === "tf"
+                            ? ["True", "False"]
+                            : [...options],
+                }
+                // 실제 저장 로직(서버 전송 등) 예시
+                console.log("[저장] 문항 데이터:", questionData)
+                alert("문항이 저장되었습니다.")
+            })
+        </script>
+    </body>
+</html>

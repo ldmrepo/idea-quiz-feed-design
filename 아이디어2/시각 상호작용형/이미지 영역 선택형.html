@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <title>이미지 영역 선택형 (핫스팟) 예시</title>
+        <style>
+            body {
+                font-family: -apple-system, sans-serif;
+                margin: 0;
+                padding: 16px;
+                background: #f9fafb;
+            }
+            .container {
+                max-width: 640px;
+                margin: 0 auto;
+            }
+            .question-title {
+                font-size: 20px;
+                font-weight: 600;
+                margin-bottom: 8px;
+                text-align: center;
+            }
+            .instruction {
+                text-align: center;
+                margin-bottom: 16px;
+                color: #555;
+            }
+            .image-container {
+                position: relative;
+                display: block;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                overflow: hidden;
+            }
+            .image-container img {
+                width: 100%;
+                display: block;
+            }
+            .hotspot {
+                position: absolute;
+                border: 2px solid transparent;
+                cursor: pointer;
+                transition: border 0.2s;
+            }
+            .hotspot:hover {
+                border-color: #2563eb;
+            }
+            .hotspot.correct {
+                border-color: green;
+            }
+            .hotspot.wrong {
+                border-color: red;
+            }
+            .feedback {
+                margin-top: 16px;
+                padding: 12px;
+                background: #e0e7ff;
+                border: 1px solid #2563eb;
+                border-radius: 6px;
+                font-size: 16px;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="question-title" id="questionTitle"></div>
+            <div class="instruction" id="instruction">
+                문제를 읽고 해당 영역을 선택하세요.
+            </div>
+            <div class="image-container" id="imageContainer">
+                <img id="bgImage" src="" alt="문제 이미지" />
+                <!-- 핫스팟 영역은 JS로 동적 생성 -->
+            </div>
+            <div class="feedback" id="feedback" style="display: none"></div>
+        </div>
+
+        <script>
+            // 문제 데이터 (실제 서버 API 호출 시 동적으로 로드)
+            const questionData = {
+                question_id: 2001,
+                type: "image_hotspot",
+                title: "인체 구조에서 간 찾기",
+                instruction:
+                    "아래 인체 이미지에서 간이 있는 영역을 선택하세요.",
+                image_url: "human_body.png", // 실제 이미지 경로
+                hotspots: [
+                    {
+                        id: "liver",
+                        coords: [120, 160, 180, 220],
+                        correct: true,
+                    },
+                    {
+                        id: "heart",
+                        coords: [100, 100, 140, 140],
+                        correct: false,
+                    },
+                ],
+            }
+
+            const questionTitleEl = document.getElementById("questionTitle")
+            const instructionEl = document.getElementById("instruction")
+            const imageContainerEl = document.getElementById("imageContainer")
+            const bgImageEl = document.getElementById("bgImage")
+            const feedbackEl = document.getElementById("feedback")
+
+            // 문제 및 핫스팟 렌더링 함수
+            function renderQuestion() {
+                questionTitleEl.textContent = questionData.title
+                instructionEl.textContent = questionData.instruction
+                bgImageEl.src = questionData.image_url
+                bgImageEl.onload = () => {
+                    // 이미지 로드 후 핫스팟 생성
+                    questionData.hotspots.forEach((hotspot) => {
+                        const [x1, y1, x2, y2] = hotspot.coords
+                        const hotspotEl = document.createElement("div")
+                        hotspotEl.className = "hotspot"
+                        hotspotEl.style.left = x1 + "px"
+                        hotspotEl.style.top = y1 + "px"
+                        hotspotEl.style.width = x2 - x1 + "px"
+                        hotspotEl.style.height = y2 - y1 + "px"
+                        hotspotEl.dataset.id = hotspot.id
+                        hotspotEl.addEventListener("click", () =>
+                            handleHotspotClick(hotspot, hotspotEl)
+                        )
+                        imageContainerEl.appendChild(hotspotEl)
+                    })
+                }
+            }
+
+            // 핫스팟 클릭 핸들러
+            function handleHotspotClick(hotspot, elem) {
+                // 피드백 표시
+                feedbackEl.style.display = "block"
+                if (hotspot.correct) {
+                    elem.classList.add("correct")
+                    feedbackEl.textContent =
+                        "정답입니다! 간이 있는 영역을 선택하셨습니다."
+                    feedbackEl.style.borderColor = "green"
+                } else {
+                    elem.classList.add("wrong")
+                    feedbackEl.textContent = "오답입니다. 다시 시도해보세요."
+                    feedbackEl.style.borderColor = "red"
+                }
+                // 클릭 후 선택 불가능하게 하거나, 재시도 버튼 제공 가능
+            }
+
+            // 초기 실행
+            renderQuestion()
+        </script>
+    </body>
+</html>

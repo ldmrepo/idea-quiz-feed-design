@@ -1,0 +1,479 @@
+<!-- 소셜 피드 페이지의 주요 특징을 설명드리겠습니다:
+
+1. 레이아웃 구성:
+- 스토리바: 최신 활동 표시
+- 왼쪽 사이드바: 프로필/통계
+- 메인 피드: 게시물 표시
+- 오른쪽 사이드바: 트렌딩 문제
+
+2. 소셜 기능:
+- 게시물 작성/공유
+- 좋아요/댓글
+- 저장 기능
+- 실시간 활동
+
+3. 학습 요소:
+- 문제 풀이 현황
+- 정답률 통계
+- 트렌딩 문제
+- 학습 노트 공유
+
+4. 인터랙션:
+- 스토리 보기
+- 게시물 작성
+- 소셜 액션
+- 문제 저장
+
+5. 디자인 특징:
+- 깔끔한 카드 디자인
+- 부드러운 색상
+- 직관적인 아이콘
+- 반응형 레이아웃 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>피드</title>
+        <style>
+            :root {
+                --primary-color: #6c5ce7;
+                --primary-light: #a29bfe;
+                --success-color: #00b894;
+                --warning-color: #fdcb6e;
+                --danger-color: #ff7675;
+                --border-color: #e5e7eb;
+                --background-color: #f8f9fa;
+                --surface-color: #ffffff;
+                --text-primary: #2d3436;
+                --text-secondary: #636e72;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+                display: grid;
+                grid-template-columns: 300px 1fr 300px;
+                gap: 24px;
+            }
+
+            /* Story Bar */
+            .stories-bar {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 20px;
+                margin-bottom: 24px;
+                grid-column: 1 / -1;
+            }
+
+            .stories-container {
+                display: flex;
+                gap: 16px;
+                overflow-x: auto;
+                padding-bottom: 8px;
+            }
+
+            .story-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .story-avatar {
+                width: 64px;
+                height: 64px;
+                border-radius: 32px;
+                background: linear-gradient(
+                    45deg,
+                    var(--primary-color),
+                    var(--primary-light)
+                );
+                padding: 3px;
+            }
+
+            .story-avatar-inner {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                background: var(--surface-color);
+            }
+
+            .story-name {
+                font-size: 12px;
+                color: var(--text-secondary);
+            }
+
+            /* Profile Section */
+            .profile-section {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 20px;
+            }
+
+            .profile-info {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 20px;
+            }
+
+            .profile-avatar {
+                width: 80px;
+                height: 80px;
+                border-radius: 40px;
+                background: var(--primary-light);
+            }
+
+            .profile-name {
+                font-weight: 600;
+                font-size: 16px;
+            }
+
+            .profile-stats {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                text-align: center;
+                padding: 16px 0;
+                border-top: 1px solid var(--border-color);
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .stat-item {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .stat-value {
+                font-weight: 600;
+            }
+
+            .stat-label {
+                font-size: 12px;
+                color: var(--text-secondary);
+            }
+
+            /* Feed Content */
+            .feed-content {
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            /* Create Post */
+            .create-post {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 20px;
+            }
+
+            .post-input {
+                width: 100%;
+                padding: 12px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                margin-bottom: 12px;
+                resize: none;
+                font-family: inherit;
+            }
+
+            .post-tools {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .tool-buttons {
+                display: flex;
+                gap: 12px;
+            }
+
+            .tool-button {
+                padding: 8px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .tool-button:hover {
+                background: var(--background-color);
+            }
+
+            .post-button {
+                padding: 8px 16px;
+                background: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 500;
+            }
+
+            /* Post Card */
+            .post-card {
+                background: var(--surface-color);
+                border-radius: 16px;
+                overflow: hidden;
+            }
+
+            .post-header {
+                display: flex;
+                align-items: center;
+                padding: 16px;
+                gap: 12px;
+            }
+
+            .post-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 20px;
+                background: var(--primary-light);
+            }
+
+            .post-user-info {
+                flex: 1;
+            }
+
+            .post-username {
+                font-weight: 500;
+            }
+
+            .post-time {
+                font-size: 12px;
+                color: var(--text-secondary);
+            }
+
+            .post-content {
+                padding: 0 16px 16px;
+            }
+
+            .post-image {
+                width: 100%;
+                height: 300px;
+                background: var(--background-color);
+                margin: 12px 0;
+                border-radius: 8px;
+            }
+
+            .post-actions {
+                display: flex;
+                padding: 12px 16px;
+                border-top: 1px solid var(--border-color);
+                gap: 16px;
+            }
+
+            .action-button {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                color: var(--text-secondary);
+                cursor: pointer;
+                font-size: 14px;
+            }
+
+            /* Trending Section */
+            .trending-section {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 20px;
+            }
+
+            .section-title {
+                font-weight: 600;
+                margin-bottom: 16px;
+            }
+
+            .trending-item {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .trending-item:hover {
+                background: var(--background-color);
+            }
+
+            .trending-image {
+                width: 48px;
+                height: 48px;
+                border-radius: 8px;
+                background: var(--primary-light);
+            }
+
+            .trending-info {
+                flex: 1;
+            }
+
+            .trending-title {
+                font-size: 14px;
+                font-weight: 500;
+                margin-bottom: 4px;
+            }
+
+            .trending-meta {
+                font-size: 12px;
+                color: var(--text-secondary);
+            }
+
+            @media (max-width: 1200px) {
+                .container {
+                    grid-template-columns: 1fr;
+                }
+
+                .profile-section,
+                .trending-section {
+                    display: none;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Stories Bar -->
+            <div class="stories-bar">
+                <div class="stories-container">
+                    <div class="story-item">
+                        <div class="story-avatar">
+                            <div class="story-avatar-inner"></div>
+                        </div>
+                        <span class="story-name">내 스토리</span>
+                    </div>
+                    <div class="story-item">
+                        <div class="story-avatar">
+                            <div class="story-avatar-inner"></div>
+                        </div>
+                        <span class="story-name">수학왕</span>
+                    </div>
+                    <div class="story-item">
+                        <div class="story-avatar">
+                            <div class="story-avatar-inner"></div>
+                        </div>
+                        <span class="story-name">과학달인</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Left Sidebar - Profile -->
+            <div class="profile-section">
+                <div class="profile-info">
+                    <div class="profile-avatar"></div>
+                    <div class="profile-name">김공부</div>
+                    <div class="profile-bio">함께 성장하는 공부러!</div>
+                </div>
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <span class="stat-value">142</span>
+                        <span class="stat-label">문제 수</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">85%</span>
+                        <span class="stat-label">정답률</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">28</span>
+                        <span class="stat-label">친구</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Feed -->
+            <div class="feed-content">
+                <!-- Create Post -->
+                <div class="create-post">
+                    <textarea
+                        class="post-input"
+                        placeholder="무엇을 공유하고 싶으신가요?"
+                    ></textarea>
+                    <div class="post-tools">
+                        <div class="tool-buttons">
+                            <div class="tool-button">📷</div>
+                            <div class="tool-button">📝</div>
+                            <div class="tool-button">🎯</div>
+                        </div>
+                        <button class="post-button">공유하기</button>
+                    </div>
+                </div>
+
+                <!-- Posts -->
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="post-avatar"></div>
+                        <div class="post-user-info">
+                            <div class="post-username">수학왕</div>
+                            <div class="post-time">2시간 전</div>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <p>오늘의 도전 문제를 풀어봤어요! 😊</p>
+                        <div class="post-image"></div>
+                    </div>
+                    <div class="post-actions">
+                        <div class="action-button">👍 좋아요 24</div>
+                        <div class="action-button">💬 댓글 8</div>
+                        <div class="action-button">🔖 저장</div>
+                    </div>
+                </div>
+
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="post-avatar"></div>
+                        <div class="post-user-info">
+                            <div class="post-username">과학달인</div>
+                            <div class="post-time">4시간 전</div>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <p>물리 개념 정리 노트 공유합니다 📚✨</p>
+                        <div class="post-image"></div>
+                    </div>
+                    <div class="post-actions">
+                        <div class="action-button">👍 좋아요 42</div>
+                        <div class="action-button">💬 댓글 15</div>
+                        <div class="action-button">🔖 저장</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar - Trending -->
+            <div class="trending-section">
+                <h3 class="section-title">트렌딩 문제</h3>
+                <div class="trending-item">
+                    <div class="trending-image"></div>
+                    <div class="trending-info">
+                        <div class="trending-title">수능 수학 고난도 문제</div>
+                        <div class="trending-meta">풀이 중 1,245명</div>
+                    </div>
+                </div>
+                <div class="trending-item">
+                    <div class="trending-image"></div>
+                    <div class="trending-info">
+                        <div class="trending-title">물리학 실전 문제</div>
+                        <div class="trending-meta">풀이 중 856명</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

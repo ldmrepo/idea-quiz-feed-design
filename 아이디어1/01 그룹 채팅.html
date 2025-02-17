@@ -1,0 +1,462 @@
+<!-- 그룹 채팅 페이지를 디자인하겠습니다.
+
+
+
+
+
+
+
+
+
+그룹 채팅 페이지의 주요 특징을 설명드리겠습니다:
+
+1. 채팅방 목록:
+- 검색 기능
+- 채팅방 리스트
+- 미리보기
+- 활성화 상태
+
+2. 메인 채팅:
+- 메시지 표시
+- 입력 영역
+- 파일 첨부
+- 이모티콘
+
+3. 멤버 패널:
+- 참여자 목록
+- 온라인 상태
+- 역할 표시
+- 빠른 멘션
+
+4. 헤더 기능:
+- 그룹 정보
+- 파일 첨부
+- 멤버 관리
+- 설정
+
+5. 반응형 디자인:
+- 모바일 대응
+- 패널 숨김
+- 유동적 레이아웃
+- 터치 최적화
+
+추가하거나 수정하고 싶은 부분이 있다면 말씀해 주세요! -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>그룹 채팅</title>
+        <style>
+            :root {
+                --primary-color: #6c5ce7;
+                --primary-light: #a29bfe;
+                --success-color: #00b894;
+                --warning-color: #fdcb6e;
+                --danger-color: #ff7675;
+                --surface-color: #ffffff;
+                --background-color: #f8f9fa;
+                --text-primary: #2d3436;
+                --text-secondary: #636e72;
+                --chat-background: #edf2f7;
+                --chat-me: #e3f2fd;
+                --chat-other: white;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+                height: 100vh;
+                display: flex;
+            }
+
+            /* Chat Layout */
+            .chat-container {
+                display: grid;
+                grid-template-columns: 300px 1fr 300px;
+                width: 100%;
+                height: 100vh;
+                background: var(--surface-color);
+            }
+
+            /* Chat List */
+            .chat-list {
+                border-right: 1px solid var(--border-color);
+                background: var(--surface-color);
+                overflow-y: auto;
+            }
+
+            .list-header {
+                padding: 20px;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .search-bar {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                margin-bottom: 16px;
+            }
+
+            .chat-rooms {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .chat-room {
+                padding: 16px;
+                display: flex;
+                gap: 12px;
+                cursor: pointer;
+                transition: background 0.2s ease;
+            }
+
+            .chat-room:hover {
+                background: var(--background-color);
+            }
+
+            .chat-room.active {
+                background: var(--primary-light);
+                color: white;
+            }
+
+            .room-avatar {
+                width: 48px;
+                height: 48px;
+                border-radius: 24px;
+                background: var(--primary-light);
+            }
+
+            .room-info {
+                flex: 1;
+            }
+
+            .room-name {
+                font-weight: 500;
+                margin-bottom: 4px;
+            }
+
+            .room-preview {
+                font-size: 14px;
+                color: var(--text-secondary);
+            }
+
+            /* Main Chat */
+            .chat-main {
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+            }
+
+            .chat-header {
+                padding: 20px;
+                border-bottom: 1px solid var(--border-color);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .header-info {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .header-actions {
+                display: flex;
+                gap: 16px;
+            }
+
+            .action-button {
+                padding: 8px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: background 0.2s ease;
+            }
+
+            .action-button:hover {
+                background: var(--background-color);
+            }
+
+            .chat-messages {
+                flex: 1;
+                background: var(--chat-background);
+                padding: 20px;
+                overflow-y: auto;
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .message {
+                max-width: 70%;
+                display: flex;
+                gap: 12px;
+            }
+
+            .message.me {
+                align-self: flex-end;
+                flex-direction: row-reverse;
+            }
+
+            .message-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 20px;
+                background: var(--primary-light);
+            }
+
+            .message-content {
+                padding: 12px 16px;
+                border-radius: 12px;
+                background: var(--chat-other);
+            }
+
+            .message.me .message-content {
+                background: var(--chat-me);
+            }
+
+            .message-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 4px;
+                font-size: 14px;
+            }
+
+            .message-sender {
+                font-weight: 500;
+            }
+
+            .message-time {
+                color: var(--text-secondary);
+            }
+
+            .chat-input {
+                padding: 20px;
+                border-top: 1px solid var(--border-color);
+                display: flex;
+                gap: 12px;
+            }
+
+            .input-field {
+                flex: 1;
+                padding: 12px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                resize: none;
+            }
+
+            .send-button {
+                padding: 12px 24px;
+                background: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+            }
+
+            /* Members Panel */
+            .members-panel {
+                border-left: 1px solid var(--border-color);
+                background: var(--surface-color);
+                padding: 20px;
+            }
+
+            .panel-header {
+                margin-bottom: 20px;
+                font-weight: 600;
+            }
+
+            .members-list {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .member-item {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 8px;
+                border-radius: 8px;
+                cursor: pointer;
+            }
+
+            .member-item:hover {
+                background: var(--background-color);
+            }
+
+            .member-avatar {
+                width: 32px;
+                height: 32px;
+                border-radius: 16px;
+                background: var(--primary-light);
+            }
+
+            .member-info {
+                flex: 1;
+            }
+
+            .member-name {
+                font-weight: 500;
+                font-size: 14px;
+            }
+
+            .member-status {
+                font-size: 12px;
+                color: var(--text-secondary);
+            }
+
+            .online-badge {
+                width: 8px;
+                height: 8px;
+                border-radius: 4px;
+                background: var(--success-color);
+            }
+
+            @media (max-width: 1200px) {
+                .chat-container {
+                    grid-template-columns: 300px 1fr;
+                }
+
+                .members-panel {
+                    display: none;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .chat-container {
+                    grid-template-columns: 1fr;
+                }
+
+                .chat-list {
+                    display: none;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="chat-container">
+            <!-- Chat List -->
+            <div class="chat-list">
+                <div class="list-header">
+                    <input
+                        type="text"
+                        class="search-bar"
+                        placeholder="채팅방 검색..."
+                    />
+                </div>
+                <div class="chat-rooms">
+                    <div class="chat-room active">
+                        <div class="room-avatar"></div>
+                        <div class="room-info">
+                            <div class="room-name">수능 수학 스터디</div>
+                            <div class="room-preview">
+                                오늘의 문제를 풀어보세요!
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chat-room">
+                        <div class="room-avatar"></div>
+                        <div class="room-info">
+                            <div class="room-name">과학 탐구 모임</div>
+                            <div class="room-preview">
+                                실험 결과를 공유해주세요.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Chat -->
+            <div class="chat-main">
+                <div class="chat-header">
+                    <div class="header-info">
+                        <div class="room-avatar"></div>
+                        <div>
+                            <div class="room-name">수능 수학 스터디</div>
+                            <div class="room-preview">24명 참여 중</div>
+                        </div>
+                    </div>
+                    <div class="header-actions">
+                        <div class="action-button">📎</div>
+                        <div class="action-button">👥</div>
+                        <div class="action-button">⚙️</div>
+                    </div>
+                </div>
+
+                <div class="chat-messages">
+                    <div class="message">
+                        <div class="message-avatar"></div>
+                        <div class="message-content">
+                            <div class="message-header">
+                                <span class="message-sender">수학왕</span>
+                                <span class="message-time">10:30</span>
+                            </div>
+                            <div class="message-text">
+                                이번 문제 어려웠네요. 풀이 과정을 공유해주실 수
+                                있나요?
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="message me">
+                        <div class="message-content">
+                            <div class="message-header">
+                                <span class="message-sender">나</span>
+                                <span class="message-time">10:32</span>
+                            </div>
+                            <div class="message-text">
+                                네, 제가 풀이 과정을 정리해서 올려드릴게요!
+                            </div>
+                        </div>
+                        <div class="message-avatar"></div>
+                    </div>
+                </div>
+
+                <div class="chat-input">
+                    <textarea
+                        class="input-field"
+                        placeholder="메시지를 입력하세요..."
+                    ></textarea>
+                    <button class="send-button">전송</button>
+                </div>
+            </div>
+
+            <!-- Members Panel -->
+            <div class="members-panel">
+                <div class="panel-header">참여자 (24)</div>
+                <div class="members-list">
+                    <div class="member-item">
+                        <div class="member-avatar"></div>
+                        <div class="member-info">
+                            <div class="member-name">수학왕</div>
+                            <div class="member-status">온라인</div>
+                        </div>
+                        <div class="online-badge"></div>
+                    </div>
+
+                    <div class="member-item">
+                        <div class="member-avatar"></div>
+                        <div class="member-info">
+                            <div class="member-name">미적분달인</div>
+                            <div class="member-status">5분 전</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

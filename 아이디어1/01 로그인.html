@@ -1,0 +1,339 @@
+<!-- 로그인 페이지의 주요 특징을 설명드리겠습니다:
+
+1. 소셜 로그인:
+- Google 로그인
+- 카카오톡 로그인
+- 네이버 로그인
+- Apple 로그인
+
+2. 디자인 요소:
+- 깔끔한 레이아웃
+- 브랜드별 색상
+- 시각적 아이콘
+- 부드러운 애니메이션
+
+3. 일반 로그인:
+- 이메일 입력
+- 비밀번호 입력
+- 회원가입 링크
+- 비밀번호 찾기
+
+4. UI/UX 개선:
+- 반응형 디자인
+- 터치 친화적
+- 명확한 피드백
+- 접근성 고려
+
+5. 부가 기능:
+- 이용약관 링크
+- 개인정보처리방침
+- 도움말 접근
+- 간편한 회원가입 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>로그인</title>
+        <style>
+            /* Variables */
+            :root {
+                --primary-color: #0095f6;
+                --google-color: #ea4335;
+                --kakao-color: #fee500;
+                --naver-color: #03c75a;
+                --apple-color: #000000;
+                --border-color: #dbdbdb;
+                --background-color: #fafafa;
+                --surface-color: #ffffff;
+                --text-primary: #262626;
+                --text-secondary: #737373;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+            }
+
+            .login-container {
+                width: 100%;
+                max-width: 400px;
+                padding: 20px;
+            }
+
+            /* Logo Section */
+            .logo-section {
+                text-align: center;
+                margin-bottom: 32px;
+            }
+
+            .logo {
+                font-size: 2rem;
+                font-weight: bold;
+                color: var(--text-primary);
+                margin-bottom: 12px;
+            }
+
+            .subtitle {
+                color: var(--text-secondary);
+                font-size: 1rem;
+            }
+
+            /* Login Form */
+            .login-form {
+                background: var(--surface-color);
+                border: 1px solid var(--border-color);
+                border-radius: 12px;
+                padding: 32px 24px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            }
+
+            /* Social Login Buttons */
+            .social-login {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                margin-bottom: 24px;
+            }
+
+            .social-button {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                padding: 12px;
+                border-radius: 8px;
+                border: none;
+                font-size: 1rem;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .social-button:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .google-login {
+                background-color: white;
+                color: var(--text-primary);
+                border: 1px solid var(--border-color);
+            }
+
+            .kakao-login {
+                background-color: var(--kakao-color);
+                color: var(--text-primary);
+            }
+
+            .naver-login {
+                background-color: var(--naver-color);
+                color: white;
+            }
+
+            .apple-login {
+                background-color: var(--apple-color);
+                color: white;
+            }
+
+            .social-icon {
+                width: 24px;
+                height: 24px;
+                object-fit: contain;
+            }
+
+            /* Divider */
+            .divider {
+                display: flex;
+                align-items: center;
+                text-align: center;
+                margin: 24px 0;
+                color: var(--text-secondary);
+                font-size: 0.875rem;
+            }
+
+            .divider::before,
+            .divider::after {
+                content: "";
+                flex: 1;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .divider span {
+                padding: 0 12px;
+            }
+
+            /* Traditional Login Form */
+            .form-group {
+                margin-bottom: 16px;
+            }
+
+            .form-label {
+                display: block;
+                font-size: 0.875rem;
+                color: var(--text-secondary);
+                margin-bottom: 8px;
+            }
+
+            .form-input {
+                width: 100%;
+                padding: 12px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                font-size: 1rem;
+                transition: all 0.2s ease;
+            }
+
+            .form-input:focus {
+                outline: none;
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 2px rgba(0, 149, 246, 0.2);
+            }
+
+            .login-button {
+                width: 100%;
+                padding: 12px;
+                background-color: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-size: 1rem;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .login-button:hover {
+                opacity: 0.9;
+            }
+
+            /* Footer Links */
+            .footer-links {
+                text-align: center;
+                margin-top: 24px;
+                font-size: 0.875rem;
+            }
+
+            .footer-links a {
+                color: var(--primary-color);
+                text-decoration: none;
+            }
+
+            .footer-links a:hover {
+                text-decoration: underline;
+            }
+
+            .policy-links {
+                margin-top: 16px;
+                text-align: center;
+                font-size: 0.75rem;
+                color: var(--text-secondary);
+            }
+
+            .policy-links a {
+                color: var(--text-secondary);
+                text-decoration: none;
+                margin: 0 8px;
+            }
+
+            .policy-links a:hover {
+                text-decoration: underline;
+            }
+
+            @media (max-width: 480px) {
+                .login-container {
+                    padding: 16px;
+                }
+
+                .login-form {
+                    padding: 24px 16px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="login-container">
+            <!-- Logo and Title -->
+            <div class="logo-section">
+                <div class="logo">문항작성</div>
+                <p class="subtitle">SNS 계정으로 간편하게 시작하세요</p>
+            </div>
+
+            <!-- Main Login Form -->
+            <div class="login-form">
+                <!-- Social Login Buttons -->
+                <div class="social-login">
+                    <button class="social-button google-login">
+                        <span class="social-icon">🌐</span>
+                        Google 계정으로 계속하기
+                    </button>
+                    <button class="social-button kakao-login">
+                        <span class="social-icon">💬</span>
+                        카카오톡으로 계속하기
+                    </button>
+                    <button class="social-button naver-login">
+                        <span class="social-icon">N</span>
+                        네이버로 계속하기
+                    </button>
+                    <button class="social-button apple-login">
+                        <span class="social-icon">🍎</span>
+                        Apple로 계속하기
+                    </button>
+                </div>
+
+                <!-- Divider -->
+                <div class="divider">
+                    <span>또는</span>
+                </div>
+
+                <!-- Traditional Login Form -->
+                <form>
+                    <div class="form-group">
+                        <label class="form-label">이메일</label>
+                        <input
+                            type="email"
+                            class="form-input"
+                            placeholder="이메일 주소를 입력하세요"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">비밀번호</label>
+                        <input
+                            type="password"
+                            class="form-input"
+                            placeholder="비밀번호를 입력하세요"
+                        />
+                    </div>
+                    <button type="submit" class="login-button">로그인</button>
+                </form>
+            </div>
+
+            <!-- Footer Links -->
+            <div class="footer-links">
+                <p>계정이 없으신가요? <a href="#">가입하기</a></p>
+                <p><a href="#">비밀번호를 잊으셨나요?</a></p>
+            </div>
+
+            <!-- Policy Links -->
+            <div class="policy-links">
+                <a href="#">이용약관</a>
+                <a href="#">개인정보처리방침</a>
+                <a href="#">도움말</a>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,451 @@
+<!-- 목표 설정 페이지의 주요 특징을 설명드리겠습니다:
+
+1. 목표 요약:
+- 전체 목표 현황
+- 달성률 통계
+- 진행 상태
+- 연속 달성일
+
+2. 목표 카드:
+- 시각적 진행바
+- 남은 기간 표시
+- 카테고리 아이콘
+- 달성 상태
+
+3. 목표 설정 폼:
+- 직관적인 입력
+- 카테고리 선택
+- 기간 설정
+- 목표치 입력
+
+4. 시각적 요소:
+- 프로그레스 바
+- 카테고리 아이콘
+- 컬러 코딩
+- 반응형 디자인
+
+5. 인터랙션:
+- 카테고리 선택
+- 폼 입력
+- 목표 추가
+- 진행 상태 확인 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>목표 설정</title>
+        <style>
+            :root {
+                --primary-color: #6c5ce7;
+                --primary-light: #a29bfe;
+                --success-color: #00b894;
+                --warning-color: #fdcb6e;
+                --danger-color: #ff7675;
+                --surface-color: #ffffff;
+                --background-color: #f8f9fa;
+                --text-primary: #2d3436;
+                --text-secondary: #636e72;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 24px;
+                display: grid;
+                grid-template-columns: 1fr 300px;
+                gap: 24px;
+            }
+
+            /* Goals Summary */
+            .goals-summary {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+                margin-bottom: 24px;
+            }
+
+            .summary-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 24px;
+            }
+
+            .summary-title {
+                font-size: 24px;
+                font-weight: 600;
+            }
+
+            .summary-period {
+                color: var(--text-secondary);
+            }
+
+            .summary-stats {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 16px;
+            }
+
+            .stat-card {
+                padding: 16px;
+                background: var(--background-color);
+                border-radius: 12px;
+                text-align: center;
+            }
+
+            .stat-value {
+                font-size: 24px;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+
+            .stat-label {
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+            /* Goals List */
+            .goals-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 24px;
+            }
+
+            .goal-card {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+                position: relative;
+            }
+
+            .goal-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 16px;
+            }
+
+            .goal-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 20px;
+                background: var(--primary-light);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+            }
+
+            .goal-info {
+                flex: 1;
+            }
+
+            .goal-title {
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+
+            .goal-period {
+                font-size: 14px;
+                color: var(--text-secondary);
+            }
+
+            .goal-progress {
+                margin: 16px 0;
+            }
+
+            .progress-bar {
+                height: 8px;
+                background: var(--background-color);
+                border-radius: 4px;
+                overflow: hidden;
+                margin-bottom: 8px;
+            }
+
+            .progress-fill {
+                height: 100%;
+                background: var(--primary-color);
+                border-radius: 4px;
+                transition: width 0.3s ease;
+            }
+
+            .progress-status {
+                display: flex;
+                justify-content: space-between;
+                font-size: 14px;
+            }
+
+            .progress-value {
+                color: var(--primary-color);
+                font-weight: 500;
+            }
+
+            .progress-target {
+                color: var(--text-secondary);
+            }
+
+            /* New Goal Form */
+            .new-goal {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+                position: sticky;
+                top: 24px;
+            }
+
+            .form-title {
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 24px;
+            }
+
+            .form-group {
+                margin-bottom: 16px;
+            }
+
+            .form-label {
+                display: block;
+                margin-bottom: 8px;
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+            .form-input {
+                width: 100%;
+                padding: 12px;
+                border: 1px solid var(--background-color);
+                border-radius: 8px;
+                font-size: 14px;
+            }
+
+            .form-input:focus {
+                outline: none;
+                border-color: var(--primary-color);
+            }
+
+            .goal-categories {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+                margin-bottom: 16px;
+            }
+
+            .category-option {
+                padding: 8px;
+                text-align: center;
+                border: 1px solid var(--background-color);
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .category-option:hover {
+                border-color: var(--primary-color);
+            }
+
+            .category-option.active {
+                background: var(--primary-color);
+                color: white;
+                border-color: var(--primary-color);
+            }
+
+            .submit-button {
+                width: 100%;
+                padding: 12px;
+                background: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .submit-button:hover {
+                background: var(--primary-light);
+            }
+
+            @media (max-width: 968px) {
+                .container {
+                    grid-template-columns: 1fr;
+                }
+
+                .summary-stats {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div>
+                <!-- Goals Summary -->
+                <div class="goals-summary">
+                    <div class="summary-header">
+                        <div>
+                            <h1 class="summary-title">나의 목표</h1>
+                            <div class="summary-period">2025년 2월</div>
+                        </div>
+                    </div>
+
+                    <div class="summary-stats">
+                        <div class="stat-card">
+                            <div class="stat-value">6</div>
+                            <div class="stat-label">진행중인 목표</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">3</div>
+                            <div class="stat-label">달성한 목표</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">85%</div>
+                            <div class="stat-label">평균 달성률</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">12일</div>
+                            <div class="stat-label">연속 달성</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Goals Grid -->
+                <div class="goals-grid">
+                    <div class="goal-card">
+                        <div class="goal-header">
+                            <div class="goal-icon">📚</div>
+                            <div class="goal-info">
+                                <div class="goal-title">
+                                    수학 문제 100개 풀기
+                                </div>
+                                <div class="goal-period">월간 목표</div>
+                            </div>
+                        </div>
+                        <div class="goal-progress">
+                            <div class="progress-bar">
+                                <div
+                                    class="progress-fill"
+                                    style="width: 75%"
+                                ></div>
+                            </div>
+                            <div class="progress-status">
+                                <span class="progress-value">75/100</span>
+                                <span class="progress-target">18일 남음</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="goal-card">
+                        <div class="goal-header">
+                            <div class="goal-icon">🎯</div>
+                            <div class="goal-info">
+                                <div class="goal-title">
+                                    퀴즈 배틀 10회 승리
+                                </div>
+                                <div class="goal-period">주간 목표</div>
+                            </div>
+                        </div>
+                        <div class="goal-progress">
+                            <div class="progress-bar">
+                                <div
+                                    class="progress-fill"
+                                    style="width: 60%"
+                                ></div>
+                            </div>
+                            <div class="progress-status">
+                                <span class="progress-value">6/10</span>
+                                <span class="progress-target">3일 남음</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="goal-card">
+                        <div class="goal-header">
+                            <div class="goal-icon">⭐</div>
+                            <div class="goal-info">
+                                <div class="goal-title">
+                                    평균 정답률 90% 달성
+                                </div>
+                                <div class="goal-period">월간 목표</div>
+                            </div>
+                        </div>
+                        <div class="goal-progress">
+                            <div class="progress-bar">
+                                <div
+                                    class="progress-fill"
+                                    style="width: 85%"
+                                ></div>
+                            </div>
+                            <div class="progress-status">
+                                <span class="progress-value">85%</span>
+                                <span class="progress-target">18일 남음</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- New Goal Form -->
+            <div class="new-goal">
+                <h2 class="form-title">새 목표 설정</h2>
+                <form>
+                    <div class="form-group">
+                        <label class="form-label">목표 제목</label>
+                        <input
+                            type="text"
+                            class="form-input"
+                            placeholder="목표를 입력하세요"
+                        />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">카테고리</label>
+                        <div class="goal-categories">
+                            <div class="category-option active">학습량</div>
+                            <div class="category-option">정답률</div>
+                            <div class="category-option">배틀</div>
+                            <div class="category-option">연습</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">목표 기간</label>
+                        <select class="form-input">
+                            <option>일간</option>
+                            <option>주간</option>
+                            <option selected>월간</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">목표치</label>
+                        <input
+                            type="number"
+                            class="form-input"
+                            placeholder="목표 수치를 입력하세요"
+                        />
+                    </div>
+
+                    <button type="submit" class="submit-button">
+                        목표 설정하기
+                    </button>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

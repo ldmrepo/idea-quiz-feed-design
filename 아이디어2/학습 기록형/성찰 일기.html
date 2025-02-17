@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <title>성찰 일기</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --gray-100: #f3f4f6;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+                --gray-900: #111827;
+            }
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+                background: #f9fafb;
+                color: var(--gray-900);
+                padding-bottom: 80px;
+            }
+            .header {
+                background: white;
+                padding: 12px;
+                border-bottom: 1px solid var(--gray-200);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .header .title {
+                font-size: 18px;
+                font-weight: 600;
+            }
+            .header button {
+                background: var(--primary);
+                color: #fff;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 6px;
+                cursor: pointer;
+            }
+
+            .container {
+                max-width: 720px;
+                margin: 16px auto;
+                padding: 0 16px;
+            }
+            .reflect-list {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+            .reflect-item {
+                background: white;
+                border: 1px solid var(--gray-200);
+                border-radius: 6px;
+                padding: 12px;
+            }
+            .reflect-item .date {
+                font-size: 14px;
+                color: var(--gray-700);
+            }
+            .reflect-item .title {
+                font-size: 16px;
+                font-weight: 600;
+                margin: 8px 0;
+            }
+            .reflect-item .feeling {
+                font-size: 24px; /* 이모티콘 크게 */
+            }
+
+            /* 작성 모달 */
+            .modal-bg {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.4);
+                display: none;
+                justify-content: center;
+                align-items: center;
+                z-index: 10;
+            }
+            .modal {
+                background: white;
+                width: 90%;
+                max-width: 600px;
+                border-radius: 8px;
+                padding: 16px;
+            }
+            .form-group {
+                margin-bottom: 16px;
+            }
+            label {
+                display: block;
+                margin-bottom: 6px;
+                font-weight: 600;
+                font-size: 14px;
+            }
+            input[type="text"],
+            textarea {
+                width: 100%;
+                padding: 10px;
+                font-size: 14px;
+                border: 1px solid var(--gray-200);
+                border-radius: 4px;
+            }
+            .emoticon-picker {
+                display: flex;
+                gap: 8px;
+                margin-top: 8px;
+            }
+            .emoticon-btn {
+                font-size: 24px;
+                cursor: pointer;
+                background: none;
+                border: none;
+                outline: none;
+            }
+            .emoticon-btn.selected {
+                font-size: 32px; /* 크기 강조 */
+            }
+            .prompt {
+                font-weight: 600;
+                margin-bottom: 4px;
+                color: var(--gray-700);
+            }
+            .modal-actions {
+                display: flex;
+                gap: 8px;
+                justify-content: flex-end;
+            }
+            .cancel-btn {
+                background: var(--gray-100);
+                color: var(--gray-900);
+                border: none;
+                padding: 10px 16px;
+                border-radius: 6px;
+                cursor: pointer;
+            }
+            .save-btn {
+                background: var(--primary);
+                color: #fff;
+                border: none;
+                padding: 10px 16px;
+                border-radius: 6px;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <div class="title">성찰 일기</div>
+            <button id="openModalBtn">오늘 성찰 쓰기</button>
+        </div>
+        <div class="container">
+            <div class="reflect-list" id="reflectList">
+                <!-- 과거 성찰 일기 목록 렌더링 -->
+            </div>
+        </div>
+
+        <!-- 작성 모달 -->
+        <div class="modal-bg" id="modalBg">
+            <div class="modal">
+                <h2>성찰 일기 작성</h2>
+                <!-- 날짜, 제목 -->
+                <div class="form-group">
+                    <label for="reflectDate">날짜</label>
+                    <input
+                        type="text"
+                        id="reflectDate"
+                        placeholder="YYYY-MM-DD"
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="reflectTitle">제목</label>
+                    <input type="text" id="reflectTitle" />
+                </div>
+                <!-- 감정 이모티콘 선택 -->
+                <div class="form-group">
+                    <label>오늘 기분은?</label>
+                    <div class="emoticon-picker">
+                        <button class="emoticon-btn" data-value="😀">😀</button>
+                        <button class="emoticon-btn" data-value="😅">😅</button>
+                        <button class="emoticon-btn" data-value="😐">😐</button>
+                        <button class="emoticon-btn" data-value="😟">😟</button>
+                        <button class="emoticon-btn" data-value="😭">😭</button>
+                    </div>
+                </div>
+                <!-- 성찰 질문/답변 -->
+                <div class="form-group">
+                    <label>성찰 질문</label>
+                    <div class="prompt">1) 오늘 무엇을 배웠는가?</div>
+                    <textarea id="answer1" rows="3"></textarea>
+                    <div class="prompt">2) 어려웠던 점은?</div>
+                    <textarea id="answer2" rows="3"></textarea>
+                    <div class="prompt">3) 앞으로 어떻게 개선할까?</div>
+                    <textarea id="answer3" rows="3"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button class="cancel-btn" id="cancelBtn">취소</button>
+                    <button class="save-btn" id="saveBtn">저장</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const openModalBtn = document.getElementById("openModalBtn")
+            const modalBg = document.getElementById("modalBg")
+            const cancelBtn = document.getElementById("cancelBtn")
+            const saveBtn = document.getElementById("saveBtn")
+
+            const reflectDateEl = document.getElementById("reflectDate")
+            const reflectTitleEl = document.getElementById("reflectTitle")
+            const emoticonBtns = document.querySelectorAll(".emoticon-btn")
+            const answer1El = document.getElementById("answer1")
+            const answer2El = document.getElementById("answer2")
+            const answer3El = document.getElementById("answer3")
+            const reflectListEl = document.getElementById("reflectList")
+
+            let selectedEmoticon = null
+            let reflections = [] // 임시 저장 (실무는 서버에 저장)
+
+            // 모달 열기
+            openModalBtn.addEventListener("click", () => {
+                modalBg.style.display = "flex"
+                const today = new Date().toISOString().split("T")[0]
+                reflectDateEl.value = today
+                reflectTitleEl.value = ""
+                answer1El.value = ""
+                answer2El.value = ""
+                answer3El.value = ""
+                selectedEmoticon = null
+                emoticonBtns.forEach((btn) => btn.classList.remove("selected"))
+            })
+
+            // 모달 닫기
+            cancelBtn.addEventListener("click", () => {
+                modalBg.style.display = "none"
+            })
+
+            // 이모티콘 클릭
+            emoticonBtns.forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    emoticonBtns.forEach((b) => b.classList.remove("selected"))
+                    btn.classList.add("selected")
+                    selectedEmoticon = btn.dataset.value
+                })
+            })
+
+            // 저장
+            saveBtn.addEventListener("click", () => {
+                const data = {
+                    date: reflectDateEl.value.trim(),
+                    title: reflectTitleEl.value.trim(),
+                    feeling: selectedEmoticon,
+                    questions: [
+                        {
+                            prompt: "오늘 무엇을 배웠는가?",
+                            answer: answer1El.value.trim(),
+                        },
+                        {
+                            prompt: "어려웠던 점은?",
+                            answer: answer2El.value.trim(),
+                        },
+                        {
+                            prompt: "어떻게 개선/계획할까?",
+                            answer: answer3El.value.trim(),
+                        },
+                    ],
+                }
+                reflections.unshift(data)
+                renderReflections()
+                modalBg.style.display = "none"
+            })
+
+            // 목록 렌더링
+            function renderReflections() {
+                reflectListEl.innerHTML = ""
+                reflections.forEach((r) => {
+                    const item = document.createElement("div")
+                    item.className = "reflect-item"
+                    item.innerHTML = `
+          <div class="date">${r.date}</div>
+          <div class="title">${r.title}</div>
+          <div class="feeling">${r.feeling || ""}</div>
+          <div class="question-answers">
+            ${r.questions
+                .map(
+                    (q) => `
+              <p><strong>${q.prompt}</strong><br/>${q.answer}</p>
+            `
+                )
+                .join("")}
+          </div>
+        `
+                    reflectListEl.appendChild(item)
+                })
+            }
+        </script>
+    </body>
+</html>

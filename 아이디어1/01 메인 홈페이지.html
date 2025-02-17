@@ -1,0 +1,222 @@
+import React from 'react'; import { Bell, Trophy, Target, Users, Book, Zap,
+Award, Timer, Calendar } from 'lucide-react'; import { Card, CardContent,
+CardHeader, CardTitle } from '@/components/ui/card'; import { Alert,
+AlertDescription, AlertTitle } from '@/components/ui/alert'; const MainHome = ()
+=> { return (
+<div className="min-h-screen bg-gray-50 p-4 md:p-6">
+    {/* 헤더 영역 */}
+    <header className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">안녕하세요, 홍길동님 👋</h1>
+        <div className="flex items-center gap-4">
+            <Bell className="w-6 h-6 text-gray-600 cursor-pointer" />
+            <div
+                className="w-10 h-10 rounded-full bg-blue-500 cursor-pointer"
+            />
+        </div>
+    </header>
+
+    {/* 최우선 노출 영역 */}
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <Target className="w-5 h-5 text-blue-500" />
+                    오늘의 도전과제
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                        <span>일일 퀴즈 완료하기</span>
+                        <span className="text-blue-500">+50 XP</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <span>3회 배틀 참여</span>
+                        <span className="text-blue-500">+100 XP</span>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+
+        <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <Trophy className="w-5 h-5 text-yellow-500" />
+                    실시간 배틀
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <Alert className="bg-yellow-50 border-yellow-200">
+                    <Timer className="w-4 h-4 text-yellow-500" />
+                    <AlertTitle>수학 배틀 진행중!</AlertTitle>
+                    <AlertDescription> 참가자 모집 중 (3/8) </AlertDescription>
+                </Alert>
+            </CardContent>
+        </Card>
+
+        <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <Calendar className="w-5 h-5 text-green-500" />
+                    학습 현황
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                        <span>이번 주 학습</span>
+                        <span className="text-green-500">5/7일</span>
+                    </div>
+                    <div className="w-full h-2 bg-gray-200 rounded-full">
+                        <div
+                            className="w-4/6 h-full bg-green-500 rounded-full"
+                        />
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+    </div>
+
+    {/* 메인 콘텐츠 영역 */}
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* 좌측: 개인화 영역 */}
+        <div className="lg:col-span-2 space-y-6">
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Zap className="w-5 h-5 text-purple-500" />
+                        AI 맞춤 추천
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="p-4 bg-purple-50 rounded-lg">
+                            <h3 className="font-medium mb-2">
+                                오늘의 추천 학습
+                            </h3>
+                            <p className="text-sm text-gray-600">
+                                수학 - 미적분 기초
+                            </p>
+                        </div>
+                        <div className="p-4 bg-purple-50 rounded-lg">
+                            <h3 className="font-medium mb-2">복습 추천</h3>
+                            <p className="text-sm text-gray-600">
+                                물리 - 역학 문제
+                            </p>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Book className="w-5 h-5 text-blue-500" />
+                        빠른 시작
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <button
+                            className="p-4 bg-blue-50 rounded-lg text-left hover:bg-blue-100"
+                        >
+                            <span className="block font-medium">5분 퀴즈</span>
+                            <span className="text-sm text-gray-600"
+                                >빠른 복습하기</span
+                            >
+                        </button>
+                        <button
+                            className="p-4 bg-green-50 rounded-lg text-left hover:bg-green-100"
+                        >
+                            <span className="block font-medium">오답 노트</span>
+                            <span className="text-sm text-gray-600"
+                                >취약점 보완</span
+                            >
+                        </button>
+                        <button
+                            className="p-4 bg-yellow-50 rounded-lg text-left hover:bg-yellow-100"
+                        >
+                            <span className="block font-medium">배틀 참여</span>
+                            <span className="text-sm text-gray-600"
+                                >실시간 대결</span
+                            >
+                        </button>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+
+        {/* 우측: 소셜 영역 */}
+        <div className="space-y-6">
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Users className="w-5 h-5 text-indigo-500" />
+                        스터디 그룹
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-3">
+                            <div
+                                className="w-10 h-10 rounded-full bg-indigo-100"
+                            />
+                            <div>
+                                <h4 className="font-medium">
+                                    수학 마스터 그룹
+                                </h4>
+                                <p className="text-sm text-gray-600">
+                                    새 게시글 3개
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <div
+                                className="w-10 h-10 rounded-full bg-green-100"
+                            />
+                            <div>
+                                <h4 className="font-medium">과학 탐구 모임</h4>
+                                <p className="text-sm text-gray-600">
+                                    새 게시글 1개
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Award className="w-5 h-5 text-yellow-500" />
+                        실시간 랭킹
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <span
+                                    className="w-6 h-6 flex items-center justify-center bg-yellow-100 rounded-full text-sm font-medium"
+                                    >1</span
+                                >
+                                <span>김철수</span>
+                            </div>
+                            <span className="text-yellow-500">2,450 XP</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <span
+                                    className="w-6 h-6 flex items-center justify-center bg-gray-100 rounded-full text-sm font-medium"
+                                    >2</span
+                                >
+                                <span>이영희</span>
+                            </div>
+                            <span className="text-yellow-500">2,280 XP</span>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    </div>
+</div>

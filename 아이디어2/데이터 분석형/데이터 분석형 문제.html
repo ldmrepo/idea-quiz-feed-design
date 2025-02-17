@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <title>데이터 분석형 문제 예시</title>
+        <style>
+            body {
+                font-family: -apple-system, sans-serif;
+                margin: 0;
+                padding: 16px;
+                background: #f9fafb;
+                color: #111827;
+            }
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+            }
+            .header {
+                text-align: center;
+                margin-bottom: 16px;
+            }
+            .chart-container {
+                position: relative;
+                width: 100%;
+                height: 400px;
+                background: #fff;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                margin-bottom: 16px;
+                padding: 8px;
+            }
+            .analysis-area {
+                background: white;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                padding: 16px;
+                margin-bottom: 16px;
+            }
+            .analysis-area textarea {
+                width: 100%;
+                height: 120px;
+                padding: 8px;
+                font-size: 14px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                resize: vertical;
+            }
+            .submit-btn {
+                background: #2563eb;
+                color: #fff;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+            }
+            .feedback {
+                background: #e0e7ff;
+                border: 1px solid #2563eb;
+                border-radius: 6px;
+                padding: 12px;
+                margin-top: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h2>2024년 매출 추세 분석</h2>
+                <p>
+                    아래 차트를 분석하여, 2024년 3분기에 매출이 급증한 원인을
+                    서술하세요.
+                </p>
+            </div>
+
+            <!-- 차트 영역 (예시: Chart.js를 활용하면 인터랙티브 차트 구현 가능) -->
+            <div class="chart-container">
+                <canvas id="salesChart"></canvas>
+            </div>
+
+            <!-- 분석 입력 영역 -->
+            <div class="analysis-area">
+                <h3>분석 및 해설</h3>
+                <textarea
+                    id="analysisInput"
+                    placeholder="여기에 분석 내용을 입력하세요..."
+                ></textarea>
+                <br />
+                <button class="submit-btn" id="submitAnalysis">제출하기</button>
+            </div>
+
+            <!-- 피드백 영역 (결과 제출 후 멘토나 자동 채점 결과가 표시) -->
+            <div class="feedback" id="feedbackBox" style="display: none">
+                <h3>피드백</h3>
+                <p id="feedbackText"></p>
+            </div>
+        </div>
+
+        <!-- Chart.js 라이브러리 (CDN) -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            // 예시 차트 데이터 (라인 차트)
+            const ctx = document.getElementById("salesChart").getContext("2d")
+            const salesChart = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: [
+                        "Jan",
+                        "Feb",
+                        "Mar",
+                        "Apr",
+                        "May",
+                        "Jun",
+                        "Jul",
+                        "Aug",
+                        "Sep",
+                        "Oct",
+                        "Nov",
+                        "Dec",
+                    ],
+                    datasets: [
+                        {
+                            label: "매출액(백만 달러)",
+                            data: [
+                                15, 18, 22, 35, 40, 38, 42, 45, 70, 65, 60, 55,
+                            ],
+                            borderColor: "#2563eb",
+                            backgroundColor: "rgba(37,99,235,0.1)",
+                            fill: true,
+                            tension: 0.3,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        tooltip: {
+                            enabled: true,
+                        },
+                    },
+                },
+            })
+
+            // 제출 버튼 이벤트 처리
+            const submitBtn = document.getElementById("submitAnalysis")
+            const analysisInput = document.getElementById("analysisInput")
+            const feedbackBox = document.getElementById("feedbackBox")
+            const feedbackText = document.getElementById("feedbackText")
+
+            submitBtn.addEventListener("click", () => {
+                const userAnalysis = analysisInput.value.trim()
+                if (!userAnalysis) {
+                    alert("분석 내용을 입력해주세요.")
+                    return
+                }
+                // 실제로는 서버에 제출하고, 채점 로직 또는 멘토 피드백을 받아옴.
+                // 여기서는 단순 모의 피드백을 제공.
+                let feedback = ""
+                if (
+                    userAnalysis.includes("3분기") &&
+                    userAnalysis.includes("프로모션")
+                ) {
+                    feedback =
+                        "좋은 분석입니다! 3분기에 실시한 대규모 프로모션이 매출 급증의 주요 원인입니다."
+                } else {
+                    feedback =
+                        "분석 내용을 보완하세요. 3분기의 특별한 마케팅 전략이나 이벤트에 대해 추가적으로 언급하면 좋겠습니다."
+                }
+                feedbackText.innerHTML = feedback
+                feedbackBox.style.display = "block"
+            })
+        </script>
+    </body>
+</html>

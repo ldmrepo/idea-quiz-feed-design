@@ -1,0 +1,477 @@
+<!-- 프로필 커스터마이징 페이지의 주요 특징을 설명드리겠습니다:
+
+1. 실시간 프리뷰:
+- 프로필 미리보기
+- 커버 이미지
+- 아바타 미리보기
+- 통계 정보
+
+2. 커스터마이징 옵션:
+- 닉네임/타이틀 설정
+- 아바타 선택
+- 테마 컬러 선택
+- 배지 관리
+
+3. 프로필 꾸미기:
+- 다양한 아바타 옵션
+- 컬러 테마 선택
+- 획득한 배지 전시
+- 개인 정보 설정
+
+4. 시각적 효과:
+- 부드러운 애니메이션
+- 호버 효과
+- 선택 표시
+- 그라데이션
+
+5. 레이아웃:
+- 2단 그리드 레이아웃
+- 반응형 디자인
+- 직관적인 배치
+- 깔끔한 정렬 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>프로필 꾸미기</title>
+        <style>
+            :root {
+                --primary-color: #6c5ce7;
+                --primary-light: #a29bfe;
+                --success-color: #00b894;
+                --warning-color: #fdcb6e;
+                --danger-color: #ff7675;
+                --surface-color: #ffffff;
+                --background-color: #f8f9fa;
+                --text-primary: #2d3436;
+                --text-secondary: #636e72;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 32px;
+                display: grid;
+                grid-template-columns: 350px 1fr;
+                gap: 32px;
+            }
+
+            /* Preview Section */
+            .preview-section {
+                background: var(--surface-color);
+                border-radius: 24px;
+                padding: 32px;
+                position: sticky;
+                top: 32px;
+            }
+
+            .profile-preview {
+                text-align: center;
+                margin-bottom: 24px;
+            }
+
+            .cover-image {
+                height: 120px;
+                background: linear-gradient(
+                    45deg,
+                    var(--primary-color),
+                    var(--primary-light)
+                );
+                border-radius: 16px;
+                margin-bottom: -50px;
+            }
+
+            .avatar-container {
+                width: 100px;
+                height: 100px;
+                margin: 0 auto;
+                position: relative;
+            }
+
+            .avatar {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                border: 4px solid var(--surface-color);
+                background: var(--primary-light);
+            }
+
+            .avatar-badge {
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background: var(--success-color);
+                border: 3px solid var(--surface-color);
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .preview-name {
+                font-size: 24px;
+                font-weight: 600;
+                margin: 16px 0 8px;
+            }
+
+            .preview-title {
+                color: var(--text-secondary);
+                margin-bottom: 16px;
+            }
+
+            .preview-stats {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+                padding: 16px 0;
+                border-top: 1px solid var(--background-color);
+                border-bottom: 1px solid var(--background-color);
+            }
+
+            .stat-item {
+                text-align: center;
+            }
+
+            .stat-value {
+                font-weight: 600;
+                font-size: 18px;
+            }
+
+            .stat-label {
+                font-size: 12px;
+                color: var(--text-secondary);
+            }
+
+            /* Customization Section */
+            .customization-section {
+                background: var(--surface-color);
+                border-radius: 24px;
+                padding: 32px;
+            }
+
+            .section-title {
+                font-size: 20px;
+                font-weight: 600;
+                margin-bottom: 24px;
+            }
+
+            /* Avatar Selection */
+            .avatar-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+                gap: 16px;
+                margin-bottom: 32px;
+            }
+
+            .avatar-option {
+                width: 80px;
+                height: 80px;
+                border-radius: 40px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                border: 3px solid transparent;
+            }
+
+            .avatar-option:hover {
+                transform: scale(1.1);
+            }
+
+            .avatar-option.selected {
+                border-color: var(--primary-color);
+            }
+
+            /* Color Themes */
+            .theme-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: 16px;
+                margin-bottom: 32px;
+            }
+
+            .theme-option {
+                height: 100px;
+                border-radius: 16px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                overflow: hidden;
+            }
+
+            .theme-option:hover {
+                transform: translateY(-4px);
+            }
+
+            .theme-preview {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .theme-header {
+                height: 60%;
+                background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            }
+
+            .theme-body {
+                height: 40%;
+                background: white;
+            }
+
+            /* Badges Section */
+            .badges-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 16px;
+                margin-bottom: 32px;
+            }
+
+            .badge-card {
+                background: var(--background-color);
+                border-radius: 16px;
+                padding: 16px;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .badge-card:hover {
+                transform: translateY(-4px);
+            }
+
+            .badge-icon {
+                font-size: 32px;
+                margin-bottom: 8px;
+            }
+
+            .badge-name {
+                font-size: 14px;
+                font-weight: 500;
+            }
+
+            .badge-description {
+                font-size: 12px;
+                color: var(--text-secondary);
+                margin-top: 4px;
+            }
+
+            /* Custom Fields */
+            .custom-fields {
+                margin-bottom: 32px;
+            }
+
+            .field-group {
+                margin-bottom: 16px;
+            }
+
+            .field-label {
+                display: block;
+                font-size: 14px;
+                color: var(--text-secondary);
+                margin-bottom: 8px;
+            }
+
+            .field-input {
+                width: 100%;
+                padding: 12px;
+                border: 1px solid var(--background-color);
+                border-radius: 8px;
+                font-size: 14px;
+                transition: all 0.2s ease;
+            }
+
+            .field-input:focus {
+                outline: none;
+                border-color: var(--primary-color);
+            }
+
+            /* Save Button */
+            .save-button {
+                width: 100%;
+                padding: 16px;
+                background: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 12px;
+                font-size: 16px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .save-button:hover {
+                background: var(--primary-light);
+            }
+
+            @media (max-width: 968px) {
+                .container {
+                    grid-template-columns: 1fr;
+                }
+
+                .preview-section {
+                    position: static;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Preview Section -->
+            <div class="preview-section">
+                <div class="profile-preview">
+                    <div class="cover-image"></div>
+                    <div class="avatar-container">
+                        <div class="avatar"></div>
+                        <div class="avatar-badge">👑</div>
+                    </div>
+                    <h2 class="preview-name">김공부</h2>
+                    <div class="preview-title">수학 마스터</div>
+                    <div class="preview-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">152</div>
+                            <div class="stat-label">문제 수</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">89%</div>
+                            <div class="stat-label">정답률</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">12</div>
+                            <div class="stat-label">배지</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customization Section -->
+            <div class="customization-section">
+                <h3 class="section-title">프로필 꾸미기</h3>
+
+                <!-- Custom Fields -->
+                <div class="custom-fields">
+                    <div class="field-group">
+                        <label class="field-label">닉네임</label>
+                        <input type="text" class="field-input" value="김공부" />
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label">타이틀</label>
+                        <input
+                            type="text"
+                            class="field-input"
+                            value="수학 마스터"
+                        />
+                    </div>
+                </div>
+
+                <!-- Avatar Selection -->
+                <h3 class="section-title">아바타 선택</h3>
+                <div class="avatar-grid">
+                    <div
+                        class="avatar-option selected"
+                        style="background: #a29bfe"
+                    ></div>
+                    <div
+                        class="avatar-option"
+                        style="background: #74b9ff"
+                    ></div>
+                    <div
+                        class="avatar-option"
+                        style="background: #55efc4"
+                    ></div>
+                    <div
+                        class="avatar-option"
+                        style="background: #ffeaa7"
+                    ></div>
+                    <div
+                        class="avatar-option"
+                        style="background: #fab1a0"
+                    ></div>
+                    <div
+                        class="avatar-option"
+                        style="background: #fd79a8"
+                    ></div>
+                </div>
+
+                <!-- Color Themes -->
+                <h3 class="section-title">테마 선택</h3>
+                <div class="theme-grid">
+                    <div class="theme-option">
+                        <div class="theme-preview">
+                            <div class="theme-header"></div>
+                            <div class="theme-body"></div>
+                        </div>
+                    </div>
+                    <div class="theme-option">
+                        <div
+                            class="theme-preview"
+                            style="
+                                background: linear-gradient(
+                                    45deg,
+                                    #00b894,
+                                    #00cec9
+                                );
+                            "
+                        >
+                            <div class="theme-header"></div>
+                            <div class="theme-body"></div>
+                        </div>
+                    </div>
+                    <div class="theme-option">
+                        <div
+                            class="theme-preview"
+                            style="
+                                background: linear-gradient(
+                                    45deg,
+                                    #e84393,
+                                    #fd79a8
+                                );
+                            "
+                        >
+                            <div class="theme-header"></div>
+                            <div class="theme-body"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Badges -->
+                <h3 class="section-title">획득한 배지</h3>
+                <div class="badges-grid">
+                    <div class="badge-card">
+                        <div class="badge-icon">👑</div>
+                        <div class="badge-name">수학왕</div>
+                        <div class="badge-description">100문제 연속 정답</div>
+                    </div>
+                    <div class="badge-card">
+                        <div class="badge-icon">⚡</div>
+                        <div class="badge-name">빠른 해결사</div>
+                        <div class="badge-description">30초 내 정답</div>
+                    </div>
+                    <div class="badge-card">
+                        <div class="badge-icon">🎯</div>
+                        <div class="badge-name">정확도 마스터</div>
+                        <div class="badge-description">95% 이상 정답률</div>
+                    </div>
+                </div>
+
+                <button class="save-button">저장하기</button>
+            </div>
+        </div>
+    </body>
+</html>

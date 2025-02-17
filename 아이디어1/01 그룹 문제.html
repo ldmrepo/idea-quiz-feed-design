@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>그룹 문제 풀이</title>
+        <style>
+            :root {
+                --primary-color: #6c5ce7;
+                --primary-light: #a29bfe;
+                --success-color: #00b894;
+                --warning-color: #fdcb6e;
+                --danger-color: #ff7675;
+                --surface-color: #ffffff;
+                --background-color: #f8f9fa;
+                --text-primary: #2d3436;
+                --text-secondary: #636e72;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 24px;
+                display: grid;
+                grid-template-columns: 300px 1fr;
+                gap: 24px;
+            }
+
+            /* Problem List */
+            .problem-list {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 20px;
+                height: calc(100vh - 48px);
+                overflow-y: auto;
+                position: sticky;
+                top: 24px;
+            }
+
+            .list-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+
+            .header-title {
+                font-size: 18px;
+                font-weight: 600;
+            }
+
+            .problem-filter {
+                display: flex;
+                gap: 8px;
+                margin-bottom: 16px;
+            }
+
+            .filter-button {
+                padding: 6px 12px;
+                border-radius: 20px;
+                border: 1px solid var(--border-color);
+                background: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                font-size: 14px;
+            }
+
+            .filter-button.active {
+                background: var(--primary-color);
+                color: white;
+                border-color: var(--primary-color);
+            }
+
+            .problem-items {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .problem-item {
+                padding: 12px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .problem-item:hover {
+                background: var(--background-color);
+            }
+
+            .problem-item.active {
+                background: var(--primary-light);
+                color: white;
+            }
+
+            .problem-title {
+                font-weight: 500;
+                margin-bottom: 4px;
+            }
+
+            .problem-meta {
+                font-size: 12px;
+                color: var(--text-secondary);
+                display: flex;
+                justify-content: space-between;
+            }
+
+            /* Problem Content */
+            .problem-content {
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            .content-header {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+            }
+
+            .problem-info {
+                margin-bottom: 24px;
+            }
+
+            .content-title {
+                font-size: 24px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .content-meta {
+                display: flex;
+                gap: 16px;
+                color: var(--text-secondary);
+                font-size: 14px;
+                margin-bottom: 16px;
+            }
+
+            .problem-description {
+                line-height: 1.6;
+            }
+
+            .problem-image {
+                width: 100%;
+                height: 200px;
+                background: var(--background-color);
+                border-radius: 8px;
+                margin: 16px 0;
+            }
+
+            .timer-section {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 16px;
+                background: var(--background-color);
+                border-radius: 8px;
+            }
+
+            .timer {
+                font-size: 24px;
+                font-weight: 600;
+                color: var(--danger-color);
+            }
+
+            /* Answer Section */
+            .answer-section {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+            }
+
+            .answer-options {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+                margin-bottom: 24px;
+            }
+
+            .answer-option {
+                padding: 16px;
+                border: 2px solid var(--border-color);
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .answer-option:hover {
+                border-color: var(--primary-color);
+            }
+
+            .answer-option.selected {
+                background: var(--primary-light);
+                color: white;
+                border-color: var(--primary-color);
+            }
+
+            /* Collaboration Section */
+            .collaboration-section {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+            }
+
+            .solving-info {
+                display: flex;
+                gap: 16px;
+                margin-bottom: 24px;
+            }
+
+            .solver-avatars {
+                display: flex;
+            }
+
+            .solver-avatar {
+                width: 32px;
+                height: 32px;
+                border-radius: 16px;
+                background: var(--primary-light);
+                margin-left: -8px;
+                border: 2px solid var(--surface-color);
+            }
+
+            .solver-avatar:first-child {
+                margin-left: 0;
+            }
+
+            .solver-count {
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+            .solution-list {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .solution-item {
+                display: flex;
+                gap: 12px;
+                padding: 12px;
+                background: var(--background-color);
+                border-radius: 8px;
+            }
+
+            .solution-content {
+                flex: 1;
+            }
+
+            .solution-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 8px;
+            }
+
+            .solution-text {
+                line-height: 1.6;
+            }
+
+            .solution-actions {
+                display: flex;
+                gap: 12px;
+                margin-top: 8px;
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+            .action-button {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                cursor: pointer;
+            }
+
+            @media (max-width: 968px) {
+                .container {
+                    grid-template-columns: 1fr;
+                }
+
+                .problem-list {
+                    height: auto;
+                    position: static;
+                }
+
+                .answer-options {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Problem List -->
+            <div class="problem-list">
+                <div class="list-header">
+                    <h2 class="header-title">문제 목록</h2>
+                </div>
+
+                <div class="problem-filter">
+                    <button class="filter-button active">전체</button>
+                    <button class="filter-button">미해결</button>
+                    <button class="filter-button">해결</button>
+                </div>
+
+                <div class="problem-items">
+                    <div class="problem-item active">
+                        <div class="problem-title">미적분 #42</div>
+                        <div class="problem-meta">
+                            <span>난이도: ⭐⭐⭐</span>
+                            <span>12명 풀이</span>
+                        </div>
+                    </div>
+
+                    <div class="problem-item">
+                        <div class="problem-title">확률과 통계 #28</div>
+                        <div class="problem-meta">
+                            <span>난이도: ⭐⭐</span>
+                            <span>8명 풀이</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problem Content -->
+            <div class="problem-content">
+                <!-- Content Header -->
+                <div class="content-header">
+                    <div class="problem-info">
+                        <h1 class="content-title">미적분 문제 #42</h1>
+                        <div class="content-meta">
+                            <span>🏷️ 미적분</span>
+                            <span>⭐ 난이도: 상</span>
+                            <span>⌛ 제한시간: 15분</span>
+                        </div>
+                        <div class="problem-description">
+                            다음 함수의 극값을 구하시오. f(x) = x² + 2x + 1
+                        </div>
+                        <div class="problem-image"></div>
+                    </div>
+
+                    <div class="timer-section">
+                        <div>남은 시간</div>
+                        <div class="timer">12:45</div>
+                    </div>
+                </div>
+
+                <!-- Answer Section -->
+                <div class="answer-section">
+                    <h3 class="header-title" style="margin-bottom: 16px">
+                        답안 선택
+                    </h3>
+                    <div class="answer-options">
+                        <div class="answer-option">
+                            <span>A. -1</span>
+                        </div>
+                        <div class="answer-option selected">
+                            <span>B. 0</span>
+                        </div>
+                        <div class="answer-option">
+                            <span>C. 1</span>
+                        </div>
+                        <div class="answer-option">
+                            <span>D. 2</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Collaboration Section -->
+                <div class="collaboration-section">
+                    <div class="solving-info">
+                        <div class="solver-avatars">
+                            <div class="solver-avatar"></div>
+                            <div class="solver-avatar"></div>
+                            <div class="solver-avatar"></div>
+                        </div>
+                        <div class="solver-count">12명이 풀이 중</div>
+                    </div>
+
+                    <div class="solution-list">
+                        <div class="solution-item">
+                            <div class="solver-avatar"></div>
+                            <div class="solution-content">
+                                <div class="solution-header">
+                                    <div class="solver-name">수학왕</div>
+                                    <div class="solution-time">5분 전</div>
+                                </div>
+                                <div class="solution-text">
+                                    이계도함수를 이용하여 풀면 쉽게 해결할 수
+                                    있습니다.
+                                </div>
+                                <div class="solution-actions">
+                                    <div class="action-button">👍 5</div>
+                                    <div class="action-button">💬 답글</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+
+<!-- 그룹 문제 풀이 페이지의 주요 특징을 설명드리겠습니다:
+
+1. 문제 목록:
+- 필터링 옵션
+- 난이도 표시
+- 풀이 현황
+- 빠른 접근
+
+2. 문제 콘텐츠:
+- 상세 설명
+- 타이머
+- 이미지/도표
+- 메타 정보
+
+3. 답안 섹션:
+- 객관식 선택
+- 답안 입력
+- 즉각적 피드백
+- 제출 기능
+
+4. 협업 기능:
+- 실시간 풀이 현황
+- 풀이 공유
+- 토론 기능
+- 답글 기능
+
+5. 학습 통계:
+- 풀이 인원
+- 정답률
+- 평균 시간
+- 난이도 평가  -->

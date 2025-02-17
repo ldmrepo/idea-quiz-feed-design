@@ -1,0 +1,458 @@
+<!-- 학습자를 위한 문항 페이지의 주요 특징을 설명드리겠습니다:
+
+1. 문항 표시 영역:
+- 명확한 문제 제시
+- 진행 상황 표시바
+- 남은 시간 타이머
+- 객관식 선택 인터페이스
+
+2. 풀이 노트 기능:
+- 개인 메모 공간
+- 실시간 저장
+- 풀이 과정 작성
+- 편집 가능한 영역
+
+3. 상호작용 섹션:
+- 질문/설명 탭
+- 댓글 시스템
+- 좋아요/답변 기능
+- 실시간 피드백
+
+4. 네비게이션:
+- 이전/다음 문항 버튼
+- 답안 제출 기능
+- 진행 상황 표시
+- 쉬운 이동
+
+5. 소셜 기능:
+- 질문 작성
+- 답변 달기
+- 좋아요 표시
+- 실시간 토론 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>학습 문항</title>
+        <style>
+            /* Base Styles */
+            :root {
+                --primary-color: #0095f6;
+                --primary-light: #e3f2fd;
+                --success-color: #4ade80;
+                --warning-color: #fbbf24;
+                --border-color: #dbdbdb;
+                --background-color: #fafafa;
+                --surface-color: #ffffff;
+                --text-primary: #262626;
+                --text-secondary: #737373;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+            }
+
+            /* Container */
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+
+            /* Question Card */
+            .question-card {
+                background: var(--surface-color);
+                border: 1px solid var(--border-color);
+                border-radius: 12px;
+                margin-bottom: 24px;
+                overflow: hidden;
+            }
+
+            .card-header {
+                padding: 16px;
+                border-bottom: 1px solid var(--border-color);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .header-title {
+                font-size: 1.125rem;
+                font-weight: 600;
+            }
+
+            .timer {
+                color: var(--text-secondary);
+                font-size: 0.875rem;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+
+            .question-content {
+                padding: 20px;
+            }
+
+            .question-text {
+                font-size: 1rem;
+                margin-bottom: 20px;
+                line-height: 1.6;
+            }
+
+            /* Answer Section */
+            .answer-section {
+                margin-top: 20px;
+            }
+
+            .answer-options {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .answer-option {
+                padding: 12px 16px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .answer-option:hover {
+                background-color: var(--primary-light);
+                border-color: var(--primary-color);
+            }
+
+            .answer-option.selected {
+                background-color: var(--primary-light);
+                border-color: var(--primary-color);
+            }
+
+            .option-number {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                background-color: var(--primary-color);
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.875rem;
+            }
+
+            /* Notes Section */
+            .notes-section {
+                margin-top: 20px;
+                padding: 20px;
+                background-color: #fffbeb;
+                border-radius: 8px;
+            }
+
+            .notes-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+            }
+
+            .notes-title {
+                font-weight: 600;
+                color: var(--text-secondary);
+            }
+
+            .notes-content {
+                min-height: 100px;
+                padding: 12px;
+                background: white;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                font-size: 0.875rem;
+            }
+
+            /* Questions & Comments */
+            .interaction-section {
+                padding: 20px;
+                border-top: 1px solid var(--border-color);
+            }
+
+            .interactions-header {
+                display: flex;
+                gap: 16px;
+                margin-bottom: 16px;
+            }
+
+            .tab {
+                padding: 8px 16px;
+                border-radius: 20px;
+                cursor: pointer;
+                font-size: 0.875rem;
+            }
+
+            .tab.active {
+                background-color: var(--primary-light);
+                color: var(--primary-color);
+                font-weight: 500;
+            }
+
+            .comment-list {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .comment {
+                display: flex;
+                gap: 12px;
+            }
+
+            .comment-avatar {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background-color: var(--border-color);
+            }
+
+            .comment-content {
+                flex: 1;
+            }
+
+            .comment-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 4px;
+            }
+
+            .comment-author {
+                font-weight: 500;
+                font-size: 0.875rem;
+            }
+
+            .comment-time {
+                color: var(--text-secondary);
+                font-size: 0.75rem;
+            }
+
+            .comment-text {
+                font-size: 0.875rem;
+                margin-bottom: 8px;
+            }
+
+            .comment-actions {
+                display: flex;
+                gap: 16px;
+            }
+
+            .action-button {
+                color: var(--text-secondary);
+                font-size: 0.75rem;
+                cursor: pointer;
+            }
+
+            .comment-input {
+                display: flex;
+                gap: 12px;
+                margin-top: 16px;
+            }
+
+            .input-field {
+                flex: 1;
+                padding: 12px;
+                border: 1px solid var(--border-color);
+                border-radius: 20px;
+                font-size: 0.875rem;
+            }
+
+            /* Action Bar */
+            .action-bar {
+                position: sticky;
+                bottom: 0;
+                background: var(--surface-color);
+                border-top: 1px solid var(--border-color);
+                padding: 16px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .action-buttons {
+                display: flex;
+                gap: 12px;
+            }
+
+            .btn {
+                padding: 8px 16px;
+                border-radius: 20px;
+                font-size: 0.875rem;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .btn-primary {
+                background-color: var(--primary-color);
+                color: white;
+                border: none;
+            }
+
+            .btn-primary:hover {
+                opacity: 0.9;
+            }
+
+            .btn-secondary {
+                background-color: transparent;
+                border: 1px solid var(--border-color);
+            }
+
+            .btn-secondary:hover {
+                background-color: var(--background-color);
+            }
+
+            /* Progress Bar */
+            .progress-bar {
+                height: 4px;
+                background-color: var(--border-color);
+                border-radius: 2px;
+                overflow: hidden;
+            }
+
+            .progress {
+                height: 100%;
+                background-color: var(--primary-color);
+                width: 60%;
+                transition: width 0.3s ease;
+            }
+
+            @media (max-width: 640px) {
+                .container {
+                    padding: 12px;
+                }
+
+                .question-card {
+                    border-radius: 0;
+                    margin: -12px;
+                }
+
+                .action-bar {
+                    padding: 12px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Question Card -->
+            <div class="question-card">
+                <div class="card-header">
+                    <h2 class="header-title">2024 수능 수학 - 문항 1</h2>
+                    <div class="timer">⏱️ 남은 시간: 14:32</div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="progress-bar">
+                    <div class="progress"></div>
+                </div>
+
+                <div class="question-content">
+                    <p class="question-text">
+                        다음은 수열 {an}의 점화식입니다. 초항 a1 = 2일 때, a3의
+                        값을 구하시오. 1) an+1 = an + 3 (n ≥ 1) 2) 수열의 첫째항
+                        a1 = 2
+                    </p>
+
+                    <!-- Answer Options -->
+                    <div class="answer-section">
+                        <div class="answer-options">
+                            <div class="answer-option">
+                                <span class="option-number">1</span>
+                                <span>8</span>
+                            </div>
+                            <div class="answer-option selected">
+                                <span class="option-number">2</span>
+                                <span>5</span>
+                            </div>
+                            <div class="answer-option">
+                                <span class="option-number">3</span>
+                                <span>7</span>
+                            </div>
+                            <div class="answer-option">
+                                <span class="option-number">4</span>
+                                <span>6</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notes Section -->
+                    <div class="notes-section">
+                        <div class="notes-header">
+                            <span class="notes-title">📝 나의 풀이 노트</span>
+                            <button class="btn btn-secondary">저장</button>
+                        </div>
+                        <div class="notes-content" contenteditable="true">
+                            여기에 풀이 과정을 적어보세요...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Questions & Comments -->
+                <div class="interaction-section">
+                    <div class="interactions-header">
+                        <div class="tab active">질문 (12)</div>
+                        <div class="tab">설명 (8)</div>
+                    </div>
+
+                    <div class="comment-list">
+                        <div class="comment">
+                            <div class="comment-avatar"></div>
+                            <div class="comment-content">
+                                <div class="comment-header">
+                                    <span class="comment-author">학생1</span>
+                                    <span class="comment-time">10분 전</span>
+                                </div>
+                                <p class="comment-text">
+                                    점화식에서 n+1항을 구하는 방법이 헷갈립니다.
+                                </p>
+                                <div class="comment-actions">
+                                    <span class="action-button">답변</span>
+                                    <span class="action-button">좋아요</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="comment-input">
+                        <div class="comment-avatar"></div>
+                        <input
+                            type="text"
+                            class="input-field"
+                            placeholder="질문이나 코멘트를 입력하세요..."
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Bar -->
+            <div class="action-bar">
+                <div class="action-buttons">
+                    <button class="btn btn-secondary">이전 문항</button>
+                    <button class="btn btn-primary">다음 문항</button>
+                </div>
+                <button class="btn btn-secondary">답안 제출</button>
+            </div>
+        </div>
+    </body>
+</html>

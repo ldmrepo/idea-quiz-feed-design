@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>검색 결과</title>
+        <style>
+            :root {
+                --primary-color: #6c5ce7;
+                --primary-light: #a29bfe;
+                --success-color: #00b894;
+                --warning-color: #fdcb6e;
+                --surface-color: #ffffff;
+                --background-color: #f8f9fa;
+                --text-primary: #2d3436;
+                --text-secondary: #636e72;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 24px;
+                display: grid;
+                grid-template-columns: 280px 1fr;
+                gap: 24px;
+            }
+
+            /* Search Header */
+            .search-header {
+                grid-column: 1 / -1;
+                margin-bottom: 24px;
+            }
+
+            .search-bar {
+                width: 100%;
+                max-width: 600px;
+                margin-bottom: 16px;
+            }
+
+            .search-input {
+                width: 100%;
+                padding: 12px 16px;
+                border: 1px solid var(--primary-light);
+                border-radius: 8px;
+                font-size: 16px;
+            }
+
+            .search-stats {
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+            /* Filters Panel */
+            .filters-panel {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 20px;
+                height: fit-content;
+            }
+
+            .filter-section {
+                margin-bottom: 24px;
+            }
+
+            .filter-title {
+                font-weight: 600;
+                margin-bottom: 12px;
+            }
+
+            .filter-options {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .filter-option {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .filter-option:hover {
+                background: var(--background-color);
+            }
+
+            .filter-option.active {
+                background: var(--primary-light);
+                color: white;
+            }
+
+            .option-count {
+                font-size: 12px;
+                color: var(--text-secondary);
+                background: var(--background-color);
+                padding: 2px 6px;
+                border-radius: 10px;
+            }
+
+            /* Results Section */
+            .results-section {
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            .result-card {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 20px;
+                transition: transform 0.2s ease;
+            }
+
+            .result-card:hover {
+                transform: translateY(-2px);
+            }
+
+            .result-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+            }
+
+            .result-type {
+                padding: 4px 8px;
+                background: var(--primary-light);
+                color: white;
+                border-radius: 4px;
+                font-size: 12px;
+            }
+
+            .result-title {
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 8px;
+                color: var(--primary-color);
+            }
+
+            .result-preview {
+                color: var(--text-secondary);
+                font-size: 14px;
+                margin-bottom: 16px;
+            }
+
+            .result-meta {
+                display: flex;
+                gap: 16px;
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+            .meta-item {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+
+            /* User Result */
+            .user-result {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+            }
+
+            .user-avatar {
+                width: 48px;
+                height: 48px;
+                border-radius: 24px;
+                background: var(--primary-light);
+            }
+
+            .user-info {
+                flex: 1;
+            }
+
+            .user-name {
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+
+            .user-bio {
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+            .follow-button {
+                padding: 8px 16px;
+                background: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+            }
+
+            /* Pagination */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                gap: 8px;
+                margin-top: 24px;
+            }
+
+            .page-button {
+                padding: 8px 12px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                background: var(--surface-color);
+                cursor: pointer;
+            }
+
+            .page-button.active {
+                background: var(--primary-color);
+                color: white;
+                border-color: var(--primary-color);
+            }
+
+            @media (max-width: 968px) {
+                .container {
+                    grid-template-columns: 1fr;
+                }
+
+                .filters-panel {
+                    display: none;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Search Header -->
+            <div class="search-header">
+                <div class="search-bar">
+                    <input
+                        type="text"
+                        class="search-input"
+                        value="미적분"
+                        placeholder="검색어를 입력하세요"
+                    />
+                </div>
+                <div class="search-stats">
+                    '미적분'에 대한 검색 결과 356건 (0.24초)
+                </div>
+            </div>
+
+            <!-- Filters Panel -->
+            <div class="filters-panel">
+                <div class="filter-section">
+                    <h3 class="filter-title">유형</h3>
+                    <div class="filter-options">
+                        <div class="filter-option active">
+                            <span>전체</span>
+                            <span class="option-count">356</span>
+                        </div>
+                        <div class="filter-option">
+                            <span>문제</span>
+                            <span class="option-count">245</span>
+                        </div>
+                        <div class="filter-option">
+                            <span>그룹</span>
+                            <span class="option-count">42</span>
+                        </div>
+                        <div class="filter-option">
+                            <span>사용자</span>
+                            <span class="option-count">69</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <h3 class="filter-title">난이도</h3>
+                    <div class="filter-options">
+                        <div class="filter-option">
+                            <span>상</span>
+                            <span class="option-count">89</span>
+                        </div>
+                        <div class="filter-option">
+                            <span>중</span>
+                            <span class="option-count">156</span>
+                        </div>
+                        <div class="filter-option">
+                            <span>하</span>
+                            <span class="option-count">111</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <h3 class="filter-title">정렬</h3>
+                    <div class="filter-options">
+                        <div class="filter-option active">
+                            <span>관련도순</span>
+                        </div>
+                        <div class="filter-option">
+                            <span>최신순</span>
+                        </div>
+                        <div class="filter-option">
+                            <span>인기순</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section">
+                <!-- Problem Result -->
+                <div class="result-card">
+                    <div class="result-header">
+                        <span class="result-type">문제</span>
+                    </div>
+                    <h3 class="result-title">미적분 문제 #42 - 함수의 극값</h3>
+                    <p class="result-preview">
+                        다음 함수의 극값을 구하시오. f(x) = x² + 2x + 1
+                    </p>
+                    <div class="result-meta">
+                        <span class="meta-item">👥 245명 풀이</span>
+                        <span class="meta-item">⭐ 난이도: 중</span>
+                        <span class="meta-item">📊 정답률: 75%</span>
+                    </div>
+                </div>
+
+                <!-- Group Result -->
+                <div class="result-card">
+                    <div class="result-header">
+                        <span class="result-type">그룹</span>
+                    </div>
+                    <h3 class="result-title">미적분 마스터 스터디</h3>
+                    <p class="result-preview">
+                        수능 미적분 문제 풀이와 개념 학습을 함께하는 스터디
+                        그룹입니다.
+                    </p>
+                    <div class="result-meta">
+                        <span class="meta-item">👥 128명 참여</span>
+                        <span class="meta-item">📚 356개 문제</span>
+                        <span class="meta-item">⭐ 평점 4.8</span>
+                    </div>
+                </div>
+
+                <!-- User Result -->
+                <div class="result-card">
+                    <div class="user-result">
+                        <div class="user-avatar"></div>
+                        <div class="user-info">
+                            <div class="user-name">미적분왕</div>
+                            <div class="user-bio">
+                                수학 문제 해결 전문가 | 미적분 튜터
+                            </div>
+                            <div class="result-meta">
+                                <span class="meta-item"
+                                    >📚 245개 문제 출제</span
+                                >
+                                <span class="meta-item">👥 128명 팔로워</span>
+                            </div>
+                        </div>
+                        <button class="follow-button">팔로우</button>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination">
+                    <button class="page-button">◀</button>
+                    <button class="page-button active">1</button>
+                    <button class="page-button">2</button>
+                    <button class="page-button">3</button>
+                    <button class="page-button">4</button>
+                    <button class="page-button">5</button>
+                    <button class="page-button">▶</button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

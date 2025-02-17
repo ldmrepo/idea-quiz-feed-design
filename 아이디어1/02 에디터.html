@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>문항 작성 도구</title>
+        <style>
+            /* Base Styles */
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: #fafafa;
+                color: #262626;
+                line-height: 1.6;
+            }
+
+            /* Header Styles - Instagram/Twitter style */
+            .header {
+                background: white;
+                border-bottom: 1px solid #dbdbdb;
+                position: sticky;
+                top: 0;
+                z-index: 100;
+            }
+
+            .header-content {
+                max-width: 935px;
+                margin: 0 auto;
+                padding: 0.75rem 1rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+                font-weight: bold;
+                color: #262626;
+            }
+
+            .header-actions {
+                display: flex;
+                gap: 1.25rem;
+                align-items: center;
+            }
+
+            .header-icon {
+                position: relative;
+                width: 24px;
+                height: 24px;
+                cursor: pointer;
+            }
+
+            .notification-badge {
+                position: absolute;
+                top: -5px;
+                right: -5px;
+                background: #ed4956;
+                color: white;
+                border-radius: 50%;
+                padding: 0.2rem 0.4rem;
+                font-size: 0.75rem;
+                min-width: 18px;
+                text-align: center;
+            }
+
+            /* Stories/Highlights Section - Instagram style */
+            .stories-bar {
+                background: white;
+                border-bottom: 1px solid #dbdbdb;
+                padding: 1rem;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+
+            .stories-bar::-webkit-scrollbar {
+                display: none;
+            }
+
+            .story-item {
+                display: inline-flex;
+                flex-direction: column;
+                align-items: center;
+                margin-right: 1rem;
+            }
+
+            .story-avatar {
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+                background: #eee;
+                border: 3px solid #e1306c;
+                margin-bottom: 0.5rem;
+            }
+
+            .story-username {
+                font-size: 0.75rem;
+                color: #262626;
+            }
+
+            /* Main Feed - Social media style */
+            .main-container {
+                max-width: 935px;
+                margin: 0 auto;
+                padding: 1rem;
+                display: flex;
+                gap: 2rem;
+            }
+
+            /* Post Card - Instagram style */
+            .post-card {
+                background: white;
+                border: 1px solid #dbdbdb;
+                border-radius: 3px;
+                margin-bottom: 1rem;
+                width: 100%;
+            }
+
+            .post-header {
+                display: flex;
+                align-items: center;
+                padding: 1rem;
+                border-bottom: 1px solid #efefef;
+            }
+
+            .post-avatar {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background: #eee;
+                margin-right: 0.75rem;
+            }
+
+            .post-author {
+                font-weight: 600;
+                color: #262626;
+            }
+
+            .post-content {
+                padding: 1rem;
+            }
+
+            .editor-title {
+                width: 100%;
+                padding: 0.75rem;
+                font-size: 1.1rem;
+                border: 1px solid #dbdbdb;
+                border-radius: 3px;
+                margin-bottom: 1rem;
+                font-family: inherit;
+            }
+
+            .editor-body {
+                width: 100%;
+                min-height: 150px;
+                padding: 0.75rem;
+                border: 1px solid #dbdbdb;
+                border-radius: 3px;
+                font-family: inherit;
+                resize: vertical;
+            }
+
+            /* Actions Bar - Social media style */
+            .post-actions {
+                padding: 0.5rem 1rem;
+                border-top: 1px solid #efefef;
+            }
+
+            .action-buttons {
+                display: flex;
+                gap: 1rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .action-button {
+                background: none;
+                border: none;
+                padding: 0.5rem;
+                cursor: pointer;
+                font-size: 0.9rem;
+                color: #262626;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .action-button:hover {
+                color: #8e8e8e;
+            }
+
+            .likes-count {
+                font-weight: 600;
+                color: #262626;
+                margin-bottom: 0.5rem;
+            }
+
+            /* Sidebar - Social media suggestions */
+            .sidebar {
+                display: none;
+                width: 300px;
+                position: sticky;
+                top: 88px;
+            }
+
+            @media (min-width: 935px) {
+                .sidebar {
+                    display: block;
+                }
+            }
+
+            .suggestions-card {
+                background: white;
+                border: 1px solid #dbdbdb;
+                border-radius: 3px;
+                padding: 1rem;
+            }
+
+            .suggestions-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 1rem;
+            }
+
+            .suggestion-title {
+                color: #8e8e8e;
+                font-weight: 600;
+            }
+
+            .suggestion-item {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 0.75rem;
+            }
+
+            .suggestion-user {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+            }
+
+            .suggestion-avatar {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background: #eee;
+            }
+
+            .suggestion-info {
+                font-size: 0.875rem;
+            }
+
+            .suggestion-username {
+                font-weight: 600;
+                color: #262626;
+            }
+
+            .suggestion-meta {
+                color: #8e8e8e;
+                font-size: 0.75rem;
+            }
+
+            .follow-button {
+                color: #0095f6;
+                font-weight: 600;
+                background: none;
+                border: none;
+                cursor: pointer;
+                font-size: 0.75rem;
+            }
+
+            /* Mobile Optimizations */
+            @media (max-width: 767px) {
+                .main-container {
+                    padding: 0;
+                }
+
+                .post-card {
+                    border-left: none;
+                    border-right: none;
+                    border-radius: 0;
+                }
+
+                .stories-bar {
+                    padding: 0.75rem;
+                }
+
+                .story-avatar {
+                    width: 48px;
+                    height: 48px;
+                }
+            }
+
+            /* Floating Create Button - Mobile */
+            .create-button {
+                position: fixed;
+                bottom: 1.5rem;
+                right: 1.5rem;
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+                background: #0095f6;
+                color: white;
+                border: none;
+                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+                cursor: pointer;
+                display: none;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.5rem;
+            }
+
+            @media (max-width: 767px) {
+                .create-button {
+                    display: flex;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">문항작성</div>
+                <div class="header-actions">
+                    <div class="header-icon">검색</div>
+                    <div class="header-icon">
+                        알림
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <div class="header-icon">프로필</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Stories/Highlights Bar -->
+        <div class="stories-bar">
+            <div class="story-item">
+                <div class="story-avatar"></div>
+                <span class="story-username">내 활동</span>
+            </div>
+            <div class="story-item">
+                <div class="story-avatar"></div>
+                <span class="story-username">최근 업데이트</span>
+            </div>
+            <div class="story-item">
+                <div class="story-avatar"></div>
+                <span class="story-username">인기 문항</span>
+            </div>
+            <div class="story-item">
+                <div class="story-avatar"></div>
+                <span class="story-username">AI 추천</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-container">
+            <!-- Feed -->
+            <div class="feed" style="flex: 1">
+                <!-- Post Card -->
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="post-avatar"></div>
+                        <div class="post-author">새 문항 작성</div>
+                    </div>
+                    <div class="post-content">
+                        <input
+                            type="text"
+                            class="editor-title"
+                            placeholder="문항 제목을 입력하세요"
+                        />
+                        <textarea
+                            class="editor-body"
+                            placeholder="여기에 문항 내용을 작성하세요..."
+                        ></textarea>
+                    </div>
+                    <div class="post-actions">
+                        <div class="action-buttons">
+                            <button class="action-button">저장</button>
+                            <button class="action-button">리뷰 요청</button>
+                            <button class="action-button">AI 검토</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Previous Post Example -->
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="post-avatar"></div>
+                        <div class="post-author">수학 기출 문항</div>
+                    </div>
+                    <div class="post-content">
+                        <p>2024학년도 수능 수학 문항...</p>
+                    </div>
+                    <div class="post-actions">
+                        <div class="action-buttons">
+                            <button class="action-button">좋아요 34</button>
+                            <button class="action-button">댓글 12</button>
+                            <button class="action-button">공유</button>
+                        </div>
+                        <div class="likes-count">
+                            김교사님 외 33명이 좋아합니다
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="suggestions-card">
+                    <div class="suggestions-header">
+                        <span class="suggestion-title">추천 문항</span>
+                        <button class="follow-button">모두 보기</button>
+                    </div>
+                    <div class="suggestion-item">
+                        <div class="suggestion-user">
+                            <div class="suggestion-avatar"></div>
+                            <div class="suggestion-info">
+                                <div class="suggestion-username">
+                                    수능 수학 고난도
+                                </div>
+                                <div class="suggestion-meta">
+                                    30분 전 업데이트
+                                </div>
+                            </div>
+                        </div>
+                        <button class="follow-button">보기</button>
+                    </div>
+                    <div class="suggestion-item">
+                        <div class="suggestion-user">
+                            <div class="suggestion-avatar"></div>
+                            <div class="suggestion-info">
+                                <div class="suggestion-username">
+                                    모의고사 영어
+                                </div>
+                                <div class="suggestion-meta">
+                                    1시간 전 업데이트
+                                </div>
+                            </div>
+                        </div>
+                        <button class="follow-button">보기</button>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Mobile Create Button -->
+        <button class="create-button">+</button>
+    </body>
+</html>

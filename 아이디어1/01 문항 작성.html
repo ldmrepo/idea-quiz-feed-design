@@ -1,0 +1,431 @@
+<!-- 문항 작성 도구의 주요 특징을 설명드리겠습니다:
+
+1. 사용자 친화적 레이아웃:
+- 단계별 작성 구조
+- 명확한 섹션 구분
+- 직관적인 입력 필드
+- 실시간 미리보기
+
+2. 소셜 미디어 스타일 요소:
+- 태그 시스템
+- 미디어 업로드
+- 공개 설정
+- 즉각적인 피드백
+
+3. 고급 기능:
+- 드래그 앤 드롭 미디어 업로드
+- 문항 유형 선택
+- 임시 저장 기능
+- 태그 관리
+
+4. 시각적 디자인:
+- 깔끔한 카드 스타일
+- 부드러운 애니메이션
+- 일관된 색상 체계
+- 명확한 상호작용 요소
+
+5. 모바일 최적화:
+- 반응형 레이아웃
+- 터치 친화적 UI
+- 적절한 입력 필드 크기
+- 모바일에 최적화된 버튼 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>문항 작성</title>
+        <style>
+            /* Base Styles */
+            :root {
+                --primary-color: #0095f6;
+                --primary-hover: #1877f2;
+                --border-color: #dbdbdb;
+                --background-color: #fafafa;
+                --surface-color: #ffffff;
+                --text-primary: #262626;
+                --text-secondary: #8e8e8e;
+                --danger-color: #ed4956;
+                --success-color: #58c322;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+            }
+
+            /* Editor Container */
+            .editor-container {
+                max-width: 600px;
+                margin: 20px auto;
+                background: var(--surface-color);
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            }
+
+            /* Editor Header */
+            .editor-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 16px;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .editor-title {
+                font-size: 16px;
+                font-weight: 600;
+            }
+
+            .close-button {
+                background: none;
+                border: none;
+                cursor: pointer;
+                font-size: 20px;
+                color: var(--text-secondary);
+            }
+
+            /* Editor Form */
+            .editor-form {
+                padding: 16px;
+            }
+
+            .form-section {
+                margin-bottom: 24px;
+            }
+
+            .section-header {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 12px;
+            }
+
+            .section-title {
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--text-secondary);
+            }
+
+            /* Input Styles */
+            .input-field {
+                width: 100%;
+                padding: 12px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                font-size: 14px;
+                resize: none;
+                margin-bottom: 8px;
+            }
+
+            .input-field:focus {
+                outline: none;
+                border-color: var(--primary-color);
+            }
+
+            .content-editor {
+                min-height: 200px;
+            }
+
+            /* Media Upload */
+            .media-upload {
+                border: 2px dashed var(--border-color);
+                border-radius: 8px;
+                padding: 24px;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .media-upload:hover {
+                border-color: var(--primary-color);
+                background: rgba(0, 149, 246, 0.05);
+            }
+
+            .upload-icon {
+                font-size: 32px;
+                margin-bottom: 8px;
+                color: var(--text-secondary);
+            }
+
+            .upload-text {
+                font-size: 14px;
+                color: var(--text-secondary);
+            }
+
+            /* Tags Section */
+            .tags-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-top: 8px;
+            }
+
+            .tag {
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                padding: 6px 12px;
+                background: var(--background-color);
+                border-radius: 16px;
+                font-size: 13px;
+            }
+
+            .tag-remove {
+                cursor: pointer;
+                color: var(--text-secondary);
+            }
+
+            /* Options Section */
+            .options-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 12px;
+                margin-top: 8px;
+            }
+
+            .option-card {
+                padding: 12px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .option-card:hover {
+                border-color: var(--primary-color);
+                background: rgba(0, 149, 246, 0.05);
+            }
+
+            .option-card.selected {
+                border-color: var(--primary-color);
+                background: rgba(0, 149, 246, 0.1);
+            }
+
+            .option-icon {
+                font-size: 24px;
+                margin-bottom: 8px;
+            }
+
+            .option-label {
+                font-size: 13px;
+                font-weight: 500;
+            }
+
+            /* Footer Actions */
+            .editor-footer {
+                padding: 16px;
+                border-top: 1px solid var(--border-color);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .action-buttons {
+                display: flex;
+                gap: 12px;
+            }
+
+            .button {
+                padding: 8px 16px;
+                border-radius: 4px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                border: none;
+            }
+
+            .button-primary {
+                background: var(--primary-color);
+                color: white;
+            }
+
+            .button-primary:hover {
+                background: var(--primary-hover);
+            }
+
+            .button-secondary {
+                background: transparent;
+                border: 1px solid var(--border-color);
+            }
+
+            .button-secondary:hover {
+                background: var(--background-color);
+            }
+
+            .privacy-selector {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+            /* Preview Section */
+            .preview-section {
+                margin-top: 16px;
+                padding: 16px;
+                background: var(--background-color);
+                border-radius: 8px;
+            }
+
+            .preview-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+            }
+
+            .preview-title {
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--text-secondary);
+            }
+
+            .preview-content {
+                background: var(--surface-color);
+                padding: 16px;
+                border-radius: 8px;
+                border: 1px solid var(--border-color);
+            }
+
+            /* Responsive Design */
+            @media (max-width: 640px) {
+                .editor-container {
+                    margin: 0;
+                    border-radius: 0;
+                    border-left: none;
+                    border-right: none;
+                }
+
+                .options-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="editor-container">
+            <!-- Editor Header -->
+            <div class="editor-header">
+                <h1 class="editor-title">새 문항 작성</h1>
+                <button class="close-button">×</button>
+            </div>
+
+            <!-- Editor Form -->
+            <form class="editor-form">
+                <!-- Title Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <span class="section-title">제목</span>
+                    </div>
+                    <input
+                        type="text"
+                        class="input-field"
+                        placeholder="문항의 제목을 입력하세요"
+                    />
+                </div>
+
+                <!-- Content Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <span class="section-title">문항 내용</span>
+                    </div>
+                    <textarea
+                        class="input-field content-editor"
+                        placeholder="문항의 내용을 작성하세요..."
+                    ></textarea>
+                </div>
+
+                <!-- Media Upload Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <span class="section-title">미디어 추가</span>
+                    </div>
+                    <div class="media-upload">
+                        <div class="upload-icon">📷</div>
+                        <div class="upload-text">
+                            이미지나 파일을 드래그하거나 클릭하여 업로드하세요
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tags Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <span class="section-title">태그</span>
+                    </div>
+                    <input
+                        type="text"
+                        class="input-field"
+                        placeholder="태그를 입력하세요 (쉼표로 구분)"
+                    />
+                    <div class="tags-container">
+                        <span class="tag"
+                            >수학 <span class="tag-remove">×</span></span
+                        >
+                        <span class="tag"
+                            >고등수학 <span class="tag-remove">×</span></span
+                        >
+                        <span class="tag"
+                            >수능 <span class="tag-remove">×</span></span
+                        >
+                    </div>
+                </div>
+
+                <!-- Options Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <span class="section-title">문항 옵션</span>
+                    </div>
+                    <div class="options-grid">
+                        <div class="option-card selected">
+                            <div class="option-icon">📝</div>
+                            <div class="option-label">객관식</div>
+                        </div>
+                        <div class="option-card">
+                            <div class="option-icon">✍️</div>
+                            <div class="option-label">주관식</div>
+                        </div>
+                        <div class="option-card">
+                            <div class="option-icon">📊</div>
+                            <div class="option-label">서술형</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview Section -->
+                <div class="preview-section">
+                    <div class="preview-header">
+                        <span class="preview-title">미리보기</span>
+                    </div>
+                    <div class="preview-content">
+                        <h3>2024 수능 수학 문항</h3>
+                        <p>문항 내용이 이곳에 표시됩니다...</p>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Footer Actions -->
+            <div class="editor-footer">
+                <div class="privacy-selector">🌐 공개 설정</div>
+                <div class="action-buttons">
+                    <button class="button button-secondary">임시 저장</button>
+                    <button class="button button-primary">게시하기</button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,372 @@
+<!-- 주요 구현 특징:
+
+1. 버그 찾기형
+- 코드 하이라이트
+- 디버그 콘솔
+- 실시간 피드백
+
+2. 코드 완성형
+- 인터랙티브 입력
+- 문법 하이라이트
+- 자동 완성 지원
+
+3. 로직 오류 찾기
+- 오류 표시
+- 테스트 케이스
+- 성능 분석
+
+4. 알고리즘 순서 맞추기
+- 드래그앤드롭
+- 순서 검증
+- 시각적 피드백
+
+모바일 최적화:
+- 터치 인터랙션
+- 코드 가독성
+- 반응형 레이아웃 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>문제해결 중심형</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --success: #22c55e;
+                --warning: #f59e0b;
+                --error: #ef4444;
+                --gray-50: #f9fafb;
+                --gray-100: #f3f4f6;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+                --gray-800: #1f2937;
+                --code-bg: #1e1e1e;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, system-ui, sans-serif;
+                background: var(--gray-50);
+                padding: 16px;
+            }
+
+            /* 공통 카드 스타일 */
+            .problem-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+                overflow: hidden;
+            }
+
+            .card-header {
+                padding: 16px;
+                border-bottom: 1px solid var(--gray-200);
+            }
+
+            .card-title {
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .card-description {
+                font-size: 14px;
+                color: var(--gray-700);
+            }
+
+            /* 코드 에디터 스타일 */
+            .code-editor {
+                background: var(--code-bg);
+                padding: 16px;
+                overflow-x: auto;
+                position: relative;
+            }
+
+            .code-content {
+                font-family: "Courier New", monospace;
+                font-size: 14px;
+                line-height: 1.5;
+                color: white;
+                tab-size: 4;
+            }
+
+            .line-numbers {
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                width: 40px;
+                padding: 16px 8px;
+                text-align: right;
+                background: rgba(255, 255, 255, 0.1);
+                color: var(--gray-500);
+                user-select: none;
+            }
+
+            /* 버그 마커 */
+            .bug-marker {
+                background: rgba(239, 68, 68, 0.2);
+                border-left: 3px solid var(--error);
+                cursor: pointer;
+            }
+
+            /* 코드 완성 입력 */
+            .code-input {
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid var(--gray-700);
+                border-radius: 4px;
+                color: white;
+                padding: 4px 8px;
+                font-family: "Courier New", monospace;
+                width: 100%;
+                margin: 4px 0;
+            }
+
+            /* 로직 오류 하이라이트 */
+            .logic-error {
+                background: rgba(245, 158, 11, 0.2);
+                border-left: 3px solid var(--warning);
+                cursor: pointer;
+            }
+
+            /* 알고리즘 순서 아이템 */
+            .algorithm-steps {
+                padding: 16px;
+            }
+
+            .step-item {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px;
+                background: var(--gray-50);
+                border: 1px solid var(--gray-200);
+                border-radius: 8px;
+                margin-bottom: 8px;
+                cursor: move;
+            }
+
+            .step-number {
+                width: 24px;
+                height: 24px;
+                background: var(--primary);
+                color: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+            }
+
+            .step-content {
+                flex: 1;
+            }
+
+            .step-handle {
+                color: var(--gray-700);
+                cursor: move;
+                padding: 8px;
+            }
+
+            /* 도구 모음 */
+            .toolbox {
+                padding: 12px;
+                border-top: 1px solid var(--gray-200);
+                display: flex;
+                gap: 8px;
+                overflow-x: auto;
+            }
+
+            .tool-button {
+                padding: 8px 16px;
+                background: var(--gray-100);
+                border: none;
+                border-radius: 6px;
+                font-size: 14px;
+                white-space: nowrap;
+                cursor: pointer;
+            }
+
+            .tool-button:hover {
+                background: var(--gray-200);
+            }
+
+            /* 디버그 콘솔 */
+            .debug-console {
+                background: var(--gray-800);
+                color: white;
+                padding: 12px;
+                font-family: "Courier New", monospace;
+                font-size: 13px;
+                max-height: 150px;
+                overflow-y: auto;
+            }
+
+            .console-line {
+                padding: 4px 0;
+            }
+
+            .error-line {
+                color: var(--error);
+            }
+
+            .success-line {
+                color: var(--success);
+            }
+
+            /* 정답 제출 영역 */
+            .submit-area {
+                padding: 16px;
+                border-top: 1px solid var(--gray-200);
+                display: flex;
+                gap: 12px;
+            }
+
+            .submit-button {
+                flex: 1;
+                padding: 12px;
+                border: none;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+            }
+
+            .primary-button {
+                background: var(--primary);
+                color: white;
+            }
+
+            .secondary-button {
+                background: var(--gray-100);
+                color: var(--gray-700);
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 버그 찾기형 -->
+        <div class="problem-card">
+            <div class="card-header">
+                <h2 class="card-title">버그 찾기 문제</h2>
+                <p class="card-description">코드에서 버그를 찾아 표시하세요.</p>
+            </div>
+            <div class="code-editor">
+                <div class="line-numbers">1<br />2<br />3<br />4<br />5</div>
+                <pre class="code-content">
+function calculateSum(arr) {
+    let sum = 0;
+    for(let i = 0; i <= arr.length; i++) {
+        sum += arr[i];
+    }
+    return sum;
+}</pre
+                >
+            </div>
+            <div class="toolbox">
+                <button class="tool-button">디버그</button>
+                <button class="tool-button">실행</button>
+                <button class="tool-button">힌트</button>
+            </div>
+            <div class="debug-console">
+                <div class="console-line error-line">
+                    Error: Cannot read property of undefined
+                </div>
+                <div class="console-line">at line 4</div>
+            </div>
+        </div>
+
+        <!-- 코드 완성형 -->
+        <div class="problem-card">
+            <div class="card-header">
+                <h2 class="card-title">코드 완성 문제</h2>
+                <p class="card-description">
+                    빈 칸에 알맞은 코드를 입력하세요.
+                </p>
+            </div>
+            <div class="code-editor">
+                <div class="line-numbers">1<br />2<br />3<br />4<br />5</div>
+                <pre class="code-content">
+function reverseString(str) {
+    let result = '';
+    for(let i = __________; i >= 0; i--) {
+        result += str[i];
+    }
+    return result;
+}</pre
+                >
+            </div>
+            <div class="submit-area">
+                <button class="submit-button secondary-button">초기화</button>
+                <button class="submit-button primary-button">제출</button>
+            </div>
+        </div>
+
+        <!-- 로직 오류 찾기 -->
+        <div class="problem-card">
+            <div class="card-header">
+                <h2 class="card-title">로직 오류 찾기</h2>
+                <p class="card-description">코드의 논리적 오류를 찾아내세요.</p>
+            </div>
+            <div class="code-editor">
+                <div class="line-numbers">
+                    1<br />2<br />3<br />4<br />5<br />6
+                </div>
+                <pre class="code-content">
+function isPrime(n) {
+    if(n < 2) return false;
+    for(let i = 2; i < n; i++) {
+        if(n % i === 0) return false;
+    }
+    return true;
+}</pre
+                >
+            </div>
+            <div class="toolbox">
+                <button class="tool-button">테스트 케이스</button>
+                <button class="tool-button">성능 분석</button>
+                <button class="tool-button">해설</button>
+            </div>
+        </div>
+
+        <!-- 알고리즘 순서 맞추기 -->
+        <div class="problem-card">
+            <div class="card-header">
+                <h2 class="card-title">알고리즘 순서 맞추기</h2>
+                <p class="card-description">
+                    버블 정렬 알고리즘의 올바른 순서를 맞추세요.
+                </p>
+            </div>
+            <div class="algorithm-steps">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">외부 반복문 시작</div>
+                    <div class="step-handle">⋮</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">인접 요소 비교</div>
+                    <div class="step-handle">⋮</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-content">필요시 요소 교환</div>
+                    <div class="step-handle">⋮</div>
+                </div>
+            </div>
+            <div class="submit-area">
+                <button class="submit-button secondary-button">
+                    순서 초기화
+                </button>
+                <button class="submit-button primary-button">순서 확인</button>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>학습 결과</title>
+        <style>
+            /* Base Styles */
+            :root {
+                --primary-color: #0095f6;
+                --success-color: #4ade80;
+                --warning-color: #fbbf24;
+                --danger-color: #ef4444;
+                --border-color: #dbdbdb;
+                --background-color: #fafafa;
+                --surface-color: #ffffff;
+                --text-primary: #262626;
+                --text-secondary: #737373;
+                --chart-grid: #f1f5f9;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+            }
+
+            /* Container */
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+
+            /* Result Card */
+            .card {
+                background: var(--surface-color);
+                border: 1px solid var(--border-color);
+                border-radius: 12px;
+                margin-bottom: 24px;
+                overflow: hidden;
+            }
+
+            .card-header {
+                padding: 16px;
+                border-bottom: 1px solid var(--border-color);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .header-title {
+                font-size: 1.125rem;
+                font-weight: 600;
+            }
+
+            /* Score Summary */
+            .score-summary {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+                padding: 24px;
+            }
+
+            .score-item {
+                text-align: center;
+                padding: 16px;
+                border-radius: 8px;
+                background: var(--background-color);
+            }
+
+            .score-label {
+                font-size: 0.875rem;
+                color: var(--text-secondary);
+                margin-bottom: 8px;
+            }
+
+            .score-value {
+                font-size: 1.5rem;
+                font-weight: 600;
+            }
+
+            .score-sub {
+                font-size: 0.75rem;
+                color: var(--text-secondary);
+                margin-top: 4px;
+            }
+
+            /* Question Results */
+            .question-results {
+                padding: 20px;
+            }
+
+            .result-item {
+                display: flex;
+                align-items: center;
+                padding: 16px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                margin-bottom: 12px;
+            }
+
+            .result-status {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: 16px;
+                font-size: 1.25rem;
+            }
+
+            .status-correct {
+                background-color: rgba(74, 222, 128, 0.1);
+                color: var(--success-color);
+            }
+
+            .status-incorrect {
+                background-color: rgba(239, 68, 68, 0.1);
+                color: var(--danger-color);
+            }
+
+            .result-content {
+                flex: 1;
+            }
+
+            .result-title {
+                font-weight: 500;
+                margin-bottom: 4px;
+            }
+
+            .result-detail {
+                font-size: 0.875rem;
+                color: var(--text-secondary);
+            }
+
+            /* Progress Charts */
+            .chart-container {
+                padding: 20px;
+            }
+
+            .chart-header {
+                margin-bottom: 16px;
+            }
+
+            .progress-chart {
+                height: 200px;
+                margin-bottom: 24px;
+                padding: 16px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                background: var(--surface-color);
+                position: relative;
+            }
+
+            .chart-grid {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                height: 100%;
+            }
+
+            .grid-line {
+                border-bottom: 1px dashed var(--chart-grid);
+                position: relative;
+            }
+
+            .grid-label {
+                position: absolute;
+                left: -40px;
+                font-size: 0.75rem;
+                color: var(--text-secondary);
+            }
+
+            /* Streak Card */
+            .streak-card {
+                display: grid;
+                grid-template-columns: repeat(7, 1fr);
+                gap: 8px;
+                padding: 16px;
+                background: var(--background-color);
+                border-radius: 8px;
+                margin-top: 16px;
+            }
+
+            .streak-day {
+                aspect-ratio: 1;
+                border-radius: 4px;
+                background: var(--surface-color);
+                border: 1px solid var(--border-color);
+            }
+
+            .streak-active {
+                background: var(--primary-color);
+                border-color: var(--primary-color);
+            }
+
+            /* Share Section */
+            .share-section {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 16px;
+                border-top: 1px solid var(--border-color);
+            }
+
+            .share-stats {
+                display: flex;
+                gap: 16px;
+            }
+
+            .stat-item {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                font-size: 0.875rem;
+                color: var(--text-secondary);
+            }
+
+            .share-button {
+                padding: 8px 16px;
+                border-radius: 20px;
+                background: var(--primary-color);
+                color: white;
+                border: none;
+                font-weight: 500;
+                cursor: pointer;
+            }
+
+            /* Achievement Badges */
+            .badges-section {
+                padding: 20px;
+            }
+
+            .badges-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 16px;
+            }
+
+            .badge-item {
+                text-align: center;
+                padding: 16px;
+                border-radius: 8px;
+                background: var(--background-color);
+            }
+
+            .badge-icon {
+                font-size: 2rem;
+                margin-bottom: 8px;
+            }
+
+            .badge-name {
+                font-size: 0.875rem;
+                font-weight: 500;
+            }
+
+            .badge-progress {
+                font-size: 0.75rem;
+                color: var(--text-secondary);
+                margin-top: 4px;
+            }
+
+            @media (max-width: 640px) {
+                .container {
+                    padding: 12px;
+                }
+
+                .score-summary {
+                    grid-template-columns: 1fr;
+                    gap: 12px;
+                }
+
+                .badges-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Overall Score Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="header-title">오늘의 학습 결과</h2>
+                    <span>2025.02.13</span>
+                </div>
+
+                <div class="score-summary">
+                    <div class="score-item">
+                        <div class="score-label">정답률</div>
+                        <div class="score-value">85%</div>
+                        <div class="score-sub">+5% 상승</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">풀이 시간</div>
+                        <div class="score-value">45분</div>
+                        <div class="score-sub">목표 60분</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">연속 학습</div>
+                        <div class="score-value">7일</div>
+                        <div class="score-sub">최고 기록!</div>
+                    </div>
+                </div>
+
+                <div class="question-results">
+                    <h3 class="header-title">문항별 결과</h3>
+                    <div class="result-item">
+                        <div class="result-status status-correct">✓</div>
+                        <div class="result-content">
+                            <div class="result-title">
+                                문항 1: 수열의 점화식
+                            </div>
+                            <div class="result-detail">
+                                정답: ② | 풀이시간: 5분
+                            </div>
+                        </div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-status status-incorrect">×</div>
+                        <div class="result-content">
+                            <div class="result-title">문항 2: 삼각함수</div>
+                            <div class="result-detail">
+                                오답: ③ (정답: ①) | 풀이시간: 8분
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="share-section">
+                    <div class="share-stats">
+                        <div class="stat-item">👍 128</div>
+                        <div class="stat-item">💬 24</div>
+                    </div>
+                    <button class="share-button">공유하기</button>
+                </div>
+            </div>
+
+            <!-- Learning Progress Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="header-title">학습 진행도</h2>
+                    <select>
+                        <option>이번 주</option>
+                        <option>이번 달</option>
+                        <option>전체</option>
+                    </select>
+                </div>
+
+                <div class="chart-container">
+                    <div class="progress-chart">
+                        <div class="chart-grid">
+                            <div class="grid-line">
+                                <span class="grid-label">100%</span>
+                            </div>
+                            <div class="grid-line">
+                                <span class="grid-label">75%</span>
+                            </div>
+                            <div class="grid-line">
+                                <span class="grid-label">50%</span>
+                            </div>
+                            <div class="grid-line">
+                                <span class="grid-label">25%</span>
+                            </div>
+                            <div class="grid-line">
+                                <span class="grid-label">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="header-title">학습 스트릭</h3>
+                    <div class="streak-card">
+                        <div class="streak-day streak-active"></div>
+                        <div class="streak-day streak-active"></div>
+                        <div class="streak-day streak-active"></div>
+                        <div class="streak-day streak-active"></div>
+                        <div class="streak-day streak-active"></div>
+                        <div class="streak-day streak-active"></div>
+                        <div class="streak-day streak-active"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achievements Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="header-title">획득한 배지</h2>
+                </div>
+
+                <div class="badges-section">
+                    <div class="badges-grid">
+                        <div class="badge-item">
+                            <div class="badge-icon">🔥</div>
+                            <div class="badge-name">7일 연속</div>
+                            <div class="badge-progress">달성!</div>
+                        </div>
+                        <div class="badge-item">
+                            <div class="badge-icon">⚡</div>
+                            <div class="badge-name">빠른 풀이</div>
+                            <div class="badge-progress">달성!</div>
+                        </div>
+                        <div class="badge-item">
+                            <div class="badge-icon">🎯</div>
+                            <div class="badge-name">정확도</div>
+                            <div class="badge-progress">80/100</div>
+                        </div>
+                        <div class="badge-item">
+                            <div class="badge-icon">📚</div>
+                            <div class="badge-name">학습량</div>
+                            <div class="badge-progress">90/100</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

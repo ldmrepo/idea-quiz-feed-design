@@ -1,0 +1,360 @@
+<!-- 
+주요 구현 특징:
+
+1. 실제 환경 내 객체 선택
+- 객체 인식 프레임
+- 실시간 마커 표시
+- 직관적 선택 UI
+
+2. 가상 객체 조작
+- 직관적 컨트롤러
+- 회전/크기 조절
+- 위치 조정
+
+3. 공간 인식 기반
+- AR 뷰파인더
+- 공간 매핑
+- 깊이 인식
+
+모바일 최적화:
+- 제스처 컨트롤
+- 카메라 뷰 최적화
+- 반응형 UI
+
+주요 기능:
+1. 객체 인식 및 추적
+2. 실시간 정보 표시
+3. 인터랙티브 마커
+4. 직관적 컨트롤
+5. 진행 상황 표시 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>AR 선택형 문제</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --success: #22c55e;
+                --warning: #f59e0b;
+                --error: #ef4444;
+                --gray-50: #f9fafb;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, system-ui, sans-serif;
+                background: black;
+                color: white;
+                height: 100vh;
+            }
+
+            /* AR 뷰파인더 */
+            .ar-viewport {
+                position: relative;
+                width: 100%;
+                height: 100vh;
+                overflow: hidden;
+            }
+
+            .camera-feed {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            /* AR 오버레이 UI */
+            .ar-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                pointer-events: none;
+            }
+
+            /* 상단 상태바 */
+            .status-bar {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                padding: 16px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: linear-gradient(
+                    to bottom,
+                    rgba(0, 0, 0, 0.5),
+                    transparent
+                );
+            }
+
+            .ar-mode-badge {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 12px;
+                background: rgba(0, 0, 0, 0.6);
+                border-radius: 20px;
+                font-size: 14px;
+            }
+
+            /* AR 안내 마커 */
+            .ar-marker {
+                position: absolute;
+                width: 80px;
+                height: 80px;
+                border: 2px solid var(--primary);
+                border-radius: 50%;
+                pointer-events: auto;
+                transform: translate(-50%, -50%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(37, 99, 235, 0.2);
+                backdrop-filter: blur(4px);
+            }
+
+            .marker-pulse {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                border: 2px solid var(--primary);
+                border-radius: 50%;
+                animation: pulse 2s infinite;
+            }
+
+            @keyframes pulse {
+                0% {
+                    transform: scale(1);
+                    opacity: 1;
+                }
+                100% {
+                    transform: scale(1.5);
+                    opacity: 0;
+                }
+            }
+
+            /* 객체 인식 프레임 */
+            .object-frame {
+                position: absolute;
+                border: 2px solid var(--success);
+                border-radius: 8px;
+                pointer-events: auto;
+            }
+
+            .frame-label {
+                position: absolute;
+                top: -24px;
+                left: 0;
+                background: var(--success);
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 12px;
+                white-space: nowrap;
+            }
+
+            /* 하단 컨트롤 패널 */
+            .control-panel {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 20px;
+                background: linear-gradient(
+                    to top,
+                    rgba(0, 0, 0, 0.8),
+                    transparent
+                );
+            }
+
+            .ar-controls {
+                display: flex;
+                justify-content: space-around;
+                margin-bottom: 20px;
+            }
+
+            .ar-button {
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.2);
+                border: 2px solid white;
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                backdrop-filter: blur(4px);
+            }
+
+            .ar-button.active {
+                background: var(--primary);
+                border-color: var(--primary);
+            }
+
+            /* 가상 객체 컨트롤 */
+            .object-controls {
+                display: flex;
+                gap: 12px;
+                margin-bottom: 20px;
+            }
+
+            .control-slider {
+                flex: 1;
+                -webkit-appearance: none;
+                height: 4px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 2px;
+            }
+
+            .control-slider::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                width: 20px;
+                height: 20px;
+                background: white;
+                border-radius: 50%;
+                cursor: pointer;
+            }
+
+            /* 안내 메시지 */
+            .guidance-message {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 0, 0, 0.8);
+                padding: 16px 24px;
+                border-radius: 24px;
+                text-align: center;
+                backdrop-filter: blur(8px);
+            }
+
+            /* 객체 정보 팝업 */
+            .object-popup {
+                position: absolute;
+                background: rgba(0, 0, 0, 0.8);
+                padding: 16px;
+                border-radius: 12px;
+                backdrop-filter: blur(8px);
+                max-width: 280px;
+            }
+
+            .popup-title {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .popup-description {
+                font-size: 14px;
+                color: rgba(255, 255, 255, 0.8);
+                margin-bottom: 12px;
+            }
+
+            .popup-button {
+                padding: 8px 16px;
+                background: var(--primary);
+                border: none;
+                border-radius: 6px;
+                color: white;
+                font-size: 14px;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- AR 뷰파인더 -->
+        <div class="ar-viewport">
+            <!-- 카메라 피드 대체 이미지 -->
+            <img
+                src="/api/placeholder/1080/1920"
+                alt="카메라 피드"
+                class="camera-feed"
+            />
+
+            <!-- AR 오버레이 -->
+            <div class="ar-overlay">
+                <!-- 상단 상태바 -->
+                <div class="status-bar">
+                    <div class="ar-mode-badge">
+                        <span>📱</span>
+                        <span>객체 인식 모드</span>
+                    </div>
+                    <div class="ar-mode-badge">
+                        <span>🎯</span>
+                        <span>3/5 발견</span>
+                    </div>
+                </div>
+
+                <!-- AR 마커 -->
+                <div class="ar-marker" style="left: 30%; top: 40%">
+                    <div class="marker-pulse"></div>
+                    <span>+</span>
+                </div>
+
+                <!-- 객체 인식 프레임 -->
+                <div
+                    class="object-frame"
+                    style="left: 60%; top: 50%; width: 120px; height: 80px"
+                >
+                    <div class="frame-label">책상</div>
+                </div>
+
+                <!-- 객체 정보 팝업 -->
+                <div class="object-popup" style="left: 20%; bottom: 30%">
+                    <h3 class="popup-title">의자</h3>
+                    <p class="popup-description">
+                        이것은 교실에서 사용되는 의자입니다. 선택하여 자세히
+                        알아보세요.
+                    </p>
+                    <button class="popup-button">선택하기</button>
+                </div>
+
+                <!-- 안내 메시지 -->
+                <div class="guidance-message">
+                    주변을 천천히 둘러보며<br />
+                    객체를 찾아보세요
+                </div>
+
+                <!-- 하단 컨트롤 패널 -->
+                <div class="control-panel">
+                    <!-- 가상 객체 컨트롤 -->
+                    <div class="object-controls">
+                        <input
+                            type="range"
+                            class="control-slider"
+                            min="0"
+                            max="100"
+                            value="50"
+                        />
+                        <input
+                            type="range"
+                            class="control-slider"
+                            min="0"
+                            max="100"
+                            value="50"
+                        />
+                    </div>
+
+                    <!-- AR 모드 컨트롤 -->
+                    <div class="ar-controls">
+                        <button class="ar-button active">🔍</button>
+                        <button class="ar-button">🌍</button>
+                        <button class="ar-button">✋</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <title>이미지 영역 선택형 편집기</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --success: green;
+                --danger: red;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+                --bg: #f9fafb;
+            }
+            body {
+                font-family: -apple-system, sans-serif;
+                margin: 0;
+                padding: 16px;
+                background: var(--bg);
+            }
+            .editor-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 16px;
+            }
+            .editor-header h1 {
+                font-size: 20px;
+                margin: 0;
+            }
+            .btn {
+                padding: 8px 16px;
+                border: none;
+                border-radius: 4px;
+                background: var(--primary);
+                color: white;
+                cursor: pointer;
+                font-size: 14px;
+                margin-left: 8px;
+            }
+            .editor-container {
+                display: flex;
+                gap: 16px;
+            }
+            .image-editor {
+                position: relative;
+                flex: 2;
+                border: 1px solid var(--gray-200);
+                background: white;
+                border-radius: 6px;
+                overflow: hidden;
+            }
+            .image-editor img {
+                width: 100%;
+                display: block;
+            }
+            .hotspot {
+                position: absolute;
+                border: 2px dashed var(--primary);
+                background: rgba(37, 99, 235, 0.1);
+                cursor: pointer;
+            }
+            .hotspot.selected {
+                border-color: var(--success);
+            }
+            .sidebar {
+                flex: 1;
+                background: white;
+                border: 1px solid var(--gray-200);
+                border-radius: 6px;
+                padding: 12px;
+                height: 400px;
+                overflow-y: auto;
+            }
+            .sidebar h2 {
+                font-size: 16px;
+                margin-bottom: 8px;
+            }
+            .hotspot-info {
+                margin-bottom: 12px;
+                border-bottom: 1px solid var(--gray-200);
+                padding-bottom: 8px;
+            }
+            .hotspot-info label {
+                font-size: 14px;
+                display: block;
+                margin-bottom: 4px;
+            }
+            .hotspot-info input[type="text"] {
+                width: 100%;
+                padding: 4px;
+                font-size: 14px;
+                border: 1px solid var(--gray-200);
+                border-radius: 4px;
+                margin-bottom: 4px;
+            }
+            .hotspot-info input[type="checkbox"] {
+                margin-right: 4px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="editor-header">
+            <h1>이미지 영역 선택형 편집기</h1>
+            <div>
+                <input type="file" id="imageUpload" accept="image/*" />
+                <button class="btn" id="saveBtn">저장하기</button>
+                <button class="btn" id="previewBtn">미리보기</button>
+            </div>
+        </div>
+
+        <div class="editor-container">
+            <!-- 이미지 편집 영역 -->
+            <div class="image-editor" id="imageEditor">
+                <!-- 배경 이미지와 핫스팟이 여기 표시됩니다. -->
+            </div>
+            <!-- 사이드바: 선택된 핫스팟 정보 편집 -->
+            <div class="sidebar" id="sidebar">
+                <h2>핫스팟 정보</h2>
+                <div id="hotspotDetails">선택된 핫스팟이 없습니다.</div>
+            </div>
+        </div>
+
+        <script>
+            const imageUpload = document.getElementById("imageUpload")
+            const imageEditor = document.getElementById("imageEditor")
+            const sidebar = document.getElementById("sidebar")
+            const hotspotDetails = document.getElementById("hotspotDetails")
+
+            let bgImage = null
+            let hotspots = []
+            let currentHotspot = null
+            let isDrawing = false
+            let startX, startY
+
+            // 이미지 업로드
+            imageUpload.addEventListener("change", (e) => {
+                const file = e.target.files[0]
+                if (file) {
+                    const reader = new FileReader()
+                    reader.onload = (evt) => {
+                        bgImage = document.createElement("img")
+                        bgImage.src = evt.target.result
+                        bgImage.onload = () => {
+                            imageEditor.innerHTML = ""
+                            imageEditor.appendChild(bgImage)
+                        }
+                    }
+                    reader.readAsDataURL(file)
+                }
+            })
+
+            // 드래그하여 핫스팟 영역 생성
+            imageEditor.addEventListener("mousedown", (e) => {
+                if (!bgImage) return
+                isDrawing = true
+                const rect = imageEditor.getBoundingClientRect()
+                startX = e.clientX - rect.left
+                startY = e.clientY - rect.top
+
+                // 새 핫스팟 div 생성
+                const hotspot = document.createElement("div")
+                hotspot.className = "hotspot"
+                hotspot.style.left = startX + "px"
+                hotspot.style.top = startY + "px"
+                hotspot.dataset.id = Date.now() // 간단한 ID 생성
+                imageEditor.appendChild(hotspot)
+                currentHotspot = hotspot
+            })
+
+            imageEditor.addEventListener("mousemove", (e) => {
+                if (isDrawing && currentHotspot) {
+                    const rect = imageEditor.getBoundingClientRect()
+                    const currentX = e.clientX - rect.left
+                    const currentY = e.clientY - rect.top
+                    const width = currentX - startX
+                    const height = currentY - startY
+                    currentHotspot.style.width = Math.abs(width) + "px"
+                    currentHotspot.style.height = Math.abs(height) + "px"
+                    // Adjust position for negative width/height
+                    currentHotspot.style.left =
+                        (width < 0 ? currentX : startX) + "px"
+                    currentHotspot.style.top =
+                        (height < 0 ? currentY : startY) + "px"
+                }
+            })
+
+            imageEditor.addEventListener("mouseup", (e) => {
+                if (isDrawing) {
+                    isDrawing = false
+                    // 저장된 핫스팟 정보 추가
+                    const hotspotInfo = {
+                        id: currentHotspot.dataset.id,
+                        left: currentHotspot.style.left,
+                        top: currentHotspot.style.top,
+                        width: currentHotspot.style.width,
+                        height: currentHotspot.style.height,
+                        correct: false, // 기본값은 false; 출제자가 수정할 수 있음
+                    }
+                    hotspots.push(hotspotInfo)
+                    // 핫스팟 클릭 이벤트 추가
+                    currentHotspot.addEventListener("click", (ev) => {
+                        ev.stopPropagation() // 다른 이벤트 방지
+                        selectHotspot(hotspotInfo, currentHotspot)
+                    })
+                    currentHotspot = null
+                }
+            })
+
+            // 핫스팟 선택 시 사이드바에 정보 표시
+            function selectHotspot(info, elem) {
+                // 하이라이트 효과: 모든 핫스팟에서 선택된 클래스 제거 후, 현재만 추가
+                document
+                    .querySelectorAll(".hotspot")
+                    .forEach((h) => h.classList.remove("selected"))
+                elem.classList.add("selected")
+                currentHotspot = elem
+                // 사이드바 업데이트
+                hotspotDetails.innerHTML = `
+        <label>핫스팟 ID:</label>
+        <input type="text" id="hsId" value="${info.id}" disabled>
+        <label>정답 여부:</label>
+        <input type="checkbox" id="hsCorrect" ${info.correct ? "checked" : ""}>
+        <button class="btn" onclick="updateHotspot()">적용</button>
+        <button class="btn" onclick="deleteHotspot('${
+            info.id
+        }', this)">삭제</button>
+      `
+            }
+
+            // 사이드바에서 변경 사항 적용
+            function updateHotspot() {
+                const correctCheckbox = document.getElementById("hsCorrect")
+                if (correctCheckbox) {
+                    // 업데이트된 값 반영
+                    hotspots = hotspots.map((h) => {
+                        if (h.id === currentHotspot.dataset.id) {
+                            h.correct = correctCheckbox.checked
+                        }
+                        return h
+                    })
+                    // 선택된 핫스팟 스타일 업데이트
+                    if (correctCheckbox.checked) {
+                        currentHotspot.classList.add("correct")
+                        currentHotspot.classList.remove("wrong")
+                    } else {
+                        currentHotspot.classList.remove("correct")
+                    }
+                    alert("핫스팟 정보가 업데이트되었습니다.")
+                }
+            }
+
+            // 핫스팟 삭제
+            function deleteHotspot(id, btn) {
+                // 삭제 후 해당 핫스팟 요소 제거
+                hotspots = hotspots.filter((h) => h.id !== id)
+                // 요소 삭제
+                const elem = document.querySelector(`.hotspot[data-id="${id}"]`)
+                if (elem) {
+                    elem.remove()
+                }
+                hotspotDetails.innerHTML = "선택된 핫스팟이 없습니다."
+            }
+
+            // 저장 버튼 클릭 시 전체 편집 내용(예: JSON) 콘솔 출력
+            document.getElementById("saveBtn").addEventListener("click", () => {
+                console.log("저장된 핫스팟 데이터:", hotspots)
+                alert("문제가 저장되었습니다. (콘솔 확인)")
+            })
+
+            // 미리보기 버튼은 실제 수험자 화면과 유사하게 보여줄 수 있도록 별도 처리 가능
+            document
+                .getElementById("previewBtn")
+                .addEventListener("click", () => {
+                    alert("미리보기 기능은 별도의 화면에서 구현 가능합니다.")
+                })
+        </script>
+    </body>
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <title>연구 노트 편집</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --gray-100: #f3f4f6;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+            }
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+                background: #f9fafb;
+                margin: 0;
+                padding: 16px;
+            }
+            .form-group {
+                margin-bottom: 16px;
+            }
+            label {
+                display: block;
+                margin-bottom: 6px;
+                font-weight: 600;
+            }
+            input[type="text"],
+            textarea {
+                width: 100%;
+                padding: 10px;
+                font-size: 14px;
+                border: 1px solid var(--gray-200);
+                border-radius: 4px;
+            }
+            .ref-container,
+            .file-container,
+            .experiment-log-container {
+                border: 1px solid var(--gray-200);
+                border-radius: 6px;
+                padding: 8px;
+                margin-top: 8px;
+            }
+            .add-btn {
+                background: var(--gray-100);
+                border: none;
+                padding: 8px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 14px;
+            }
+            .save-btn {
+                background: var(--primary);
+                color: #fff;
+                border: none;
+                padding: 10px 16px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 600;
+            }
+            .logs {
+                margin-top: 8px;
+            }
+            .log-item {
+                border: 1px dashed var(--gray-200);
+                padding: 8px;
+                border-radius: 4px;
+                margin-bottom: 8px;
+            }
+            .log-item .timestamp {
+                font-size: 12px;
+                color: var(--gray-700);
+            }
+            .log-item .desc {
+                margin-top: 4px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>연구 노트 작성</h1>
+
+        <div class="form-group">
+            <label for="noteTitle">제목</label>
+            <input
+                type="text"
+                id="noteTitle"
+                placeholder="예: Reinforcement Learning 실험 노트"
+            />
+        </div>
+
+        <div class="form-group">
+            <label for="noteDate">날짜</label>
+            <input type="text" id="noteDate" placeholder="YYYY-MM-DD" />
+        </div>
+
+        <div class="form-group">
+            <label for="noteTags">태그</label>
+            <input
+                type="text"
+                id="noteTags"
+                placeholder="쉼표로 구분 (예: RL, ML, Experiment)"
+            />
+        </div>
+
+        <!-- 본문 (간단 textarea, 실제론 WYSIWYG 권장) -->
+        <div class="form-group">
+            <label for="noteContent">내용</label>
+            <textarea
+                id="noteContent"
+                rows="6"
+                placeholder="연구 내용, 이론, 실험 아이디어 등을 자유롭게 작성"
+            ></textarea>
+        </div>
+
+        <!-- 참고 자료 -->
+        <div class="form-group">
+            <label>참고 자료</label>
+            <div class="ref-container" id="refList"></div>
+            <button class="add-btn" id="addRefBtn">+ 자료 추가</button>
+        </div>
+
+        <!-- 파일 첨부 -->
+        <div class="form-group">
+            <label>파일 첨부</label>
+            <div class="file-container" id="fileList"></div>
+            <button class="add-btn" id="addFileBtn">+ 파일 첨부</button>
+        </div>
+
+        <!-- 실험 로그 -->
+        <div class="form-group">
+            <label>실험 로그</label>
+            <div class="experiment-log-container" id="logContainer">
+                <div class="logs" id="logList"></div>
+                <button class="add-btn" id="addLogBtn">+ 로그 추가</button>
+            </div>
+        </div>
+
+        <!-- 저장 버튼 -->
+        <div>
+            <button class="save-btn" id="saveBtn">저장하기</button>
+        </div>
+
+        <script>
+            const refListEl = document.getElementById("refList")
+            const fileListEl = document.getElementById("fileList")
+            const logListEl = document.getElementById("logList")
+
+            let references = []
+            let files = []
+            let logs = []
+
+            // 참고 자료 추가
+            document
+                .getElementById("addRefBtn")
+                .addEventListener("click", () => {
+                    const title = prompt("자료 제목/설명:")
+                    const link = prompt("링크(URL):")
+                    if (title && link) {
+                        references.push({ title, link })
+                        renderRefs()
+                    }
+                })
+            function renderRefs() {
+                refListEl.innerHTML = ""
+                references.forEach((ref, idx) => {
+                    const div = document.createElement("div")
+                    div.textContent = `[${idx + 1}] ${ref.title} - ${ref.link}`
+                    refListEl.appendChild(div)
+                })
+            }
+
+            // 파일 첨부 시뮬레이션
+            document
+                .getElementById("addFileBtn")
+                .addEventListener("click", () => {
+                    const fName = prompt("파일명(예: data.csv):")
+                    if (fName) {
+                        files.push({
+                            file_name: fName,
+                            file_url: "/uploads/" + fName,
+                        })
+                        renderFiles()
+                    }
+                })
+            function renderFiles() {
+                fileListEl.innerHTML = ""
+                files.forEach((f, idx) => {
+                    const div = document.createElement("div")
+                    div.textContent = `[${idx + 1}] ${f.file_name} (${
+                        f.file_url
+                    })`
+                    fileListEl.appendChild(div)
+                })
+            }
+
+            // 실험 로그 추가
+            document
+                .getElementById("addLogBtn")
+                .addEventListener("click", () => {
+                    const desc = prompt("실험 로그 내용:")
+                    if (desc) {
+                        const timestamp = new Date().toISOString()
+                        logs.push({ timestamp, description: desc })
+                        renderLogs()
+                    }
+                })
+            function renderLogs() {
+                logListEl.innerHTML = ""
+                logs.forEach((log) => {
+                    const item = document.createElement("div")
+                    item.className = "log-item"
+                    item.innerHTML = `
+          <div class="timestamp">${log.timestamp}</div>
+          <div class="desc">${log.description}</div>
+        `
+                    logListEl.appendChild(item)
+                })
+            }
+
+            // 저장
+            document.getElementById("saveBtn").addEventListener("click", () => {
+                const data = {
+                    title: document.getElementById("noteTitle").value.trim(),
+                    date: document.getElementById("noteDate").value.trim(),
+                    tags: document
+                        .getElementById("noteTags")
+                        .value.split(",")
+                        .map((t) => t.trim()),
+                    content: document
+                        .getElementById("noteContent")
+                        .value.trim(),
+                    references,
+                    files,
+                    experiment_logs: logs,
+                }
+                console.log("[저장] 연구 노트 데이터:", data)
+                alert("연구 노트가 저장되었습니다.")
+                // 실제로는 서버에 data 전송(API POST)
+            })
+        </script>
+    </body>
+</html>

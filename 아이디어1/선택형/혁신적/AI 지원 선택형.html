@@ -1,0 +1,367 @@
+<!-- 주요 구현 특징:
+
+1. 적응형 난이도 조절
+- 실시간 난이도 게이지
+- 학습 진행도 시각화
+- 동적 난이도 조정
+
+2. 개인화된 선택지
+- AI 추천 표시
+- 맞춤형 옵션
+- 학습 패턴 분석
+
+3. 실시간 피드백
+- 즉각적 분석 결과
+- 개선점 제안
+- 학습 방향 가이드
+
+모바일 최적화:
+- 터치 최적화
+- 반응형 UI
+- 직관적 인터페이스 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>AI 지원 선택형</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --secondary: #9333ea;
+                --success: #22c55e;
+                --warning: #f59e0b;
+                --error: #ef4444;
+                --ai: #6366f1;
+                --gray-50: #f9fafb;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, system-ui, sans-serif;
+                background: var(--gray-50);
+                padding: 16px;
+            }
+
+            /* AI 인사이트 배지 */
+            .ai-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                padding: 4px 8px;
+                background: var(--ai);
+                color: white;
+                border-radius: 12px;
+                font-size: 12px;
+                font-weight: 500;
+            }
+
+            /* 적응형 난이도 UI */
+            .difficulty-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+            }
+
+            .difficulty-header {
+                padding: 16px;
+                border-bottom: 1px solid var(--gray-200);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .difficulty-title {
+                font-size: 18px;
+                font-weight: 600;
+            }
+
+            .difficulty-gauge {
+                padding: 20px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .gauge-label {
+                font-size: 14px;
+                color: var(--gray-700);
+                min-width: 60px;
+            }
+
+            .gauge-bar {
+                flex: 1;
+                height: 8px;
+                background: var(--gray-200);
+                border-radius: 4px;
+                overflow: hidden;
+            }
+
+            .gauge-fill {
+                height: 100%;
+                background: var(--ai);
+                width: 60%;
+                transition: width 0.3s;
+            }
+
+            /* 개인화된 선택지 UI */
+            .personalized-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+            }
+
+            .option-grid {
+                padding: 16px;
+                display: grid;
+                gap: 12px;
+            }
+
+            .option-item {
+                padding: 16px;
+                background: var(--gray-50);
+                border: 1px solid var(--gray-200);
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s;
+                position: relative;
+            }
+
+            .option-item:hover {
+                border-color: var(--ai);
+                background: var(--gray-50);
+            }
+
+            .personalization-tag {
+                position: absolute;
+                top: -8px;
+                right: 12px;
+                padding: 4px 8px;
+                background: var(--ai);
+                color: white;
+                border-radius: 12px;
+                font-size: 12px;
+            }
+
+            /* 실시간 피드백 UI */
+            .feedback-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+                overflow: hidden;
+            }
+
+            .feedback-container {
+                padding: 16px;
+            }
+
+            .feedback-message {
+                padding: 12px;
+                background: var(--gray-50);
+                border-radius: 8px;
+                margin-bottom: 16px;
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .feedback-icon {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                background: var(--ai);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                flex-shrink: 0;
+            }
+
+            .feedback-content {
+                flex: 1;
+                font-size: 14px;
+            }
+
+            .feedback-suggestion {
+                font-weight: 500;
+                margin-bottom: 4px;
+            }
+
+            .feedback-detail {
+                color: var(--gray-700);
+                font-size: 13px;
+            }
+
+            /* 진행 상태 UI */
+            .progress-container {
+                padding: 16px;
+                background: var(--gray-50);
+                border-radius: 8px;
+                margin-bottom: 16px;
+            }
+
+            .progress-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 8px;
+            }
+
+            .progress-label {
+                font-size: 14px;
+                color: var(--gray-700);
+            }
+
+            .progress-bar {
+                height: 6px;
+                background: var(--gray-200);
+                border-radius: 3px;
+                overflow: hidden;
+            }
+
+            .progress-fill {
+                height: 100%;
+                background: var(--ai);
+                width: 75%;
+                transition: width 0.3s;
+            }
+
+            /* 하단 네비게이션 */
+            .bottom-nav {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 16px;
+                background: white;
+                border-top: 1px solid var(--gray-200);
+                display: flex;
+                gap: 12px;
+            }
+
+            .nav-button {
+                flex: 1;
+                padding: 14px;
+                border-radius: 8px;
+                font-size: 15px;
+                font-weight: 600;
+                border: none;
+                cursor: pointer;
+            }
+
+            .button-primary {
+                background: var(--ai);
+                color: white;
+            }
+
+            .button-secondary {
+                background: var(--gray-50);
+                color: var(--gray-700);
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 적응형 난이도 조절 -->
+        <div class="difficulty-card">
+            <div class="difficulty-header">
+                <h2 class="difficulty-title">적응형 난이도</h2>
+                <span class="ai-badge">AI 분석</span>
+            </div>
+            <div class="difficulty-gauge">
+                <span class="gauge-label">현재 수준</span>
+                <div class="gauge-bar">
+                    <div class="gauge-fill"></div>
+                </div>
+                <span class="gauge-label">중급</span>
+            </div>
+            <div class="difficulty-gauge">
+                <span class="gauge-label">정확도</span>
+                <div class="gauge-bar">
+                    <div class="gauge-fill" style="width: 75%"></div>
+                </div>
+                <span class="gauge-label">75%</span>
+            </div>
+        </div>
+
+        <!-- 개인화된 선택지 -->
+        <div class="personalized-card">
+            <div class="difficulty-header">
+                <h2 class="difficulty-title">맞춤형 학습</h2>
+                <span class="ai-badge">AI 추천</span>
+            </div>
+            <div class="option-grid">
+                <div class="option-item">
+                    <span class="personalization-tag">추천</span>
+                    <h3>개념 심화 학습</h3>
+                    <p
+                        style="
+                            font-size: 14px;
+                            color: var(--gray-700);
+                            margin-top: 8px;
+                        "
+                    >
+                        이전 학습 패턴 기반 맞춤 추천
+                    </p>
+                </div>
+                <div class="option-item">
+                    <h3>실전 문제 풀이</h3>
+                    <p
+                        style="
+                            font-size: 14px;
+                            color: var(--gray-700);
+                            margin-top: 8px;
+                        "
+                    >
+                        취약점 보완을 위한 문제
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 실시간 피드백 -->
+        <div class="feedback-card">
+            <div class="difficulty-header">
+                <h2 class="difficulty-title">실시간 피드백</h2>
+                <span class="ai-badge">AI 분석</span>
+            </div>
+            <div class="feedback-container">
+                <div class="feedback-message">
+                    <div class="feedback-icon">AI</div>
+                    <div class="feedback-content">
+                        <div class="feedback-suggestion">
+                            개념 이해도가 향상되고 있습니다
+                        </div>
+                        <div class="feedback-detail">
+                            최근 3회 연속 정답률이 상승했습니다
+                        </div>
+                    </div>
+                </div>
+                <div class="feedback-message">
+                    <div class="feedback-icon">AI</div>
+                    <div class="feedback-content">
+                        <div class="feedback-suggestion">다음 단계 추천</div>
+                        <div class="feedback-detail">
+                            응용문제에 도전해보세요
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 하단 네비게이션 -->
+        <div class="bottom-nav">
+            <button class="nav-button button-secondary">이전</button>
+            <button class="nav-button button-primary">다음 문제</button>
+        </div>
+    </body>
+</html>

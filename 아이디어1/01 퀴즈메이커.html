@@ -1,0 +1,300 @@
+<!-- 친근하고 재미있게 개선된 로그인 페이지의 주요 변경사항을 설명드리겠습니다:
+
+1. 브랜드 아이덴티티:
+- "퀴즈메이커"로 이름 변경
+- 귀여운 이모지 활용
+- 친근한 서브타이틀
+- 부드러운 애니메이션
+
+2. 디자인 톤 개선:
+- 밝고 경쾌한 컬러
+- 둥근 모서리
+- 부드러운 그림자
+- 재미있는 호버 효과
+
+3. 시각적 요소:
+- 떠있는 듯한 로고 애니메이션
+- 점선 구분선
+- 커다란 소셜 아이콘
+- 부드러운 전환 효과
+
+4. 카피라이팅:
+- 친근한 문구 사용
+- 격식 없는 어조
+- 긍정적인 메시지
+- 간결한 안내문
+
+5. 인터랙션:
+- 부드러운 버튼 효과
+- 재미있는 호버 애니메이션
+- 직관적인 피드백
+- 생동감 있는 동작 -->
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>퀴즈메이커</title>
+        <style>
+            :root {
+                --primary-color: #6c5ce7;
+                --primary-light: #a29bfe;
+                --border-color: #e5e7eb;
+                --background-color: #ffffff;
+                --text-primary: #2d3436;
+                --text-secondary: #636e72;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+            }
+
+            .login-container {
+                width: 100%;
+                max-width: 360px;
+                padding: 24px;
+            }
+
+            /* Fun Logo */
+            .logo {
+                text-align: center;
+                margin-bottom: 32px;
+                animation: float 3s ease-in-out infinite;
+            }
+
+            @keyframes float {
+                0% {
+                    transform: translateY(0px);
+                }
+                50% {
+                    transform: translateY(-10px);
+                }
+                100% {
+                    transform: translateY(0px);
+                }
+            }
+
+            .logo-text {
+                font-size: 32px;
+                font-weight: 700;
+                color: var(--primary-color);
+                margin-bottom: 8px;
+            }
+
+            .logo-emoji {
+                font-size: 40px;
+                margin-bottom: 16px;
+            }
+
+            .logo-subtitle {
+                font-size: 14px;
+                color: var(--text-secondary);
+                font-weight: 500;
+            }
+
+            /* Form Elements */
+            .login-form {
+                margin-bottom: 24px;
+            }
+
+            .form-group {
+                margin-bottom: 16px;
+                position: relative;
+            }
+
+            .form-input {
+                width: 100%;
+                padding: 12px 16px;
+                border: 2px solid var(--border-color);
+                border-radius: 12px;
+                font-size: 14px;
+                transition: all 0.3s ease;
+                background: #f8f9fa;
+            }
+
+            .form-input:focus {
+                outline: none;
+                border-color: var(--primary-color);
+                background: white;
+                box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1);
+            }
+
+            .login-button {
+                width: 100%;
+                padding: 12px;
+                background-color: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 12px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .login-button:hover {
+                background-color: var(--primary-light);
+                transform: translateY(-2px);
+            }
+
+            /* Divider */
+            .divider {
+                display: flex;
+                align-items: center;
+                text-align: center;
+                margin: 24px 0;
+                font-size: 14px;
+                color: var(--text-secondary);
+            }
+
+            .divider::before,
+            .divider::after {
+                content: "";
+                flex: 1;
+                border-bottom: 2px dashed var(--border-color);
+            }
+
+            .divider span {
+                padding: 0 12px;
+            }
+
+            /* Social Login */
+            .social-login {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                margin-bottom: 24px;
+            }
+
+            .social-button {
+                width: 48px;
+                height: 48px;
+                border-radius: 24px;
+                border: 2px solid var(--border-color);
+                background: white;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+                font-size: 24px;
+            }
+
+            .social-button:hover {
+                transform: translateY(-4px) scale(1.1);
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            }
+
+            /* Links */
+            .links {
+                text-align: center;
+                font-size: 14px;
+            }
+
+            .links a {
+                color: var(--primary-color);
+                text-decoration: none;
+                font-weight: 500;
+                transition: all 0.2s ease;
+            }
+
+            .links a:hover {
+                color: var(--primary-light);
+            }
+
+            .help-links {
+                margin-top: 16px;
+                display: flex;
+                justify-content: center;
+                gap: 16px;
+                color: var(--text-secondary);
+                font-size: 12px;
+            }
+
+            .help-links a {
+                color: var(--text-secondary);
+                text-decoration: none;
+            }
+
+            .help-links a:hover {
+                color: var(--text-primary);
+            }
+
+            @media (max-width: 480px) {
+                .login-container {
+                    padding: 16px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="login-container">
+            <!-- Fun Logo -->
+            <div class="logo">
+                <div class="logo-emoji">📝✨</div>
+                <div class="logo-text">퀴즈메이커</div>
+                <div class="logo-subtitle">함께 만드는 즐거운 문제!</div>
+            </div>
+
+            <!-- Login Form -->
+            <form class="login-form">
+                <div class="form-group">
+                    <input
+                        type="email"
+                        class="form-input"
+                        placeholder="이메일을 알려주세요"
+                    />
+                </div>
+                <div class="form-group">
+                    <input
+                        type="password"
+                        class="form-input"
+                        placeholder="비밀번호를 입력해주세요"
+                    />
+                </div>
+                <button type="submit" class="login-button">시작하기</button>
+            </form>
+
+            <!-- Divider -->
+            <div class="divider">
+                <span>또는</span>
+            </div>
+
+            <!-- Social Login Icons -->
+            <div class="social-login">
+                <button class="social-button">🌐</button>
+                <button class="social-button">💬</button>
+                <button class="social-button">📱</button>
+                <button class="social-button">🍎</button>
+            </div>
+
+            <!-- Links -->
+            <div class="links">
+                <a href="#">비밀번호를 잊으셨나요?</a>
+                <p style="margin-top: 16px">
+                    아직 회원이 아니신가요? <a href="#">가입하기</a>
+                </p>
+            </div>
+
+            <!-- Help Links -->
+            <div class="help-links">
+                <a href="#">이용약관</a>
+                <a href="#">개인정보처리방침</a>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,313 @@
+<!-- 주요 구현 특징:
+1. 데이터 시각화 해석
+- 다양한 차트 유형
+- 분석 도구 제공
+- 인사이트 표시
+
+2. 통계 그래프 분석
+- 핵심 지표 표시
+- 통계 수치 시각화
+- 비교 분석 도구
+
+3. 트렌드 패턴 인식
+- 패턴 하이라이트
+- 이상치 탐지
+- 트렌드 분석
+
+모바일 최적화:
+- 터치 인터페이스
+- 반응형 그래프
+- 스크롤 최적화 -->
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>데이터 분석형 문제</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --secondary: #9333ea;
+                --success: #22c55e;
+                --error: #ef4444;
+                --gray-50: #f9fafb;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, system-ui, sans-serif;
+                background: var(--gray-50);
+                padding: 16px;
+            }
+
+            /* 데이터 카드 공통 스타일 */
+            .data-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+                overflow: hidden;
+            }
+
+            .card-header {
+                padding: 16px;
+                border-bottom: 1px solid var(--gray-200);
+            }
+
+            .card-title {
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .card-description {
+                font-size: 14px;
+                color: var(--gray-700);
+            }
+
+            /* 데이터 시각화 영역 */
+            .visualization-area {
+                padding: 16px;
+                height: 300px;
+                background: var(--gray-50);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 16px;
+            }
+
+            /* 데이터 분석 도구 */
+            .analysis-tools {
+                padding: 16px;
+                display: flex;
+                gap: 8px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .tool-button {
+                padding: 8px 16px;
+                background: var(--gray-50);
+                border: 1px solid var(--gray-200);
+                border-radius: 20px;
+                font-size: 14px;
+                white-space: nowrap;
+                cursor: pointer;
+            }
+
+            .tool-button.active {
+                background: var(--primary);
+                color: white;
+                border-color: var(--primary);
+            }
+
+            /* 데이터 인사이트 */
+            .insights-container {
+                padding: 16px;
+            }
+
+            .insight-item {
+                padding: 12px;
+                background: var(--gray-50);
+                border-radius: 8px;
+                margin-bottom: 12px;
+            }
+
+            .insight-header {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 8px;
+            }
+
+            .insight-icon {
+                width: 24px;
+                height: 24px;
+                background: var(--primary);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 14px;
+            }
+
+            .insight-title {
+                font-weight: 600;
+            }
+
+            .insight-content {
+                font-size: 14px;
+                color: var(--gray-700);
+            }
+
+            /* 통계 수치 */
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                padding: 16px;
+            }
+
+            .stat-box {
+                padding: 16px;
+                background: var(--gray-50);
+                border-radius: 8px;
+                text-align: center;
+            }
+
+            .stat-value {
+                font-size: 24px;
+                font-weight: 600;
+                color: var(--primary);
+                margin-bottom: 4px;
+            }
+
+            .stat-label {
+                font-size: 14px;
+                color: var(--gray-700);
+            }
+
+            /* 트렌드 패턴 */
+            .trend-patterns {
+                padding: 16px;
+            }
+
+            .pattern-item {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px;
+                border: 1px solid var(--gray-200);
+                border-radius: 8px;
+                margin-bottom: 12px;
+            }
+
+            .pattern-indicator {
+                width: 4px;
+                height: 40px;
+                background: var(--primary);
+                border-radius: 2px;
+            }
+
+            .pattern-details {
+                flex: 1;
+            }
+
+            .pattern-title {
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+
+            .pattern-description {
+                font-size: 14px;
+                color: var(--gray-700);
+            }
+
+            /* 반응형 조정 */
+            @media (max-width: 640px) {
+                .stats-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 데이터 시각화 해석 -->
+        <div class="data-card">
+            <div class="card-header">
+                <h2 class="card-title">매출 데이터 분석</h2>
+                <p class="card-description">
+                    주어진 데이터를 분석하고 인사이트를 도출하세요.
+                </p>
+            </div>
+
+            <div class="visualization-area">
+                <!-- 차트/그래프가 표시될 영역 -->
+            </div>
+
+            <div class="analysis-tools">
+                <button class="tool-button active">라인 차트</button>
+                <button class="tool-button">바 차트</button>
+                <button class="tool-button">파이 차트</button>
+                <button class="tool-button">산점도</button>
+            </div>
+
+            <div class="insights-container">
+                <div class="insight-item">
+                    <div class="insight-header">
+                        <div class="insight-icon">↗</div>
+                        <div class="insight-title">상승 트렌드</div>
+                    </div>
+                    <p class="insight-content">
+                        최근 3개월간 지속적인 성장세를 보이고 있습니다.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 통계 그래프 분석 -->
+        <div class="data-card">
+            <div class="card-header">
+                <h2 class="card-title">통계 분석</h2>
+                <p class="card-description">주요 통계 지표를 확인하세요.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-value">+15.8%</div>
+                    <div class="stat-label">성장률</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">89.2</div>
+                    <div class="stat-label">신뢰도</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">0.78</div>
+                    <div class="stat-label">상관계수</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">±2.3</div>
+                    <div class="stat-label">표준편차</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 트렌드 패턴 인식 -->
+        <div class="data-card">
+            <div class="card-header">
+                <h2 class="card-title">패턴 분석</h2>
+                <p class="card-description">주요 패턴을 식별하고 분석하세요.</p>
+            </div>
+
+            <div class="trend-patterns">
+                <div class="pattern-item">
+                    <div class="pattern-indicator"></div>
+                    <div class="pattern-details">
+                        <div class="pattern-title">계절성 패턴</div>
+                        <p class="pattern-description">
+                            3개월 주기의 반복적 패턴이 관찰됩니다.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="pattern-item">
+                    <div class="pattern-indicator"></div>
+                    <div class="pattern-details">
+                        <div class="pattern-title">이상치 발생</div>
+                        <p class="pattern-description">
+                            4월 데이터에서 유의미한 이상치가 발견되었습니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

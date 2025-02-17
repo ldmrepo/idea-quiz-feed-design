@@ -1,0 +1,411 @@
+<!-- 그룹 토론 페이지의 주요 특징을 설명드리겠습니다:
+
+1. 주제 목록:
+- 토론 주제 필터링
+- 카테고리 분류
+- 활성화된 토론 표시
+- 참여도/시간 정보
+
+2. 토론 스레드:
+- 주제 상세 정보
+- 참여자 통계
+- 답변 수
+- 추천 수
+
+3. 메시지 시스템:
+- 답변 작성
+- 답글 기능
+- 추천 기능
+- 시간 표시
+
+4. 상호작용:
+- 답변 작성
+- 추천하기
+- 답글달기
+- 공유하기
+
+5. UI/UX 요소:
+- 실시간 업데이트
+- 직관적인 인터페이스
+- 참여자 정보
+- 쉬운 네비게이션 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>그룹 토론</title>
+        <style>
+            :root {
+                --primary-color: #6c5ce7;
+                --primary-light: #a29bfe;
+                --success-color: #00b894;
+                --warning-color: #fdcb6e;
+                --danger-color: #ff7675;
+                --surface-color: #ffffff;
+                --background-color: #f8f9fa;
+                --text-primary: #2d3436;
+                --text-secondary: #636e72;
+                --border-color: #e5e7eb;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 24px;
+                display: grid;
+                grid-template-columns: 300px 1fr;
+                gap: 24px;
+            }
+
+            /* Topic List */
+            .topic-list {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 20px;
+                height: calc(100vh - 48px);
+                overflow-y: auto;
+                position: sticky;
+                top: 24px;
+            }
+
+            .list-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+
+            .create-topic {
+                width: 100%;
+                padding: 12px;
+                background: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                margin-bottom: 16px;
+            }
+
+            .topic-filter {
+                display: flex;
+                gap: 8px;
+                margin-bottom: 16px;
+            }
+
+            .filter-button {
+                padding: 6px 12px;
+                border-radius: 20px;
+                border: 1px solid var(--border-color);
+                background: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                font-size: 14px;
+            }
+
+            .filter-button.active {
+                background: var(--primary-color);
+                color: white;
+                border-color: var(--primary-color);
+            }
+
+            .topic-items {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .topic-item {
+                padding: 12px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .topic-item:hover {
+                background: var(--background-color);
+            }
+
+            .topic-item.active {
+                background: var(--primary-light);
+                color: white;
+            }
+
+            .topic-title {
+                font-weight: 500;
+                margin-bottom: 4px;
+            }
+
+            .topic-meta {
+                font-size: 12px;
+                color: var(--text-secondary);
+                display: flex;
+                justify-content: space-between;
+            }
+
+            /* Discussion Thread */
+            .discussion-thread {
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            .thread-header {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+            }
+
+            .thread-title {
+                font-size: 24px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .thread-meta {
+                display: flex;
+                gap: 16px;
+                color: var(--text-secondary);
+                font-size: 14px;
+                margin-bottom: 16px;
+            }
+
+            .thread-stats {
+                display: flex;
+                gap: 16px;
+                padding: 16px;
+                background: var(--background-color);
+                border-radius: 8px;
+            }
+
+            .stat-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                color: var(--text-secondary);
+            }
+
+            /* Discussion Messages */
+            .messages {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+            }
+
+            .message-item {
+                display: flex;
+                gap: 16px;
+                margin-bottom: 24px;
+            }
+
+            .message-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 20px;
+                background: var(--primary-light);
+            }
+
+            .message-content {
+                flex: 1;
+                background: var(--background-color);
+                padding: 16px;
+                border-radius: 8px;
+            }
+
+            .message-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 8px;
+            }
+
+            .message-author {
+                font-weight: 500;
+            }
+
+            .message-time {
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+            .message-text {
+                margin-bottom: 16px;
+                line-height: 1.6;
+            }
+
+            .message-actions {
+                display: flex;
+                gap: 16px;
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+            .action-button {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                cursor: pointer;
+            }
+
+            /* Reply Input */
+            .reply-input {
+                display: flex;
+                gap: 16px;
+                margin-top: 24px;
+            }
+
+            .input-field {
+                flex: 1;
+                padding: 12px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                min-height: 100px;
+                resize: vertical;
+            }
+
+            .submit-button {
+                padding: 12px 24px;
+                background: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                align-self: flex-start;
+            }
+
+            @media (max-width: 968px) {
+                .container {
+                    grid-template-columns: 1fr;
+                }
+
+                .topic-list {
+                    height: auto;
+                    position: static;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Topic List -->
+            <div class="topic-list">
+                <button class="create-topic">+ 새 토론 시작하기</button>
+
+                <div class="topic-filter">
+                    <button class="filter-button active">전체</button>
+                    <button class="filter-button">문제풀이</button>
+                    <button class="filter-button">개념질문</button>
+                </div>
+
+                <div class="topic-items">
+                    <div class="topic-item active">
+                        <div class="topic-title">미적분 극값 구하기 방법</div>
+                        <div class="topic-meta">
+                            <span>답변 12개</span>
+                            <span>5분 전</span>
+                        </div>
+                    </div>
+
+                    <div class="topic-item">
+                        <div class="topic-title">수열의 극한 이해하기</div>
+                        <div class="topic-meta">
+                            <span>답변 8개</span>
+                            <span>30분 전</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Discussion Thread -->
+            <div class="discussion-thread">
+                <!-- Thread Header -->
+                <div class="thread-header">
+                    <h1 class="thread-title">미적분 극값 구하기 방법</h1>
+                    <div class="thread-meta">
+                        <span>작성자: 수학왕</span>
+                        <span>2시간 전</span>
+                    </div>
+                    <p>
+                        이계도함수를 사용하는 방법과 다른 접근 방법에 대해
+                        토론해보고 싶습니다.
+                    </p>
+                    <div class="thread-stats">
+                        <div class="stat-item">
+                            <span>👥 12명 참여</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>💬 24개 답변</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>👍 48 추천</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Messages -->
+                <div class="messages">
+                    <div class="message-item">
+                        <div class="message-avatar"></div>
+                        <div class="message-content">
+                            <div class="message-header">
+                                <div class="message-author">미적분달인</div>
+                                <div class="message-time">1시간 전</div>
+                            </div>
+                            <div class="message-text">
+                                저는 이계도함수를 사용하는 것이 가장
+                                효율적이라고 생각합니다. 특히 복잡한 함수의
+                                경우에 더욱 유용합니다.
+                            </div>
+                            <div class="message-actions">
+                                <div class="action-button">👍 12</div>
+                                <div class="action-button">💬 답글</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="message-item">
+                        <div class="message-avatar"></div>
+                        <div class="message-content">
+                            <div class="message-header">
+                                <div class="message-author">수학탐험가</div>
+                                <div class="message-time">30분 전</div>
+                            </div>
+                            <div class="message-text">
+                                일계도함수만으로도 충분히 해결할 수 있는 경우가
+                                많습니다. 접근 방법은 문제의 특성에 따라 달라질
+                                수 있죠.
+                            </div>
+                            <div class="message-actions">
+                                <div class="action-button">👍 8</div>
+                                <div class="action-button">💬 답글</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reply Input -->
+                    <div class="reply-input">
+                        <textarea
+                            class="input-field"
+                            placeholder="답변을 작성해주세요..."
+                        ></textarea>
+                        <button class="submit-button">답변하기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

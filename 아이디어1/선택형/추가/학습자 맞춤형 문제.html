@@ -1,0 +1,360 @@
+<!-- 주요 구현 특징:
+
+1. 시각적 학습자용
+- 이미지 그리드
+- 다이어그램
+- 시각적 체계화
+
+2. 청각적 학습자용
+- 오디오 플레이어
+- 음성 설명
+- 청각적 피드백
+
+3. 운동감각적 학습자용
+- 드래그앤드롭
+- 인터랙티브 요소
+- 직접 조작
+
+4. 읽기/쓰기 선호형
+- 텍스트 기반 설명
+- 글쓰기 영역
+- 구조화된 텍스트
+
+모바일 최적화:
+- 터치 인터페이스
+- 반응형 레이아웃
+- 접근성 고려 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>학습자 맞춤형 문제</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --visual: #3b82f6;
+                --auditory: #8b5cf6;
+                --kinesthetic: #ec4899;
+                --reading: #10b981;
+                --gray-50: #f9fafb;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, system-ui, sans-serif;
+                background: var(--gray-50);
+                padding: 16px;
+            }
+
+            /* 학습 스타일 선택기 */
+            .style-selector {
+                position: fixed;
+                top: 16px;
+                right: 16px;
+                z-index: 100;
+            }
+
+            .style-button {
+                padding: 8px 16px;
+                border-radius: 20px;
+                margin-bottom: 8px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 14px;
+                border: none;
+                cursor: pointer;
+                color: white;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .visual-style {
+                background: var(--visual);
+            }
+            .auditory-style {
+                background: var(--auditory);
+            }
+            .kinesthetic-style {
+                background: var(--kinesthetic);
+            }
+            .reading-style {
+                background: var(--reading);
+            }
+
+            /* 시각적 학습 컨텐츠 */
+            .visual-content {
+                padding: 16px;
+            }
+
+            .image-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                margin-bottom: 16px;
+            }
+
+            .visual-item {
+                aspect-ratio: 1;
+                background: white;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                overflow: hidden;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .visual-item img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            /* 청각적 학습 컨텐츠 */
+            .audio-content {
+                padding: 16px;
+            }
+
+            .audio-player {
+                background: white;
+                border-radius: 12px;
+                padding: 16px;
+                margin-bottom: 16px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .audio-controls {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-top: 12px;
+            }
+
+            .audio-button {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: var(--auditory);
+                color: white;
+                border: none;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            /* 운동감각적 학습 컨텐츠 */
+            .kinesthetic-content {
+                padding: 16px;
+            }
+
+            .interactive-area {
+                background: white;
+                border-radius: 12px;
+                padding: 16px;
+                min-height: 200px;
+                margin-bottom: 16px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                position: relative;
+            }
+
+            .draggable-item {
+                padding: 12px;
+                background: var(--kinesthetic);
+                color: white;
+                border-radius: 8px;
+                cursor: move;
+                margin-bottom: 8px;
+            }
+
+            .drop-zone {
+                border: 2px dashed var(--gray-200);
+                border-radius: 8px;
+                padding: 16px;
+                margin-top: 16px;
+                min-height: 100px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            /* 읽기/쓰기 컨텐츠 */
+            .reading-content {
+                padding: 16px;
+            }
+
+            .text-passage {
+                background: white;
+                border-radius: 12px;
+                padding: 16px;
+                margin-bottom: 16px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                line-height: 1.6;
+            }
+
+            .writing-area {
+                width: 100%;
+                min-height: 120px;
+                padding: 12px;
+                border: 1px solid var(--gray-200);
+                border-radius: 8px;
+                resize: vertical;
+                margin-bottom: 16px;
+            }
+
+            /* 공통 문제 카드 */
+            .question-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+                overflow: hidden;
+            }
+
+            .card-header {
+                padding: 16px;
+                border-bottom: 1px solid var(--gray-200);
+            }
+
+            .card-title {
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .card-description {
+                font-size: 14px;
+                color: var(--gray-700);
+            }
+
+            /* 하단 네비게이션 */
+            .bottom-nav {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 16px;
+                background: white;
+                border-top: 1px solid var(--gray-200);
+                display: flex;
+                gap: 12px;
+            }
+
+            .nav-button {
+                flex: 1;
+                padding: 14px;
+                border-radius: 8px;
+                font-size: 15px;
+                font-weight: 600;
+                border: none;
+                cursor: pointer;
+            }
+
+            .primary-button {
+                background: var(--primary);
+                color: white;
+            }
+
+            .secondary-button {
+                background: var(--gray-50);
+                color: var(--gray-700);
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 학습 스타일 선택기 -->
+        <div class="style-selector">
+            <button class="style-button visual-style">👁️ 시각적</button>
+            <button class="style-button auditory-style">👂 청각적</button>
+            <button class="style-button kinesthetic-style">
+                ✋ 운동감각적
+            </button>
+            <button class="style-button reading-style">📚 읽기/쓰기</button>
+        </div>
+
+        <!-- 시각적 학습자용 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2 class="card-title">이미지 기반 학습</h2>
+                <p class="card-description">시각적 요소를 통해 학습하세요.</p>
+            </div>
+            <div class="visual-content">
+                <div class="image-grid">
+                    <div class="visual-item">
+                        <img src="/api/placeholder/200/200" alt="시각 자료 1" />
+                    </div>
+                    <div class="visual-item">
+                        <img src="/api/placeholder/200/200" alt="시각 자료 2" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 청각적 학습자용 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2 class="card-title">오디오 기반 학습</h2>
+                <p class="card-description">음성 설명을 들으며 학습하세요.</p>
+            </div>
+            <div class="audio-content">
+                <div class="audio-player">
+                    <div>현재 재생중: 학습 내용 1</div>
+                    <div class="audio-controls">
+                        <button class="audio-button">▶</button>
+                        <input type="range" style="flex: 1" />
+                        <span>3:45</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 운동감각적 학습자용 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2 class="card-title">인터랙티브 학습</h2>
+                <p class="card-description">직접 조작하며 학습하세요.</p>
+            </div>
+            <div class="kinesthetic-content">
+                <div class="interactive-area">
+                    <div class="draggable-item">요소 1</div>
+                    <div class="draggable-item">요소 2</div>
+                    <div class="drop-zone">여기로 드래그하세요</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 읽기/쓰기 선호형 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2 class="card-title">텍스트 기반 학습</h2>
+                <p class="card-description">글을 읽고 작성하며 학습하세요.</p>
+            </div>
+            <div class="reading-content">
+                <div class="text-passage">
+                    여기에 학습 텍스트가 제시됩니다. 자세한 설명과 함께 개념을
+                    이해할 수 있습니다.
+                </div>
+                <textarea
+                    class="writing-area"
+                    placeholder="여기에 답변을 작성하세요..."
+                ></textarea>
+            </div>
+        </div>
+
+        <!-- 하단 네비게이션 -->
+        <div class="bottom-nav">
+            <button class="nav-button secondary-button">이전</button>
+            <button class="nav-button primary-button">다음</button>
+        </div>
+    </body>
+</html>

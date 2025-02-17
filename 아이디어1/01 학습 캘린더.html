@@ -1,0 +1,454 @@
+<!-- 학습 캘린더의 주요 특징을 설명드리겠습니다:
+
+1. 월간 캘린더:
+- 일별 학습 현황
+- 활동 표시기
+- 월 이동 네비게이션
+- 주말 구분
+
+2. 일일 상세 내역:
+- 학습 시간
+- 풀이 문제 수
+- 정답률
+- 배틀 성과
+
+3. 학습 활동 로그:
+- 시간별 활동
+- 성과 표시
+- 활동 유형 구분
+- 점수/결과
+
+4. 연속 학습:
+- 스트릭 캘린더
+- 연속일 표시
+- 달성 현황
+- 동기부여 요소
+
+5. 시각적 표시:
+- 활동 아이콘
+- 컬러 코딩
+- 성취 배지
+- 진행 상태 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>학습 캘린더</title>
+        <style>
+            :root {
+                --primary-color: #6c5ce7;
+                --primary-light: #a29bfe;
+                --success-color: #00b894;
+                --warning-color: #fdcb6e;
+                --danger-color: #ff7675;
+                --surface-color: #ffffff;
+                --background-color: #f8f9fa;
+                --text-primary: #2d3436;
+                --text-secondary: #636e72;
+                --border-color: #e5e7eb;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 24px;
+                display: grid;
+                grid-template-columns: 300px 1fr;
+                gap: 24px;
+            }
+
+            /* Header Controls */
+            .calendar-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 24px;
+            }
+
+            .month-selector {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+            }
+
+            .current-month {
+                font-size: 24px;
+                font-weight: 600;
+            }
+
+            .nav-button {
+                padding: 8px;
+                border: none;
+                background: var(--surface-color);
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .nav-button:hover {
+                background: var(--primary-light);
+                color: white;
+            }
+
+            /* Calendar Grid */
+            .calendar-grid {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+            }
+
+            .weekdays {
+                display: grid;
+                grid-template-columns: repeat(7, 1fr);
+                gap: 8px;
+                margin-bottom: 16px;
+            }
+
+            .weekday {
+                text-align: center;
+                font-weight: 500;
+                color: var(--text-secondary);
+                padding: 8px;
+            }
+
+            .days {
+                display: grid;
+                grid-template-columns: repeat(7, 1fr);
+                gap: 8px;
+            }
+
+            .day {
+                aspect-ratio: 1;
+                padding: 8px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .day:hover {
+                border-color: var(--primary-color);
+            }
+
+            .day.today {
+                background: var(--primary-light);
+                color: white;
+                border-color: var(--primary-color);
+            }
+
+            .day.active {
+                border-color: var(--primary-color);
+                background: var(--primary-light);
+                color: white;
+            }
+
+            .day-number {
+                font-weight: 500;
+                margin-bottom: 4px;
+            }
+
+            .day-indicator {
+                display: flex;
+                gap: 2px;
+                margin-top: 4px;
+            }
+
+            .indicator {
+                width: 6px;
+                height: 6px;
+                border-radius: 3px;
+            }
+
+            .study-done {
+                background: var(--success-color);
+            }
+
+            .quiz-done {
+                background: var(--warning-color);
+            }
+
+            .battle-won {
+                background: var(--primary-color);
+            }
+
+            /* Study History Sidebar */
+            .study-history {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+            }
+
+            .history-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 16px;
+            }
+
+            .history-title {
+                font-size: 18px;
+                font-weight: 600;
+            }
+
+            .history-items {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .history-item {
+                display: flex;
+                align-items: start;
+                gap: 12px;
+                padding: 12px;
+                background: var(--background-color);
+                border-radius: 8px;
+            }
+
+            .history-icon {
+                width: 32px;
+                height: 32px;
+                border-radius: 16px;
+                background: var(--primary-light);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+            }
+
+            .history-content {
+                flex: 1;
+            }
+
+            .history-title {
+                font-weight: 500;
+                margin-bottom: 4px;
+                font-size: 14px;
+            }
+
+            .history-meta {
+                font-size: 12px;
+                color: var(--text-secondary);
+            }
+
+            .history-score {
+                padding: 4px 8px;
+                background: var(--success-color);
+                color: white;
+                border-radius: 12px;
+                font-size: 12px;
+            }
+
+            /* Stats Section */
+            .stats-section {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+                margin-bottom: 24px;
+            }
+
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 16px;
+            }
+
+            .stat-item {
+                text-align: center;
+            }
+
+            .stat-value {
+                font-size: 24px;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+
+            .stat-label {
+                font-size: 12px;
+                color: var(--text-secondary);
+            }
+
+            /* Streak Calendar */
+            .streak-calendar {
+                display: grid;
+                grid-template-columns: repeat(7, 1fr);
+                gap: 4px;
+                margin-top: 16px;
+            }
+
+            .streak-day {
+                aspect-ratio: 1;
+                border-radius: 4px;
+                background: var(--background-color);
+            }
+
+            .streak-day.active {
+                background: var(--primary-color);
+            }
+
+            @media (max-width: 968px) {
+                .container {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Study History Sidebar -->
+            <div class="study-history">
+                <div class="history-header">
+                    <h2 class="history-title">2월 13일의 학습</h2>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">3</div>
+                        <div class="stat-label">학습 시간</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">푼 문제</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">85%</div>
+                        <div class="stat-label">정답률</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">2</div>
+                        <div class="stat-label">배틀 승리</div>
+                    </div>
+                </div>
+
+                <div class="history-items">
+                    <div class="history-item">
+                        <div class="history-icon">📚</div>
+                        <div class="history-content">
+                            <div class="history-title">수학 - 미적분 학습</div>
+                            <div class="history-meta">오전 10:00 | 1시간</div>
+                        </div>
+                        <div class="history-score">90점</div>
+                    </div>
+
+                    <div class="history-item">
+                        <div class="history-icon">⚡</div>
+                        <div class="history-content">
+                            <div class="history-title">퀴즈 배틀 승리</div>
+                            <div class="history-meta">
+                                오후 2:30 | vs 수학왕
+                            </div>
+                        </div>
+                        <div class="history-score">승리</div>
+                    </div>
+
+                    <div class="history-item">
+                        <div class="history-icon">📝</div>
+                        <div class="history-content">
+                            <div class="history-title">과학 문제 풀이</div>
+                            <div class="history-meta">오후 4:00 | 2시간</div>
+                        </div>
+                        <div class="history-score">85점</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 24px">
+                    <h3 style="margin-bottom: 8px">연속 학습</h3>
+                    <div class="streak-calendar">
+                        <div class="streak-day active"></div>
+                        <div class="streak-day active"></div>
+                        <div class="streak-day active"></div>
+                        <div class="streak-day active"></div>
+                        <div class="streak-day active"></div>
+                        <div class="streak-day active"></div>
+                        <div class="streak-day active"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar Section -->
+            <div>
+                <div class="calendar-header">
+                    <div class="month-selector">
+                        <button class="nav-button">◀</button>
+                        <h2 class="current-month">2025년 2월</h2>
+                        <button class="nav-button">▶</button>
+                    </div>
+                </div>
+
+                <div class="calendar-grid">
+                    <div class="weekdays">
+                        <div class="weekday">일</div>
+                        <div class="weekday">월</div>
+                        <div class="weekday">화</div>
+                        <div class="weekday">수</div>
+                        <div class="weekday">목</div>
+                        <div class="weekday">금</div>
+                        <div class="weekday">토</div>
+                    </div>
+
+                    <div class="days">
+                        <!-- Previous Month Days -->
+                        <div class="day">
+                            <div class="day-number">28</div>
+                        </div>
+                        <div class="day">
+                            <div class="day-number">29</div>
+                        </div>
+                        <div class="day">
+                            <div class="day-number">30</div>
+                        </div>
+                        <div class="day">
+                            <div class="day-number">31</div>
+                        </div>
+
+                        <!-- Current Month Days -->
+                        <div class="day">
+                            <div class="day-number">1</div>
+                            <div class="day-indicator">
+                                <div class="indicator study-done"></div>
+                            </div>
+                        </div>
+                        <div class="day">
+                            <div class="day-number">2</div>
+                            <div class="day-indicator">
+                                <div class="indicator quiz-done"></div>
+                            </div>
+                        </div>
+                        <div class="day">
+                            <div class="day-number">3</div>
+                            <div class="day-indicator">
+                                <div class="indicator battle-won"></div>
+                            </div>
+                        </div>
+
+                        <!-- More days... -->
+                        <div class="day active">
+                            <div class="day-number">13</div>
+                            <div class="day-indicator">
+                                <div class="indicator study-done"></div>
+                                <div class="indicator quiz-done"></div>
+                                <div class="indicator battle-won"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

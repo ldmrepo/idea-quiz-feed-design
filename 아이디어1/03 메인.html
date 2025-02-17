@@ -1,0 +1,498 @@
+<!-- 메인 홈 페이지의 주요 특징을 설명드리겠습니다:
+
+1. 스토리 섹션:
+- 학습 활동 하이라이트
+- 최근 업데이트
+- 친구 활동
+- 빠른 접근
+
+2. 프로필 정보:
+- 사용자 정보
+- 학습 통계
+- 레벨/랭킹
+- 활동 요약 -->
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>메인 홈</title>
+        <style>
+            :root {
+                --primary-color: #6c5ce7;
+                --primary-light: #a29bfe;
+                --success-color: #00b894;
+                --warning-color: #fdcb6e;
+                --danger-color: #ff7675;
+                --surface-color: #ffffff;
+                --background-color: #f8f9fa;
+                --text-primary: #2d3436;
+                --text-secondary: #636e72;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 24px;
+                display: grid;
+                grid-template-columns: 300px 1fr 300px;
+                gap: 24px;
+            }
+
+            /* Stories Bar */
+            .stories-bar {
+                grid-column: 1 / -1;
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 20px;
+                margin-bottom: 24px;
+            }
+
+            .stories-container {
+                display: flex;
+                gap: 16px;
+                overflow-x: auto;
+                padding-bottom: 8px;
+            }
+
+            .story-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+                cursor: pointer;
+            }
+
+            .story-avatar {
+                width: 64px;
+                height: 64px;
+                border-radius: 32px;
+                background: linear-gradient(
+                    45deg,
+                    var(--primary-color),
+                    var(--primary-light)
+                );
+                padding: 2px;
+            }
+
+            .story-avatar-inner {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                background: var(--surface-color);
+            }
+
+            .story-name {
+                font-size: 12px;
+                color: var(--text-secondary);
+            }
+
+            /* Profile Section */
+            .profile-section {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 20px;
+                position: sticky;
+                top: 24px;
+                height: fit-content;
+            }
+
+            .profile-info {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 20px;
+            }
+
+            .profile-avatar {
+                width: 80px;
+                height: 80px;
+                border-radius: 40px;
+                background: var(--primary-light);
+            }
+
+            .profile-name {
+                font-weight: 600;
+                font-size: 18px;
+            }
+
+            .profile-stats {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                text-align: center;
+                padding: 12px 0;
+                border-top: 1px solid var(--background-color);
+                border-bottom: 1px solid var(--background-color);
+            }
+
+            .stat-item {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .stat-value {
+                font-weight: 600;
+            }
+
+            .stat-label {
+                font-size: 12px;
+                color: var(--text-secondary);
+            }
+
+            /* Main Feed */
+            .main-feed {
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            /* Create Post */
+            .create-post {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 20px;
+            }
+
+            .post-input {
+                width: 100%;
+                padding: 12px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                margin-bottom: 12px;
+                resize: none;
+            }
+
+            .post-actions {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .action-buttons {
+                display: flex;
+                gap: 12px;
+            }
+
+            .action-button {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 12px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .action-button:hover {
+                background: var(--background-color);
+            }
+
+            .post-button {
+                padding: 8px 16px;
+                background: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+            }
+
+            /* Feed Card */
+            .feed-card {
+                background: var(--surface-color);
+                border-radius: 16px;
+                overflow: hidden;
+            }
+
+            .card-header {
+                display: flex;
+                justify-content: space-between;
+                padding: 16px;
+            }
+
+            .user-info {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .user-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 20px;
+                background: var(--primary-light);
+            }
+
+            .user-meta {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .user-name {
+                font-weight: 500;
+            }
+
+            .post-time {
+                font-size: 12px;
+                color: var(--text-secondary);
+            }
+
+            .card-content {
+                padding: 0 16px 16px;
+            }
+
+            .content-text {
+                margin-bottom: 16px;
+            }
+
+            .content-preview {
+                background: var(--background-color);
+                border-radius: 8px;
+                padding: 16px;
+                margin-bottom: 16px;
+            }
+
+            .content-actions {
+                display: flex;
+                justify-content: space-between;
+                padding: 12px 16px;
+                border-top: 1px solid var(--background-color);
+            }
+
+            .action-stats {
+                display: flex;
+                gap: 16px;
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+            /* Trending Section */
+            .trending-section {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 20px;
+                position: sticky;
+                top: 24px;
+                height: fit-content;
+            }
+
+            .section-title {
+                font-weight: 600;
+                margin-bottom: 16px;
+            }
+
+            .trending-list {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .trending-item {
+                display: flex;
+                gap: 12px;
+                padding: 12px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .trending-item:hover {
+                background: var(--background-color);
+            }
+
+            .trending-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 8px;
+                background: var(--primary-light);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+            }
+
+            .trending-info {
+                flex: 1;
+            }
+
+            .trending-title {
+                font-weight: 500;
+                margin-bottom: 4px;
+            }
+
+            .trending-meta {
+                font-size: 12px;
+                color: var(--text-secondary);
+            }
+
+            @media (max-width: 1200px) {
+                .container {
+                    grid-template-columns: 1fr;
+                }
+
+                .profile-section,
+                .trending-section {
+                    display: none;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Stories Bar -->
+            <div class="stories-bar">
+                <div class="stories-container">
+                    <div class="story-item">
+                        <div class="story-avatar">
+                            <div class="story-avatar-inner"></div>
+                        </div>
+                        <span class="story-name">나의 학습</span>
+                    </div>
+                    <div class="story-item">
+                        <div class="story-avatar">
+                            <div class="story-avatar-inner"></div>
+                        </div>
+                        <span class="story-name">수학왕</span>
+                    </div>
+                    <div class="story-item">
+                        <div class="story-avatar">
+                            <div class="story-avatar-inner"></div>
+                        </div>
+                        <span class="story-name">과학달인</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Left Sidebar - Profile -->
+            <div class="profile-section">
+                <div class="profile-info">
+                    <div class="profile-avatar"></div>
+                    <div class="profile-name">김학생</div>
+                    <div class="profile-title">수학 마스터</div>
+                </div>
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <span class="stat-value">152</span>
+                        <span class="stat-label">문제</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">85%</span>
+                        <span class="stat-label">정답률</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">12</span>
+                        <span class="stat-label">순위</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Feed -->
+            <div class="main-feed">
+                <!-- Create Post -->
+                <div class="create-post">
+                    <textarea
+                        class="post-input"
+                        placeholder="무엇을 공유하고 싶으신가요?"
+                    ></textarea>
+                    <div class="post-actions">
+                        <div class="action-buttons">
+                            <div class="action-button">📷 이미지</div>
+                            <div class="action-button">📎 문제</div>
+                            <div class="action-button"># 태그</div>
+                        </div>
+                        <button class="post-button">공유하기</button>
+                    </div>
+                </div>
+
+                <!-- Feed Items -->
+                <div class="feed-card">
+                    <div class="card-header">
+                        <div class="user-info">
+                            <div class="user-avatar"></div>
+                            <div class="user-meta">
+                                <div class="user-name">수학왕</div>
+                                <div class="post-time">2시간 전</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="content-text">
+                            오늘의 도전 문제를 풀어보세요!
+                        </div>
+                        <div class="content-preview">미적분 문제 #42</div>
+                        <div class="content-actions">
+                            <div class="action-stats">
+                                <span>👍 24</span>
+                                <span>💬 8</span>
+                                <span>📊 85% 정답률</span>
+                            </div>
+                            <div class="action-button">풀어보기</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feed-card">
+                    <div class="card-header">
+                        <div class="user-info">
+                            <div class="user-avatar"></div>
+                            <div class="user-meta">
+                                <div class="user-name">과학달인</div>
+                                <div class="post-time">3시간 전</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="content-text">
+                            물리 개념 정리 노트를 공유합니다 📚
+                        </div>
+                        <div class="content-preview">물리학 기본 개념 노트</div>
+                        <div class="content-actions">
+                            <div class="action-stats">
+                                <span>👍 32</span>
+                                <span>💬 12</span>
+                                <span>🔖 256</span>
+                            </div>
+                            <div class="action-button">저장하기</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar - Trending -->
+            <div class="trending-section">
+                <h3 class="section-title">트렌딩</h3>
+                <div class="trending-list">
+                    <div class="trending-item">
+                        <div class="trending-icon">📚</div>
+                        <div class="trending-info">
+                            <div class="trending-title">수능 수학 기출</div>
+                            <div class="trending-meta">1,245명 학습 중</div>
+                        </div>
+                    </div>
+                    <div class="trending-item">
+                        <div class="trending-icon">🎯</div>
+                        <div class="trending-info">
+                            <div class="trending-title">과학 퀴즈 배틀</div>
+                            <div class="trending-meta">856명 참여 중</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

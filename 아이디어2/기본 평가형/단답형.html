@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>빈칸 채우기 문제 편집기</title>
+  <style>
+    body {
+      font-family: -apple-system, sans-serif;
+      background: #f9fafb;
+      margin: 0; padding: 16px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .header h1 {
+      font-size: 20px;
+      margin: 0;
+    }
+    .btn {
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    .editor, .preview {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 16px;
+    }
+    .editor textarea {
+      width: 100%;
+      height: 120px;
+      padding: 8px;
+      font-size: 14px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      resize: vertical;
+    }
+    .preview p {
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    .blank-input {
+      border: 1px solid #2563eb;
+      border-radius: 4px;
+      padding: 4px;
+      font-size: 16px;
+      width: 150px;
+      margin: 0 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>빈칸 채우기 문제 편집기</h1>
+    <div>
+      <button class="btn" id="previewBtn">미리보기</button>
+      <button class="btn" id="saveBtn">저장하기</button>
+    </div>
+  </div>
+
+  <!-- 문제 편집 영역 -->
+  <div class="editor">
+    <label for="questionText">문제 문장 입력 (빈칸은 [[]] 로 표시):</label>
+    <textarea id="questionText" placeholder="예: 서울은 대한민국의 수도이다. [[]]는 가장 큰 도시이다."></textarea>
+  </div>
+
+  <!-- 미리보기 영역 -->
+  <div class="preview" id="previewArea" style="display:none;">
+    <h2>미리보기</h2>
+    <p id="previewText"></p>
+  </div>
+
+  <script>
+    const previewBtn = document.getElementById('previewBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const questionTextEl = document.getElementById('questionText');
+    const previewAreaEl = document.getElementById('previewArea');
+    const previewTextEl = document.getElementById('previewText');
+
+    // 미리보기 버튼 클릭 시, 텍스트를 파싱하여 빈칸을 입력창으로 대체
+    previewBtn.addEventListener('click', () => {
+      const text = questionTextEl.value;
+      // 정규 표현식을 사용하여 빈칸 표시 [[]]를 분할
+      const parts = text.split(/\[\[\]\]/);
+      // parts 사이에 input 태그를 삽입하여 빈칸을 재현
+      let previewHTML = "";
+      parts.forEach((part, index) => {
+        previewHTML += part;
+        if(index < parts.length - 1) {
+          previewHTML += `<input type="text" class="blank-input" placeholder="답안 입력">`;
+        }
+      });
+      previewTextEl.innerHTML = previewHTML;
+      previewAreaEl.style.display = "block";
+    });
+
+    // 저장 버튼 (실제 저장 로직은 백엔드 연동 필요)
+    saveBtn.addEventListener('click', () => {
+      const questionContent = questionTextEl.value;
+      // 예시: 콘솔에 저장 내용 출력
+      console.log("저장된 문제 문장:", questionContent);
+      alert("문제가 저장되었습니다. (콘솔 확인)");
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <title>학습 일지</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --gray-100: #f3f4f6;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+                --gray-900: #111827;
+            }
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+                background: #f9fafb;
+                color: var(--gray-900);
+            }
+
+            .app-header {
+                background: white;
+                padding: 12px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 1px solid var(--gray-200);
+            }
+            .app-header .title {
+                font-size: 18px;
+                font-weight: 600;
+            }
+            .new-diary-btn {
+                background: var(--primary);
+                color: #fff;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 6px;
+                cursor: pointer;
+            }
+
+            .container {
+                max-width: 720px;
+                margin: 20px auto;
+                padding: 0 16px;
+            }
+            .diary-list {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+            .diary-item {
+                background: white;
+                padding: 12px;
+                border: 1px solid var(--gray-200);
+                border-radius: 6px;
+            }
+            .diary-item .date {
+                font-size: 14px;
+                color: var(--gray-700);
+            }
+            .diary-item .title {
+                font-size: 16px;
+                font-weight: 600;
+                margin: 8px 0;
+            }
+            .diary-item .tags {
+                font-size: 13px;
+                color: var(--primary);
+            }
+
+            /* 새 일지 작성 화면 모달/영역 */
+            .modal-bg {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.4);
+                display: none;
+                justify-content: center;
+                align-items: center;
+                z-index: 10;
+            }
+            .modal {
+                background: white;
+                width: 90%;
+                max-width: 600px;
+                border-radius: 8px;
+                padding: 16px;
+            }
+            .form-group {
+                margin-bottom: 16px;
+            }
+            label {
+                display: block;
+                font-weight: 600;
+                margin-bottom: 6px;
+            }
+            input[type="text"],
+            textarea {
+                width: 100%;
+                padding: 10px;
+                font-size: 14px;
+                border: 1px solid var(--gray-200);
+                border-radius: 4px;
+            }
+            .tag-input {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+            .tag-pill {
+                background: var(--gray-100);
+                padding: 6px 10px;
+                border-radius: 16px;
+                cursor: pointer;
+                font-size: 13px;
+            }
+            .modal-actions {
+                display: flex;
+                gap: 8px;
+                justify-content: flex-end;
+            }
+            .cancel-btn {
+                background: var(--gray-100);
+                color: var(--gray-900);
+                border: none;
+                padding: 10px 16px;
+                border-radius: 6px;
+                cursor: pointer;
+            }
+            .save-btn {
+                background: var(--primary);
+                color: #fff;
+                border: none;
+                padding: 10px 16px;
+                border-radius: 6px;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <header class="app-header">
+            <div class="title">학습 일지</div>
+            <button class="new-diary-btn" id="openModalBtn">
+                오늘 일지 작성
+            </button>
+        </header>
+        <main class="container">
+            <div class="diary-list" id="diaryList">
+                <!-- 최근 일지 목록 표시 영역 -->
+            </div>
+        </main>
+
+        <!-- 새 학습 일지 작성 모달 -->
+        <div class="modal-bg" id="modalBg">
+            <div class="modal">
+                <h2>학습 일지 작성</h2>
+                <div class="form-group">
+                    <label for="diaryDate">날짜</label>
+                    <input
+                        type="text"
+                        id="diaryDate"
+                        placeholder="YYYY-MM-DD"
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="diaryTitle">제목</label>
+                    <input type="text" id="diaryTitle" />
+                </div>
+                <div class="form-group">
+                    <label for="diaryContent">내용</label>
+                    <textarea id="diaryContent" rows="5"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>태그</label>
+                    <div class="tag-input" id="tagInput">
+                        <!-- 태그 선택/입력 구현 (직접 입력, 자동완성 등) -->
+                        <span class="tag-pill" data-tag="공부습관"
+                            >공부습관</span
+                        >
+                        <span class="tag-pill" data-tag="React">React</span>
+                        <span class="tag-pill" data-tag="알고리즘"
+                            >알고리즘</span
+                        >
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button class="cancel-btn" id="cancelBtn">취소</button>
+                    <button class="save-btn" id="saveBtn">저장</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const openModalBtn = document.getElementById("openModalBtn")
+            const modalBg = document.getElementById("modalBg")
+            const cancelBtn = document.getElementById("cancelBtn")
+            const saveBtn = document.getElementById("saveBtn")
+
+            const diaryDateEl = document.getElementById("diaryDate")
+            const diaryTitleEl = document.getElementById("diaryTitle")
+            const diaryContentEl = document.getElementById("diaryContent")
+            const tagInputEl = document.getElementById("tagInput")
+            const diaryListEl = document.getElementById("diaryList")
+
+            // 임시 저장용
+            let diaries = []
+
+            // 모달 열기
+            openModalBtn.addEventListener("click", () => {
+                modalBg.style.display = "flex"
+                // 기본값(오늘 날짜)
+                const today = new Date().toISOString().split("T")[0]
+                diaryDateEl.value = today
+                diaryTitleEl.value = ""
+                diaryContentEl.value = ""
+            })
+
+            // 모달 닫기
+            cancelBtn.addEventListener("click", () => {
+                modalBg.style.display = "none"
+            })
+
+            // 태그 선택
+            let selectedTags = []
+            tagInputEl.addEventListener("click", (e) => {
+                if (e.target.classList.contains("tag-pill")) {
+                    const tag = e.target.dataset.tag
+                    // 토글 로직
+                    if (selectedTags.includes(tag)) {
+                        selectedTags = selectedTags.filter((t) => t !== tag)
+                        e.target.style.background = "var(--gray-100)"
+                    } else {
+                        selectedTags.push(tag)
+                        e.target.style.background = "var(--primary)"
+                        e.target.style.color = "#fff"
+                    }
+                }
+            })
+
+            // 저장
+            saveBtn.addEventListener("click", () => {
+                const diary = {
+                    date: diaryDateEl.value.trim(),
+                    title: diaryTitleEl.value.trim(),
+                    content: diaryContentEl.value.trim(),
+                    tags: [...selectedTags],
+                }
+                diaries.unshift(diary) // 최근 작성이 상단에
+                renderDiaryList()
+                modalBg.style.display = "none"
+                // 태그 스타일 원복
+                ;[...tagInputEl.querySelectorAll(".tag-pill")].forEach((el) => {
+                    el.style.background = "var(--gray-100)"
+                    el.style.color = "var(--gray-900)"
+                })
+                selectedTags = []
+            })
+
+            function renderDiaryList() {
+                diaryListEl.innerHTML = ""
+                diaries.forEach((d, idx) => {
+                    const item = document.createElement("div")
+                    item.className = "diary-item"
+                    item.innerHTML = `
+          <div class="date">${d.date}</div>
+          <div class="title">${d.title}</div>
+          <div class="content">${d.content}</div>
+          <div class="tags">${d.tags.map((t) => "#" + t).join(" ")}</div>
+        `
+                    diaryListEl.appendChild(item)
+                })
+            }
+        </script>
+    </body>
+</html>

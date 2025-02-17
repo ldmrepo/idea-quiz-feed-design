@@ -1,0 +1,384 @@
+<!-- 주요 구현 특징:
+
+1. 역할 분담 선택
+- 직관적인 역할 그리드
+- 실시간 상태 표시
+- 역할별 책임자 지정
+
+2. 전략 수립 선택
+- 투표 시스템
+- 의견 제안 기능
+- 실시간 피드백
+
+3. 의견 조율 선택
+- 토론 스레드
+- 실시간 댓글
+- 합의점 도출
+
+4. 공동 의사결정
+- 투표 진행 상황
+- 결과 시각화
+- 최종 결정 지원
+
+모바일 최적화:
+- 반응형 레이아웃
+- 터치 인터페이스
+- 실시간 업데이트 -->
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>팀 기반 선택형</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --success: #22c55e;
+                --warning: #f59e0b;
+                --error: #ef4444;
+                --gray-50: #f9fafb;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, system-ui, sans-serif;
+                background: var(--gray-50);
+                padding: 16px;
+            }
+
+            /* 팀 정보 영역 */
+            .team-info {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                padding: 16px;
+                background: white;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                z-index: 100;
+            }
+
+            .team-members {
+                display: flex;
+                gap: 8px;
+                overflow-x: auto;
+                padding-bottom: 8px;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .member-chip {
+                padding: 6px 12px;
+                background: var(--gray-50);
+                border-radius: 16px;
+                font-size: 14px;
+                white-space: nowrap;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .member-status {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: var(--success);
+            }
+
+            /* 역할 선택 카드 */
+            .role-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+                margin-top: 80px;
+            }
+
+            .card-header {
+                padding: 16px;
+                border-bottom: 1px solid var(--gray-200);
+            }
+
+            .role-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: 12px;
+                padding: 16px;
+            }
+
+            .role-item {
+                padding: 16px;
+                background: var(--gray-50);
+                border-radius: 8px;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .role-item.selected {
+                background: var(--primary);
+                color: white;
+            }
+
+            /* 전략 수립 영역 */
+            .strategy-board {
+                padding: 16px;
+            }
+
+            .strategy-input {
+                width: 100%;
+                padding: 12px;
+                border: 1px solid var(--gray-200);
+                border-radius: 8px;
+                margin-bottom: 12px;
+                resize: vertical;
+                min-height: 100px;
+            }
+
+            .strategy-list {
+                border: 1px solid var(--gray-200);
+                border-radius: 8px;
+                overflow: hidden;
+            }
+
+            .strategy-item {
+                padding: 12px;
+                border-bottom: 1px solid var(--gray-200);
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .strategy-vote {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 4px;
+            }
+
+            .vote-count {
+                font-weight: 600;
+                color: var(--primary);
+            }
+
+            /* 의견 조율 영역 */
+            .discussion-area {
+                padding: 16px;
+            }
+
+            .discussion-thread {
+                margin-bottom: 16px;
+            }
+
+            .comment {
+                padding: 12px;
+                background: var(--gray-50);
+                border-radius: 8px;
+                margin-bottom: 8px;
+            }
+
+            .comment-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 4px;
+                font-size: 14px;
+            }
+
+            /* 공동 의사결정 */
+            .decision-area {
+                padding: 16px;
+            }
+
+            .vote-progress {
+                height: 8px;
+                background: var(--gray-200);
+                border-radius: 4px;
+                margin: 8px 0;
+                overflow: hidden;
+            }
+
+            .vote-bar {
+                height: 100%;
+                background: var(--primary);
+                transition: width 0.3s;
+            }
+
+            .vote-stats {
+                display: flex;
+                justify-content: space-between;
+                font-size: 14px;
+                color: var(--gray-700);
+            }
+
+            /* 하단 네비게이션 */
+            .bottom-nav {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 16px;
+                background: white;
+                border-top: 1px solid var(--gray-200);
+                display: flex;
+                gap: 12px;
+            }
+
+            .nav-button {
+                flex: 1;
+                padding: 14px;
+                border-radius: 8px;
+                font-size: 15px;
+                font-weight: 600;
+                border: none;
+                cursor: pointer;
+            }
+
+            .primary-button {
+                background: var(--primary);
+                color: white;
+            }
+
+            .secondary-button {
+                background: var(--gray-50);
+                color: var(--gray-700);
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 팀 정보 -->
+        <div class="team-info">
+            <div class="team-members">
+                <div class="member-chip">
+                    <div class="member-status"></div>
+                    <span>김팀장 (리더)</span>
+                </div>
+                <div class="member-chip">
+                    <div class="member-status"></div>
+                    <span>이연구</span>
+                </div>
+                <div class="member-chip">
+                    <div class="member-status"></div>
+                    <span>박분석</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 역할 분담 선택 -->
+        <div class="role-card">
+            <div class="card-header">
+                <h2>역할 선택</h2>
+                <p>팀원별 역할을 선택하세요.</p>
+            </div>
+            <div class="role-grid">
+                <div class="role-item">
+                    <h3>자료 조사</h3>
+                    <p>담당: 미정</p>
+                </div>
+                <div class="role-item selected">
+                    <h3>분석</h3>
+                    <p>담당: 박분석</p>
+                </div>
+                <div class="role-item">
+                    <h3>보고서</h3>
+                    <p>담당: 미정</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 전략 수립 선택 -->
+        <div class="role-card">
+            <div class="card-header">
+                <h2>전략 수립</h2>
+                <p>문제 해결을 위한 전략을 제안하세요.</p>
+            </div>
+            <div class="strategy-board">
+                <textarea
+                    class="strategy-input"
+                    placeholder="전략을 입력하세요..."
+                ></textarea>
+                <div class="strategy-list">
+                    <div class="strategy-item">
+                        <div class="strategy-vote">
+                            <button>▲</button>
+                            <span class="vote-count">5</span>
+                            <button>▼</button>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600">데이터 기반 접근</div>
+                            <div style="font-size: 14px">
+                                실제 데이터를 수집하여 분석합니다.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 의견 조율 선택 -->
+        <div class="role-card">
+            <div class="card-header">
+                <h2>의견 조율</h2>
+                <p>팀원들의 의견을 조율하세요.</p>
+            </div>
+            <div class="discussion-area">
+                <div class="discussion-thread">
+                    <div class="comment">
+                        <div class="comment-header">
+                            <span>김팀장</span>
+                            <span>방금 전</span>
+                        </div>
+                        <div>
+                            데이터 수집 범위를 좁히는 게 좋을 것 같습니다.
+                        </div>
+                    </div>
+                </div>
+                <textarea
+                    class="strategy-input"
+                    placeholder="의견을 입력하세요..."
+                ></textarea>
+            </div>
+        </div>
+
+        <!-- 공동 의사결정 -->
+        <div class="role-card">
+            <div class="card-header">
+                <h2>최종 결정</h2>
+                <p>팀의 최종 결정을 진행하세요.</p>
+            </div>
+            <div class="decision-area">
+                <div style="margin-bottom: 16px">
+                    <div style="font-weight: 600">제안 1: 데이터 기반 접근</div>
+                    <div class="vote-progress">
+                        <div class="vote-bar" style="width: 75%"></div>
+                    </div>
+                    <div class="vote-stats">
+                        <span>75%</span>
+                        <span>3/4 찬성</span>
+                    </div>
+                </div>
+                <div style="margin-bottom: 16px">
+                    <div style="font-weight: 600">제안 2: 인터뷰 기반 접근</div>
+                    <div class="vote-progress">
+                        <div class="vote-bar" style="width: 25%"></div>
+                    </div>
+                    <div class="vote-stats">
+                        <span>25%</span>
+                        <span>1/4 찬성</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 하단 네비게이션 -->
+        <div class="bottom-nav">
+            <button class="nav-button secondary-button">이전</button>
+            <button class="nav-button primary-button">다음</button>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문항 작성 도구</title>
+    <style>
+        /* Reset & Variables */
+        :root {
+            --primary-color: #0095f6;
+            --secondary-color: #00376b;
+            --background-color: #fafafa;
+            --surface-color: #ffffff;
+            --border-color: #dbdbdb;
+            --text-primary: #262626;
+            --text-secondary: #8e8e8e;
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --container-width: 975px;
+            --sidebar-width: 320px;
+            --header-height: 60px;
+            --story-height: 84px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Layout Grid System */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 
+                [full-start] minmax(var(--spacing-md), 1fr)
+                [main-start] min(var(--container-width), calc(100% - var(--spacing-md) * 2))
+                [main-end] minmax(var(--spacing-md), 1fr)
+                [full-end];
+        }
+
+        .grid-container > * {
+            grid-column: main-start / main-end;
+        }
+
+        /* Header */
+        .header {
+            background: var(--surface-color);
+            border-bottom: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: var(--header-height);
+        }
+
+        .header-content {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--spacing-md);
+            max-width: var(--container-width);
+            margin: 0 auto;
+        }
+
+        .nav-group {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        /* Story Bar */
+        .story-container {
+            position: sticky;
+            top: var(--header-height);
+            background: var(--surface-color);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 900;
+            height: var(--story-height);
+            margin-top: var(--header-height);
+        }
+
+        .story-scroll {
+            display: flex;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .story-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .story-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .story-ring {
+            width: 66px;
+            height: 66px;
+            border-radius: 50%;
+            padding: 3px;
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+        }
+
+        .story-avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid var(--surface-color);
+            background: var(--background-color);
+        }
+
+        /* Main Content Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr var(--sidebar-width);
+            gap: var(--spacing-xl);
+            padding-top: var(--spacing-lg);
+            max-width: var(--container-width);
+            margin: 0 auto;
+        }
+
+        /* Feed Section */
+        .feed {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+        }
+
+        .post-card {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-md);
+            gap: var(--spacing-md);
+        }
+
+        .post-profile {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--background-color);
+        }
+
+        .post-info {
+            flex: 1;
+        }
+
+        .post-author {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .post-meta {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .post-content {
+            padding: var(--spacing-md);
+        }
+
+        .editor-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .editor-title {
+            font-size: 1.125rem;
+            padding: var(--spacing-md);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: transparent;
+            width: 100%;
+        }
+
+        .editor-body {
+            min-height: 200px;
+            padding: var(--spacing-md);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: transparent;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .post-actions {
+            border-top: 1px solid var(--border-color);
+            padding: var(--spacing-md);
+        }
+
+        .action-group {
+            display: flex;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .action-button {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            cursor: pointer;
+            padding: var(--spacing-xs);
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .action-button:hover {
+            background-color: var(--background-color);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: sticky;
+            top: calc(var(--header-height) + var(--story-height) + var(--spacing-lg));
+            height: fit-content;
+        }
+
+        .suggestion-card {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: var(--spacing-md);
+        }
+
+        .suggestion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .suggestion-title {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .suggestion-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .suggestion-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .suggestion-profile {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .suggestion-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--background-color);
+        }
+
+        .suggestion-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .suggestion-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .suggestion-meta {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .follow-button {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 0.75rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .follow-button:hover {
+            background-color: rgba(0, 149, 246, 0.1);
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+        }
+
+        @media (max-width: 640px) {
+            :root {
+                --spacing-md: 0.75rem;
+                --spacing-lg: 1rem;
+            }
+
+            .grid-container {
+                grid-template-columns: 
+                    [full-start] 0
+                    [main-start] 100%
+                    [main-end] 0
+                    [full-end];
+            }
+
+            .post-card {
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+            }
+
+            .story-ring {
+                width: 56px;
+                height: 56px;
+            }
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: var(--spacing-lg);
+            right: var(--spacing-lg);
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: var(--surface-color);
+            border: none;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            z-index: 1000;
+        }
+
+        @media (max-width: 640px) {
+            .fab {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="#" class="logo">문항작성</a>
+            <nav class="nav-group">
+                <div class="nav-icon">검색</div>
+                <div class="nav-icon">알림</div>
+                <div class="nav-icon">프로필</div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Stories -->
+    <div class="story-container">
+        <div class="story-scroll">
+            <div class="story-item">
+                <div class="story-ring">
+                    <div class="story-avatar"></div>
+                </div>
+                <span>내 활동</span>
+            </div>
+            <div class="story-item">
+                <div class="story-ring">
+                    <div class="story-avatar"></div>
+                </div>
+                <span>최근 문항</span>
+            </div>
+            <div class="story-item">
+                <div class="story-ring">
+                    <div class="story-avatar"></div>
+                </div>
+                <span>인기 문항</span>
+            </div>
+            <div class="story-item">
+                <div class="story-ring">
+                    <div class="story-avatar"></div>
+                </div>
+                <span>AI 추천</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="grid-container">
+        <div class="main-layout">
+            <!-- Feed -->
+            <div class="feed">
+                <!-- Editor Card -->
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="post-profile"></div>
+                        <div class="post-info">
+                            <div class="post-author">새 문항 작성</div>
+                            <div class="post-meta">공개 문항</div>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <div class="editor-wrapper">
+                            <input type="text" class="editor-title" placeholder="문항 제목을 입력하세요">
+                            <textarea class="editor-body" placeholder="여기에 문항 내용을 작성하세요..."></textarea>
+                        </div>
+                    </div>
+                    <div class="post-actions">
+                        <div class="action-group">
+                            <button class="action-button">저장</button>
+                            <button class="action-button">리뷰 요청</button>
+                            <button class="action-button">AI 검토</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Example Post -->
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="post-profile"></div>
+                        <div class="post-info">
+                            <div class="post-author">수학 기출 문항</div>
+                            <div class="post-meta">2시간 전</div>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <p>2024학년도 수능 수학 문항...</p>
+                    </div>
+                    <div

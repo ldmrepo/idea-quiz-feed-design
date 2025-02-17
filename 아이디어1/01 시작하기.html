@@ -1,0 +1,367 @@
+<!-- 
+온보딩/튜토리얼 페이지의 주요 특징을 설명드리겠습니다:
+
+1. 단계별 구성:
+- 진행 상태바
+- 단계 표시 닷
+- 이전/다음 네비게이션
+- 건너뛰기 옵션
+
+2. 시각적 요소:
+- 큰 일러스트레이션
+- 이모지 아이콘
+- 그라데이션 효과
+- 부드러운 애니메이션
+
+3. 핵심 기능 소개:
+- 주요 특징 설명
+- 기능별 카드
+- 실제 사용 예시
+- 인터랙티브 데모
+
+4. 사용자 경험:
+- 직관적인 UI
+- 쉬운 네비게이션
+- 반응형 디자인
+- 즉각적인 피드백
+
+5. 디자인 특징:
+- 모던한 스타일
+- 밝고 친근한 톤
+- 여백 활용
+- 시선 흐름 고려 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>시작하기</title>
+        <style>
+            :root {
+                --primary-color: #6c5ce7;
+                --primary-light: #a29bfe;
+                --success-color: #00b894;
+                --surface-color: #ffffff;
+                --text-primary: #2d3436;
+                --text-secondary: #636e72;
+                --background-color: #f8f9fa;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+                height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .onboarding-container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+
+            /* Progress Bar */
+            .progress-bar {
+                width: 100%;
+                height: 4px;
+                background: #e5e7eb;
+                border-radius: 2px;
+                margin-bottom: 40px;
+                position: relative;
+            }
+
+            .progress {
+                position: absolute;
+                height: 100%;
+                background: var(--primary-color);
+                border-radius: 2px;
+                transition: width 0.3s ease;
+            }
+
+            /* Step Content */
+            .step-content {
+                display: flex;
+                align-items: center;
+                gap: 48px;
+                margin-bottom: 40px;
+            }
+
+            .illustration {
+                flex: 1;
+                height: 400px;
+                background: var(--surface-color);
+                border-radius: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 48px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .illustration::after {
+                content: "";
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 100px;
+                background: linear-gradient(
+                    to top,
+                    rgba(255, 255, 255, 0.9),
+                    transparent
+                );
+            }
+
+            .step-info {
+                flex: 1;
+                padding: 40px;
+            }
+
+            .step-emoji {
+                font-size: 48px;
+                margin-bottom: 24px;
+            }
+
+            .step-title {
+                font-size: 32px;
+                font-weight: 700;
+                margin-bottom: 16px;
+                background: linear-gradient(
+                    120deg,
+                    var(--primary-color),
+                    var(--primary-light)
+                );
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            .step-description {
+                font-size: 18px;
+                color: var(--text-secondary);
+                margin-bottom: 32px;
+                line-height: 1.6;
+            }
+
+            /* Features Grid */
+            .features-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 24px;
+                margin-bottom: 40px;
+            }
+
+            .feature-card {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+                transition: transform 0.3s ease;
+                cursor: pointer;
+            }
+
+            .feature-card:hover {
+                transform: translateY(-4px);
+            }
+
+            .feature-icon {
+                font-size: 32px;
+                margin-bottom: 16px;
+            }
+
+            .feature-title {
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .feature-description {
+                font-size: 14px;
+                color: var(--text-secondary);
+            }
+
+            /* Navigation */
+            .navigation {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 40px;
+            }
+
+            .nav-button {
+                padding: 12px 24px;
+                border-radius: 12px;
+                font-size: 16px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .prev-button {
+                color: var(--text-secondary);
+                background: none;
+                border: none;
+            }
+
+            .next-button {
+                background: var(--primary-color);
+                color: white;
+                border: none;
+            }
+
+            .next-button:hover {
+                background: var(--primary-light);
+                transform: translateX(4px);
+            }
+
+            .dots {
+                display: flex;
+                gap: 8px;
+            }
+
+            .dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 4px;
+                background: #e5e7eb;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .dot.active {
+                width: 24px;
+                background: var(--primary-color);
+            }
+
+            /* Skip Button */
+            .skip-button {
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                padding: 8px 16px;
+                border-radius: 20px;
+                background: var(--surface-color);
+                color: var(--text-secondary);
+                font-size: 14px;
+                border: none;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .skip-button:hover {
+                background: var(--background-color);
+            }
+
+            /* Interactive Elements */
+            .demo-interaction {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+                margin-top: 24px;
+                text-align: center;
+            }
+
+            .demo-button {
+                padding: 12px 24px;
+                border-radius: 8px;
+                background: var(--primary-light);
+                color: white;
+                border: none;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .demo-button:hover {
+                background: var(--primary-color);
+                transform: scale(1.05);
+            }
+
+            @media (max-width: 768px) {
+                .step-content {
+                    flex-direction: column;
+                }
+
+                .illustration {
+                    height: 300px;
+                }
+
+                .step-info {
+                    padding: 20px 0;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <button class="skip-button">건너뛰기</button>
+
+        <div class="onboarding-container">
+            <!-- Progress Bar -->
+            <div class="progress-bar">
+                <div class="progress" style="width: 25%"></div>
+            </div>
+
+            <!-- Step Content -->
+            <div class="step-content">
+                <div class="illustration">🚀</div>
+                <div class="step-info">
+                    <div class="step-emoji">✨</div>
+                    <h1 class="step-title">
+                        퀴즈메이커에 오신 것을 환영합니다!
+                    </h1>
+                    <p class="step-description">
+                        함께 배우고 성장하는 즐거운 학습 여정을 시작해보세요.
+                        퀴즈메이커에서는 재미있게 문제를 만들고, 풀고, 공유할 수
+                        있습니다.
+                    </p>
+
+                    <!-- Features Grid -->
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">📝</div>
+                            <div class="feature-title">문제 만들기</div>
+                            <div class="feature-description">
+                                나만의 문제를 쉽게 만들고 공유해보세요
+                            </div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🤝</div>
+                            <div class="feature-title">함께 학습</div>
+                            <div class="feature-description">
+                                친구들과 함께 풀고 토론해보세요
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Demo -->
+                    <div class="demo-interaction">
+                        <button class="demo-button">시작하기</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="navigation">
+                <button class="nav-button prev-button">이전</button>
+                <div class="dots">
+                    <div class="dot active"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+                <button class="nav-button next-button">다음</button>
+            </div>
+        </div>
+    </body>
+</html>

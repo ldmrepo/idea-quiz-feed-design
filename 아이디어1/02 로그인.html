@@ -1,0 +1,272 @@
+<!-- 심플한 로그인 페이지의 주요 개선사항을 설명드리겠습니다:
+
+1. 미니멀 디자인:
+- 깔끔한 레이아웃
+- 여백 활용
+- 불필요한 요소 제거
+- 심플한 색상 구성
+
+2. 간소화된 SNS 로그인:
+- 아이콘만 표시
+- 원형 버튼 디자인
+- 최소한의 시각적 요소
+- 직관적인 배치
+
+3. 폼 디자인:
+- 단순화된 입력 필드
+- 명확한 버튼
+- 적절한 간격
+- 부드러운 인터랙션
+
+4. 타이포그래피:
+- 가독성 높은 글꼴
+- 적절한 크기
+- 명확한 계층구조
+- 일관된 스타일
+
+5. 반응형 개선:
+- 모바일 최적화
+- 터치 친화적 버튼
+- 유동적 레이아웃
+- 접근성 고려 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>로그인</title>
+        <style>
+            :root {
+                --primary-color: #0095f6;
+                --border-color: #e5e7eb;
+                --background-color: #ffffff;
+                --text-primary: #111827;
+                --text-secondary: #6b7280;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+            }
+
+            .login-container {
+                width: 100%;
+                max-width: 360px;
+                padding: 24px;
+            }
+
+            /* Logo */
+            .logo {
+                text-align: center;
+                margin-bottom: 32px;
+            }
+
+            .logo-text {
+                font-size: 24px;
+                font-weight: 600;
+                color: var(--text-primary);
+            }
+
+            /* Login Form */
+            .login-form {
+                margin-bottom: 24px;
+            }
+
+            .form-group {
+                margin-bottom: 16px;
+            }
+
+            .form-input {
+                width: 100%;
+                padding: 12px 16px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                font-size: 14px;
+                transition: all 0.2s ease;
+            }
+
+            .form-input:focus {
+                outline: none;
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 2px rgba(0, 149, 246, 0.1);
+            }
+
+            .login-button {
+                width: 100%;
+                padding: 12px;
+                background-color: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .login-button:hover {
+                opacity: 0.9;
+            }
+
+            /* Divider */
+            .divider {
+                display: flex;
+                align-items: center;
+                text-align: center;
+                margin: 24px 0;
+                font-size: 12px;
+                color: var(--text-secondary);
+            }
+
+            .divider::before,
+            .divider::after {
+                content: "";
+                flex: 1;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .divider span {
+                padding: 0 12px;
+            }
+
+            /* Social Login */
+            .social-login {
+                display: flex;
+                justify-content: center;
+                gap: 16px;
+                margin-bottom: 24px;
+            }
+
+            .social-button {
+                width: 40px;
+                height: 40px;
+                border-radius: 20px;
+                border: 1px solid var(--border-color);
+                background: white;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s ease;
+            }
+
+            .social-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            }
+
+            .social-icon {
+                width: 20px;
+                height: 20px;
+                object-fit: contain;
+            }
+
+            /* Links */
+            .links {
+                text-align: center;
+                font-size: 13px;
+            }
+
+            .links a {
+                color: var(--primary-color);
+                text-decoration: none;
+            }
+
+            .links a:hover {
+                text-decoration: underline;
+            }
+
+            .help-links {
+                margin-top: 16px;
+                display: flex;
+                justify-content: center;
+                gap: 16px;
+                color: var(--text-secondary);
+                font-size: 12px;
+            }
+
+            .help-links a {
+                color: var(--text-secondary);
+                text-decoration: none;
+            }
+
+            .help-links a:hover {
+                text-decoration: underline;
+            }
+
+            @media (max-width: 480px) {
+                .login-container {
+                    padding: 16px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="login-container">
+            <!-- Logo -->
+            <div class="logo">
+                <div class="logo-text">문항작성</div>
+            </div>
+
+            <!-- Login Form -->
+            <form class="login-form">
+                <div class="form-group">
+                    <input
+                        type="email"
+                        class="form-input"
+                        placeholder="이메일"
+                    />
+                </div>
+                <div class="form-group">
+                    <input
+                        type="password"
+                        class="form-input"
+                        placeholder="비밀번호"
+                    />
+                </div>
+                <button type="submit" class="login-button">로그인</button>
+            </form>
+
+            <!-- Divider -->
+            <div class="divider">
+                <span>또는</span>
+            </div>
+
+            <!-- Social Login Icons -->
+            <div class="social-login">
+                <button class="social-button">🌐</button>
+                <button class="social-button">💬</button>
+                <button class="social-button">N</button>
+                <button class="social-button">🍎</button>
+            </div>
+
+            <!-- Links -->
+            <div class="links">
+                <a href="#">비밀번호를 잊으셨나요?</a>
+                <p style="margin-top: 16px">
+                    계정이 없으신가요? <a href="#">가입하기</a>
+                </p>
+            </div>
+
+            <!-- Help Links -->
+            <div class="help-links">
+                <a href="#">이용약관</a>
+                <a href="#">개인정보처리방침</a>
+            </div>
+        </div>
+    </body>
+</html>

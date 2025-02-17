@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>학습 대시보드</title>
+        <style>
+            :root {
+                --primary-color: #6c5ce7;
+                --primary-light: #a29bfe;
+                --success-color: #00b894;
+                --warning-color: #fdcb6e;
+                --danger-color: #ff7675;
+                --border-color: #e5e7eb;
+                --background-color: #f8f9fa;
+                --surface-color: #ffffff;
+                --text-primary: #2d3436;
+                --text-secondary: #636e72;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 24px;
+            }
+
+            /* Welcome Section */
+            .welcome-section {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 32px;
+            }
+
+            .welcome-text h1 {
+                font-size: 28px;
+                margin-bottom: 8px;
+            }
+
+            .welcome-text p {
+                color: var(--text-secondary);
+            }
+
+            .date-picker {
+                padding: 8px 16px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                background: var(--surface-color);
+            }
+
+            /* Stats Grid */
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 24px;
+                margin-bottom: 32px;
+            }
+
+            .stat-card {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+                display: flex;
+                align-items: center;
+                gap: 16px;
+            }
+
+            .stat-icon {
+                width: 48px;
+                height: 48px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 24px;
+            }
+
+            .stat-info {
+                flex: 1;
+            }
+
+            .stat-value {
+                font-size: 24px;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+
+            .stat-label {
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+            /* Progress Section */
+            .progress-section {
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 24px;
+                margin-bottom: 32px;
+            }
+
+            .chart-card {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+            }
+
+            .chart-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+
+            .chart-title {
+                font-size: 18px;
+                font-weight: 600;
+            }
+
+            .chart-container {
+                height: 300px;
+                background: var(--background-color);
+                border-radius: 8px;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .progress-bar {
+                height: 100%;
+                width: 70%;
+                background: linear-gradient(
+                    to top,
+                    var(--primary-color),
+                    var(--primary-light)
+                );
+                position: absolute;
+                bottom: 0;
+                border-radius: 8px;
+            }
+
+            /* Recent Activity */
+            .activity-section {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+                margin-bottom: 32px;
+            }
+
+            .activity-list {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .activity-item {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                padding: 16px;
+                background: var(--background-color);
+                border-radius: 12px;
+            }
+
+            .activity-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 20px;
+                background: var(--primary-light);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+            }
+
+            .activity-info {
+                flex: 1;
+            }
+
+            .activity-title {
+                font-weight: 500;
+                margin-bottom: 4px;
+            }
+
+            .activity-meta {
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+            .activity-score {
+                padding: 4px 12px;
+                background: var(--success-color);
+                color: white;
+                border-radius: 12px;
+                font-size: 14px;
+            }
+
+            /* Learning Goals */
+            .goals-section {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+            }
+
+            .goals-list {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .goal-item {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+            }
+
+            .goal-check {
+                width: 24px;
+                height: 24px;
+                border-radius: 6px;
+                border: 2px solid var(--border-color);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .goal-check.completed {
+                background: var(--success-color);
+                border-color: var(--success-color);
+                color: white;
+            }
+
+            .goal-info {
+                flex: 1;
+            }
+
+            .goal-title {
+                font-weight: 500;
+                margin-bottom: 4px;
+            }
+
+            .goal-progress {
+                width: 100px;
+                height: 6px;
+                background: var(--border-color);
+                border-radius: 3px;
+                overflow: hidden;
+            }
+
+            .goal-progress-bar {
+                height: 100%;
+                background: var(--primary-color);
+            }
+
+            @media (max-width: 768px) {
+                .container {
+                    padding: 16px;
+                }
+
+                .progress-section {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <div class="welcome-text">
+                    <h1>안녕하세요, 김공부님! 👋</h1>
+                    <p>오늘도 즐거운 학습 되세요!</p>
+                </div>
+                <div class="date-picker">2025년 2월 13일</div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div
+                        class="stat-icon"
+                        style="background: #e3f2fd; color: #2196f3"
+                    >
+                        📚
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">357</div>
+                        <div class="stat-label">총 학습 문제</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div
+                        class="stat-icon"
+                        style="background: #e8f5e9; color: #4caf50"
+                    >
+                        📈
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">85%</div>
+                        <div class="stat-label">평균 정답률</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div
+                        class="stat-icon"
+                        style="background: #fff3e0; color: #ff9800"
+                    >
+                        ⏱️
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">42시간</div>
+                        <div class="stat-label">총 학습 시간</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div
+                        class="stat-icon"
+                        style="background: #fce4ec; color: #e91e63"
+                    >
+                        🎯
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">12일</div>
+                        <div class="stat-label">연속 학습</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Section -->
+            <div class="progress-section">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h2 class="chart-title">주간 학습 현황</h2>
+                    </div>
+                    <div class="chart-container">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h2 class="chart-title">과목별 진도율</h2>
+                    </div>
+                    <div class="chart-container">
+                        <div class="progress-bar" style="width: 85%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="activity-section">
+                <div class="chart-header">
+                    <h2 class="chart-title">최근 활동</h2>
+                </div>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon">📝</div>
+                        <div class="activity-info">
+                            <div class="activity-title">
+                                수능 수학 - 미적분 문제 풀이
+                            </div>
+                            <div class="activity-meta">1시간 전</div>
+                        </div>
+                        <div class="activity-score">90점</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">📚</div>
+                        <div class="activity-info">
+                            <div class="activity-title">
+                                물리학 개념 복습 완료
+                            </div>
+                            <div class="activity-meta">3시간 전</div>
+                        </div>
+                        <div class="activity-score">85점</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learning Goals -->
+            <div class="goals-section">
+                <div class="chart-header">
+                    <h2 class="chart-title">학습 목표</h2>
+                </div>
+                <div class="goals-list">
+                    <div class="goal-item">
+                        <div class="goal-check completed">✓</div>
+                        <div class="goal-info">
+                            <div class="goal-title">주간 학습 목표</div>
+                            <div class="activity-meta">50문제 풀기</div>
+                        </div>
+                        <div class="goal-progress">
+                            <div
+                                class="goal-progress-bar"
+                                style="width: 100%"
+                            ></div>
+                        </div>
+                    </div>
+                    <div class="goal-item">
+                        <div class="goal-check"></div>
+                        <div class="goal-info">
+                            <div class="goal-title">월간 목표</div>
+                            <div class="activity-meta">
+                                평균 정답률 90% 달성
+                            </div>
+                        </div>
+                        <div class="goal-progress">
+                            <div
+                                class="goal-progress-bar"
+                                style="width: 75%"
+                            ></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

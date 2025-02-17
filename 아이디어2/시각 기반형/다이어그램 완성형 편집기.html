@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>다이어그램 완성형 문제 편집기 (Tailwind 개선)</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-gray-50 p-4">
+        <!-- Header -->
+        <header class="flex flex-wrap justify-between items-center mb-4">
+            <h1 class="text-2xl font-bold">다이어그램 완성형 문제 편집기</h1>
+            <div class="flex flex-wrap items-center gap-2">
+                <input
+                    type="file"
+                    id="bgUpload"
+                    accept="image/*"
+                    class="block"
+                />
+                <button
+                    id="addNodeBtn"
+                    class="bg-blue-600 text-white py-1 px-3 rounded"
+                >
+                    노드 추가
+                </button>
+                <button
+                    id="saveBtn"
+                    class="bg-blue-600 text-white py-1 px-3 rounded"
+                >
+                    저장하기
+                </button>
+                <button
+                    id="setAnswerBtn"
+                    class="bg-yellow-500 text-white py-1 px-3 rounded"
+                >
+                    정답 설정
+                </button>
+                <button
+                    id="previewBtn"
+                    class="bg-blue-600 text-white py-1 px-3 rounded"
+                >
+                    미리보기
+                </button>
+                <button
+                    id="togglePreviewBtn"
+                    class="bg-green-500 text-white py-1 px-3 rounded"
+                >
+                    미리보기 전환
+                </button>
+                <button
+                    id="resizeToggleBtn"
+                    class="bg-purple-600 text-white py-1 px-3 rounded"
+                >
+                    리사이즈 모드
+                </button>
+            </div>
+        </header>
+
+        <!-- Editor Container -->
+        <div class="flex flex-wrap gap-4">
+            <!-- Canvas Area -->
+            <div
+                id="canvasArea"
+                class="flex-1 relative border border-gray-200 bg-white rounded overflow-hidden"
+            >
+                <canvas
+                    id="diagramCanvas"
+                    width="600"
+                    height="400"
+                    class="w-full"
+                ></canvas>
+            </div>
+            <!-- Sidebar -->
+            <aside
+                id="sidebar"
+                class="w-full md:w-1/3 bg-white border border-gray-200 rounded p-4"
+            >
+                <h2 class="text-lg font-semibold mb-2">노드 정보</h2>
+                <div id="nodeDetails">노드를 선택하세요.</div>
+            </aside>
+        </div>
+
+        <!-- Action Bar -->
+        <div id="actionBar" class="mt-4 text-center hidden">
+            <button
+                id="checkAnswerBtn"
+                class="bg-red-600 text-white py-1 px-3 rounded"
+            >
+                정답 확인
+            </button>
+        </div>
+
+        <script>
+            const bgUpload = document.getElementById("bgUpload")
+            const addNodeBtn = document.getElementById("addNodeBtn")
+            const saveBtn = document.getElementById("saveBtn")
+            const setAnswerBtn = document.getElementById("setAnswerBtn")
+            const previewBtn = document.getElementById("previewBtn")
+            const togglePreviewBtn = document.getElementById("togglePreviewBtn")
+            const resizeToggleBtn = document.getElementById("resizeToggleBtn")
+            const canvas = document.getElementById("diagramCanvas")
+            const ctx = canvas.getContext("2d")
+            const sidebar = document.getElementById("sidebar")
+            const nodeDetails = document.getElementById("nodeDetails")
+            const actionBar = document.getElementById("actionBar")
+            const checkAnswerBtn = document.getElementById("checkAnswerBtn")
+
+            let bgImage = null
+            let nodes = [] // { id, label, currentX, currentY, width, height }
+            let connections = [] // { from, to }
+            let selectedNode = null
+            let isDrawingConnection = false
+            let connectionStartNode = null
+            let isPreviewMode = false // 미리보기 모드 상태 변수
+            let isResizeMode = false // 리사이즈 모드 활성 여부
+            let isResizing = false // 현재 리사이즈 중 상태
+            let resizeOffsetX = 0,
+                resizeOffsetY = 0
+            let correctConnections = [] // 정답 연결 상태 저장
+
+            // 배경 이미지 업로드
+            bgUpload.addEventListener("change", (e) => {
+                const file = e.target.files[0]
+                if (file) {
+                    const reader = new FileReader()
+                    reader.onload = (evt) => {
+                        bgImage = new Image()
+                        bgImage.src = evt.target.result
+                        bgImage.onload = () => {
+                            drawDiagram()
+                        }
+                    }
+                    reader.readAsDataURL(file)
+                }
+            })
+
+            // 노드 추가 버튼
+            addNodeBtn.addEventListener("click", () => {
+                const newNode = {
+                    id: Date.now().toString(),
+                    label: "노드 " + (nodes.length + 1),
+                    currentX: 50,
+                    currentY: 50,
+                    width: 80,
+                    height: 40,
+                }
+                nodes.push(newNode)
+                drawDiagram()
+            })
+
+            // 정답 설정 버튼: 현재 연결 상태를 정답으로 저장
+            setAnswerBtn.addEventListener("click", () => {
+                correctConnections = JSON.parse(JSON.stringify(connections))
+                alert("현재 연결 상태가 정답으로 설정되었습니다.")
+            })
+
+            // 미리보기 전환 버튼
+            togglePreviewBtn.addEventListener("click", () => {
+                isPreviewMode = !isPreviewMode
+                if (isPreviewMode) {
+                    sidebar.classList.add("hidden")
+                    actionBar.classList.remove("hidden") // 정답 확인 버튼 표시
+                    togglePreviewBtn.textContent = "편집 모드 전환"
+                } else {
+                    sidebar.classList.remove("hidden")
+                    actionBar.classList.add("hidden")
+                    togglePreviewBtn.textContent = "미리보기 전환"
+                }
+                drawDiagram()
+            })
+
+            // 리사이즈 모드 토글 버튼
+            resizeToggleBtn.addEventListener("click", () => {
+                isResizeMode = !isResizeMode
+                if (isResizeMode) {
+                    resizeToggleBtn.textContent = "이동 모드 전환"
+                    alert(
+                        "리사이즈 모드 활성화: 노드 오른쪽 하단을 드래그하여 크기를 조절하세요."
+                    )
+                } else {
+                    resizeToggleBtn.textContent = "리사이즈 모드"
+                }
+            })
+
+            // 정답 확인 버튼 (미리보기 모드에서만 활성)
+            checkAnswerBtn.addEventListener("click", () => {
+                if (arraysEqual(connections, correctConnections)) {
+                    alert("정답입니다!")
+                } else {
+                    alert("정답이 아닙니다.")
+                }
+            })
+
+            // 마우스 이벤트: 노드 드래그 및 리사이즈
+            let offsetX, offsetY
+            canvas.addEventListener("mousedown", (e) => {
+                const pos = getMousePos(e)
+                const node = nodes.find(
+                    (n) =>
+                        pos.x >= n.currentX &&
+                        pos.x <= n.currentX + n.width &&
+                        pos.y >= n.currentY &&
+                        pos.y <= n.currentY + n.height
+                )
+                if (node) {
+                    // 리사이즈 조건: 리사이즈 모드 활성화 및 마우스가 노드 우측 하단 10px 이내
+                    if (
+                        isResizeMode &&
+                        pos.x >= node.currentX + node.width - 10 &&
+                        pos.x <= node.currentX + node.width &&
+                        pos.y >= node.currentY + node.height - 10 &&
+                        pos.y <= node.currentY + node.height
+                    ) {
+                        isResizing = true
+                        resizeOffsetX = node.currentX + node.width - pos.x
+                        resizeOffsetY = node.currentY + node.height - pos.y
+                        selectedNode = node
+                        updateSidebar(node)
+                    } else {
+                        selectedNode = node
+                        offsetX = pos.x - node.currentX
+                        offsetY = pos.y - node.currentY
+                        updateSidebar(node)
+                    }
+                }
+            })
+            canvas.addEventListener("mousemove", (e) => {
+                const pos = getMousePos(e)
+                if (selectedNode) {
+                    if (isResizing) {
+                        selectedNode.width =
+                            pos.x - selectedNode.currentX + resizeOffsetX
+                        selectedNode.height =
+                            pos.y - selectedNode.currentY + resizeOffsetY
+                        if (selectedNode.width < 40) selectedNode.width = 40
+                        if (selectedNode.height < 20) selectedNode.height = 20
+                        drawDiagram()
+                    } else {
+                        selectedNode.currentX = pos.x - offsetX
+                        selectedNode.currentY = pos.y - offsetY
+                        drawDiagram()
+                    }
+                }
+            })
+            canvas.addEventListener("mouseup", () => {
+                selectedNode = null
+                isResizing = false
+            })
+
+            // 터치 이벤트 지원
+            canvas.addEventListener("touchstart", (e) => {
+                const touch = e.touches[0]
+                const pos = getTouchPos(touch)
+                const node = nodes.find(
+                    (n) =>
+                        pos.x >= n.currentX &&
+                        pos.x <= n.currentX + n.width &&
+                        pos.y >= n.currentY &&
+                        pos.y <= n.currentY + n.height
+                )
+                if (node) {
+                    if (
+                        isResizeMode &&
+                        pos.x >= node.currentX + node.width - 10 &&
+                        pos.x <= node.currentX + node.width &&
+                        pos.y >= node.currentY + node.height - 10 &&
+                        pos.y <= node.currentY + node.height
+                    ) {
+                        isResizing = true
+                        resizeOffsetX = node.currentX + node.width - pos.x
+                        resizeOffsetY = node.currentY + node.height - pos.y
+                        selectedNode = node
+                        updateSidebar(node)
+                    } else {
+                        selectedNode = node
+                        offsetX = pos.x - node.currentX
+                        offsetY = pos.y - node.currentY
+                        updateSidebar(node)
+                    }
+                }
+            })
+            canvas.addEventListener("touchmove", (e) => {
+                e.preventDefault() // 스크롤 방지
+                const touch = e.touches[0]
+                const pos = getTouchPos(touch)
+                if (selectedNode) {
+                    if (isResizing) {
+                        selectedNode.width =
+                            pos.x - selectedNode.currentX + resizeOffsetX
+                        selectedNode.height =
+                            pos.y - selectedNode.currentY + resizeOffsetY
+                        if (selectedNode.width < 40) selectedNode.width = 40
+                        if (selectedNode.height < 20) selectedNode.height = 20
+                        drawDiagram()
+                    } else {
+                        selectedNode.currentX = pos.x - offsetX
+                        selectedNode.currentY = pos.y - offsetY
+                        drawDiagram()
+                    }
+                }
+            })
+            canvas.addEventListener("touchend", () => {
+                selectedNode = null
+                isResizing = false
+            })
+
+            // 캔버스 클릭: 노드 선택 및 연결선 그리기
+            canvas.addEventListener("click", (e) => {
+                const pos = getMousePos(e)
+                const clickedNode = nodes.find(
+                    (n) =>
+                        pos.x >= n.currentX &&
+                        pos.x <= n.currentX + n.width &&
+                        pos.y >= n.currentY &&
+                        pos.y <= n.currentY + n.height
+                )
+                if (clickedNode) {
+                    if (!isDrawingConnection) {
+                        connectionStartNode = clickedNode
+                        isDrawingConnection = true
+                    } else {
+                        if (connectionStartNode.id !== clickedNode.id) {
+                            connections.push({
+                                from: connectionStartNode.id,
+                                to: clickedNode.id,
+                            })
+                        }
+                        isDrawingConnection = false
+                        connectionStartNode = null
+                        drawDiagram()
+                    }
+                }
+            })
+
+            // 현재 마우스 위치 구하기
+            function getMousePos(evt) {
+                const rect = canvas.getBoundingClientRect()
+                return { x: evt.clientX - rect.left, y: evt.clientY - rect.top }
+            }
+            // 현재 터치 위치 구하기
+            function getTouchPos(touch) {
+                const rect = canvas.getBoundingClientRect()
+                return {
+                    x: touch.clientX - rect.left,
+                    y: touch.clientY - rect.top,
+                }
+            }
+
+            // 다이어그램 그리기: 배경, 연결선, 노드 (미리보기 모드에서는 그림자 효과 추가)
+            function drawDiagram() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height)
+                if (bgImage) {
+                    ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height)
+                }
+                // 연결선 그리기
+                ctx.strokeStyle = varCSS("--primary")
+                ctx.lineWidth = 2
+                connections.forEach((conn) => {
+                    const fromNode = nodes.find((n) => n.id === conn.from)
+                    const toNode = nodes.find((n) => n.id === conn.to)
+                    if (fromNode && toNode) {
+                        ctx.beginPath()
+                        ctx.moveTo(
+                            fromNode.currentX + fromNode.width,
+                            fromNode.currentY + fromNode.height / 2
+                        )
+                        ctx.lineTo(
+                            toNode.currentX,
+                            toNode.currentY + toNode.height / 2
+                        )
+                        ctx.stroke()
+                    }
+                })
+                // 노드 그리기
+                nodes.forEach((node) => {
+                    ctx.fillStyle = varCSS("--primary")
+                    ctx.fillRect(
+                        node.currentX,
+                        node.currentY,
+                        node.width,
+                        node.height
+                    )
+                    ctx.fillStyle = "#fff"
+                    ctx.font = "14px sans-serif"
+                    ctx.fillText(
+                        node.label,
+                        node.currentX + 5,
+                        node.currentY + 25
+                    )
+                    // 미리보기 모드에서는 그림자 효과 적용
+                    if (isPreviewMode) {
+                        ctx.shadowColor = "rgba(0,0,0,0.3)"
+                        ctx.shadowBlur = 10
+                    } else {
+                        ctx.shadowBlur = 0
+                    }
+                    // 노드 우측 하단에 리사이즈 핸들 (작은 사각형)
+                    ctx.fillStyle = "#fff"
+                    ctx.fillRect(
+                        node.currentX + node.width - 8,
+                        node.currentY + node.height - 8,
+                        6,
+                        6
+                    )
+                    ctx.strokeStyle = varCSS("--primary")
+                    ctx.strokeRect(
+                        node.currentX + node.width - 8,
+                        node.currentY + node.height - 8,
+                        6,
+                        6
+                    )
+                })
+            }
+
+            // Helper: CSS 변수 값 가져오기
+            function varCSS(name) {
+                return getComputedStyle(document.documentElement)
+                    .getPropertyValue(name)
+                    .trim()
+            }
+
+            // 사이드바 업데이트: 선택된 노드 정보 표시 및 편집
+            function updateSidebar(node) {
+                nodeDetails.innerHTML = `
+          <div class="mb-4">
+            <label class="block text-sm font-medium">노드 ID:</label>
+            <input type="text" id="nodeId" value="${node.id}" disabled class="w-full p-1 border border-gray-200 rounded">
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-medium">레이블:</label>
+            <input type="text" id="nodeLabel" value="${node.label}" class="w-full p-1 border border-gray-200 rounded">
+          </div>
+          <button class="bg-blue-600 text-white py-1 px-3 rounded" onclick="applyNodeChanges()">적용</button>
+        `
+            }
+
+            // 적용 버튼: 사이드바의 변경 내용을 노드에 반영
+            function applyNodeChanges() {
+                const newLabel = document.getElementById("nodeLabel").value
+                const nodeId = document.getElementById("nodeId").value
+                const node = nodes.find((n) => n.id === nodeId)
+                if (node) {
+                    node.label = newLabel
+                    drawDiagram()
+                    alert("노드 정보가 업데이트되었습니다.")
+                }
+            }
+
+            // 저장 버튼: 전체 문제 데이터를 JSON으로 출력 (실제 구현에서는 서버 전송)
+            saveBtn.addEventListener("click", () => {
+                const problemData = {
+                    question_id: Date.now(),
+                    type: "diagram_completion",
+                    title: "회로도 완성 문제",
+                    background_image: bgImage ? bgImage.src : null,
+                    nodes: nodes.map((n) => ({
+                        node_id: n.id,
+                        label: n.label,
+                        init_x: n.currentX,
+                        init_y: n.currentY,
+                        draggable: true,
+                    })),
+                    correct_connections: connections,
+                }
+                console.log(
+                    "저장된 문제 데이터:",
+                    JSON.stringify(problemData, null, 2)
+                )
+                alert("문제가 저장되었습니다. (콘솔 확인)")
+            })
+
+            // 미리보기 버튼: 별도 처리 (예: 다른 화면 전환)
+            previewBtn.addEventListener("click", () => {
+                alert("미리보기 기능은 별도의 화면에서 구현 가능합니다.")
+            })
+
+            // Helper: 배열 비교 (연결선 비교)
+            function arraysEqual(a, b) {
+                if (a.length !== b.length) return false
+                let sortedA = [...a].sort(
+                    (x, y) =>
+                        x.from.localeCompare(y.from) || x.to.localeCompare(y.to)
+                )
+                let sortedB = [...b].sort(
+                    (x, y) =>
+                        x.from.localeCompare(y.from) || x.to.localeCompare(y.to)
+                )
+                return JSON.stringify(sortedA) === JSON.stringify(sortedB)
+            }
+
+            // 초기 실행
+            drawDiagram()
+        </script>
+    </body>
+</html>

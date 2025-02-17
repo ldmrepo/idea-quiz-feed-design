@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <title>역할 기반 의사결정 시나리오</title>
+        <style>
+            body {
+                font-family: -apple-system, sans-serif;
+                margin: 0;
+                padding: 16px;
+                background: #f9fafb;
+            }
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+            }
+            .role-selection,
+            .scenario-step,
+            .outcome-screen {
+                background: white;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                padding: 16px;
+                margin-bottom: 16px;
+            }
+            .role-btn,
+            .choice-btn {
+                display: block;
+                background: #2563eb;
+                color: white;
+                border: none;
+                padding: 10px;
+                border-radius: 6px;
+                margin-top: 8px;
+                text-align: left;
+                cursor: pointer;
+            }
+            .role-btn:hover,
+            .choice-btn:hover {
+                opacity: 0.9;
+            }
+            .role-title {
+                font-size: 18px;
+                font-weight: 600;
+            }
+            .narration {
+                margin-bottom: 12px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h2>역할 기반 의사결정 시나리오</h2>
+            <div id="appView"></div>
+        </div>
+
+        <script>
+            const scenarioData = {
+                scenario_id: 201,
+                title: "프로젝트 기획 시나리오",
+                roles: [
+                    {
+                        role_id: "manager",
+                        role_name: "팀장",
+                        description:
+                            "프로젝트 전체 일정과 성과를 책임지는 역할",
+                    },
+                    {
+                        role_id: "dev",
+                        role_name: "개발자",
+                        description:
+                            "실제 코드를 작성하고 기술적 리스크를 관리",
+                    },
+                ],
+                steps: [
+                    {
+                        step_id: "step1",
+                        narration:
+                            "새 프로젝트가 시작되었습니다. 일정은 빠듯하고 요구사항은 많습니다...",
+                        role_choices: {
+                            manager: [
+                                {
+                                    choice_id: "m1",
+                                    choice_text: "프로젝트 범위를 축소해 진행",
+                                    next_step: "step2A",
+                                },
+                                {
+                                    choice_id: "m2",
+                                    choice_text: "야심차게 큰 범위로 제안",
+                                    next_step: "step2B",
+                                },
+                            ],
+                            dev: [
+                                {
+                                    choice_id: "d1",
+                                    choice_text: "기술적 리스크를 우선 보고",
+                                    next_step: "step2C",
+                                },
+                                {
+                                    choice_id: "d2",
+                                    choice_text: "별다른 이의 없이 사양 수용",
+                                    next_step: "step2D",
+                                },
+                            ],
+                        },
+                    },
+                    {
+                        step_id: "step2A",
+                        narration:
+                            "범위를 축소했습니다. 클라이언트는 의아해하지만 납기 내 가능성을 높게 봅니다...",
+                        role_choices: {
+                            manager: [
+                                {
+                                    choice_id: "m3",
+                                    choice_text: "추가 인력 지원 요청",
+                                    next_step: "outcomeSuccess",
+                                },
+                                {
+                                    choice_id: "m4",
+                                    choice_text: "현재 인력으로 무리 없이 진행",
+                                    next_step: "outcomeMid",
+                                },
+                            ],
+                            // dev 입장에서는 step2A가 없다고 가정(만약 dev에도 적용하려면 정의)
+                        },
+                    },
+                    {
+                        step_id: "step2B",
+                        narration:
+                            "큰 범위를 제안했습니다. 팀원들은 일정이 빡빡하다고 우려합니다...",
+                        role_choices: {
+                            manager: [
+                                {
+                                    choice_id: "m5",
+                                    choice_text: "야근과 주말근무로 커버",
+                                    next_step: "outcomeFail",
+                                },
+                                {
+                                    choice_id: "m6",
+                                    choice_text:
+                                        "클라이언트와 협상해 마감 연장",
+                                    next_step: "outcomeMid",
+                                },
+                            ],
+                        },
+                    },
+                    {
+                        step_id: "step2C",
+                        narration:
+                            "개발자로서 기술적 리스크를 팀장에게 보고했습니다...",
+                        role_choices: {
+                            dev: [
+                                {
+                                    choice_id: "d3",
+                                    choice_text: "팀장 결정에 따르기",
+                                    next_step: "outcomeMid",
+                                },
+                                {
+                                    choice_id: "d4",
+                                    choice_text: "진행 불가를 강하게 주장",
+                                    next_step: "outcomeFail",
+                                },
+                            ],
+                        },
+                    },
+                    {
+                        step_id: "step2D",
+                        narration:
+                            "별다른 이의 없이 사양을 전부 수용했습니다...",
+                        role_choices: {
+                            dev: [
+                                {
+                                    choice_id: "d5",
+                                    choice_text: "야근 불사하고 구현 진행",
+                                    next_step: "outcomeMid",
+                                },
+                                {
+                                    choice_id: "d6",
+                                    choice_text:
+                                        "중간에 문제 발생 시 팀장에게 재보고",
+                                    next_step: "outcomeMid",
+                                },
+                            ],
+                        },
+                    },
+                ],
+                outcomes: [
+                    {
+                        outcome_id: "outcomeSuccess",
+                        outcome_text: "프로젝트가 성공적으로 완료! +10점",
+                    },
+                    {
+                        outcome_id: "outcomeMid",
+                        outcome_text: "프로젝트가 간신히 진행 중... +5점",
+                    },
+                    {
+                        outcome_id: "outcomeFail",
+                        outcome_text:
+                            "프로젝트가 무산되거나 큰 문제 발생. -5점",
+                    },
+                ],
+            }
+
+            let currentRole = null
+            let currentStep = null
+            const appView = document.getElementById("appView")
+
+            // 1) 역할 선택 화면
+            function renderRoleSelection() {
+                let html = `<div class="role-selection"><h3>역할을 선택하세요</h3>`
+                scenarioData.roles.forEach((role) => {
+                    html += `
+      <button class="role-btn" onclick="selectRole('${role.role_id}')">
+        <div class="role-title">${role.role_name}</div>
+        <div class="role-desc">${role.description}</div>
+      </button>`
+                })
+                html += `</div>`
+                appView.innerHTML = html
+            }
+
+            function selectRole(roleId) {
+                currentRole = roleId
+                // 시나리오 시작 단계로 이동
+                currentStep = scenarioData.steps[0].step_id
+                renderStep(currentStep)
+            }
+
+            // 2) 단계 렌더
+            function renderStep(stepId) {
+                const stepObj = scenarioData.steps.find(
+                    (s) => s.step_id === stepId
+                )
+                if (!stepObj) return
+
+                // 내레이션
+                let html = `<div class="scenario-step">
+    <div class="narration">${stepObj.narration}</div>
+    <div class="choices" id="choiceContainer">`
+
+                // role_choices 안에 현재 role이 있는지 확인
+                const choicesForRole = stepObj.role_choices[currentRole]
+                if (!choicesForRole) {
+                    // 만약 해당 단계에서 이 역할의 선택지가 없다면 끝 or 다음 단계?
+                    html += `<p>(이 역할에 해당하는 선택지가 없습니다.)</p>`
+                } else {
+                    // 선택지 버튼
+                    choicesForRole.forEach((choice) => {
+                        html += `<button class="choice-btn" onclick="handleChoice('${choice.next_step}')">${choice.choice_text}</button>`
+                    })
+                }
+
+                html += `</div></div>`
+                appView.innerHTML = html
+            }
+
+            // 3) 선택 처리(다음 step or outcome)
+            function handleChoice(nextStepId) {
+                // outcome인지 step인지 판별
+                const outcomeObj = scenarioData.outcomes.find(
+                    (o) => o.outcome_id === nextStepId
+                )
+                if (outcomeObj) {
+                    renderOutcome(outcomeObj)
+                } else {
+                    // 다음 단계 렌더
+                    currentStep = nextStepId
+                    renderStep(currentStep)
+                }
+            }
+
+            // 4) 결과 화면
+            function renderOutcome(outcomeObj) {
+                let html = `
+    <div class="outcome-screen">
+      <h3>결과</h3>
+      <p>${outcomeObj.outcome_text}</p>
+      <button onclick="restartScenario()">다시 시작</button>
+    </div>
+  `
+                appView.innerHTML = html
+            }
+
+            function restartScenario() {
+                currentRole = null
+                currentStep = null
+                renderRoleSelection()
+            }
+
+            // 초기 표시
+            renderRoleSelection()
+        </script>
+    </body>
+</html>

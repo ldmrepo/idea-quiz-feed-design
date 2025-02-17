@@ -1,0 +1,429 @@
+<!-- 학습 통계 페이지의 주요 특징을 설명드리겠습니다:
+
+1. 개요 통계:
+- 총 학습 시간
+- 푼 문제 수
+- 평균 정답률
+- 증감율 표시
+
+2. 학습 추이:
+- 기간별 그래프
+- 과목별 분포
+- 진행 상황
+- 성장 분석
+
+3. 과목별 통계:
+- 과목별 진도율
+- 정답률
+- 학습량
+- 성과 지표
+
+4. 성취 현황:
+- 최근 성취
+- 획득 배지
+- 달성률
+- 성장 기록
+
+5. 시각화 요소:
+- 프로그레스 바
+- 차트
+- 아이콘
+- 색상 코딩 -->
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>학습 통계</title>
+        <style>
+            :root {
+                --primary-color: #6c5ce7;
+                --primary-light: #a29bfe;
+                --math-color: #00b894;
+                --science-color: #0984e3;
+                --english-color: #fdcb6e;
+                --surface-color: #ffffff;
+                --background-color: #f8f9fa;
+                --text-primary: #2d3436;
+                --text-secondary: #636e72;
+                --border-color: #e5e7eb;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 24px;
+            }
+
+            /* Overview Cards */
+            .overview-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 24px;
+                margin-bottom: 32px;
+            }
+
+            .overview-card {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+            }
+
+            .card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 16px;
+            }
+
+            .card-title {
+                font-size: 18px;
+                font-weight: 600;
+            }
+
+            .stat-value {
+                font-size: 32px;
+                font-weight: 700;
+                margin-bottom: 8px;
+            }
+
+            .stat-meta {
+                display: flex;
+                justify-content: space-between;
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+            /* Progress Charts */
+            .chart-section {
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 24px;
+                margin-bottom: 32px;
+            }
+
+            .chart-card {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+            }
+
+            .chart-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 24px;
+            }
+
+            .period-selector {
+                display: flex;
+                gap: 8px;
+            }
+
+            .period-button {
+                padding: 6px 12px;
+                border-radius: 20px;
+                border: 1px solid var(--border-color);
+                background: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .period-button.active {
+                background: var(--primary-color);
+                color: white;
+                border-color: var(--primary-color);
+            }
+
+            .chart-container {
+                height: 300px;
+                background: var(--background-color);
+                border-radius: 8px;
+                position: relative;
+                overflow: hidden;
+            }
+
+            /* Subject Stats */
+            .subject-stats {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+                margin-bottom: 32px;
+            }
+
+            .subject-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 24px;
+            }
+
+            .subject-card {
+                padding: 20px;
+                border-radius: 12px;
+                background: var(--background-color);
+            }
+
+            .subject-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 16px;
+            }
+
+            .subject-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+            }
+
+            .progress-bar {
+                height: 8px;
+                background: var(--border-color);
+                border-radius: 4px;
+                overflow: hidden;
+                margin-bottom: 12px;
+            }
+
+            .progress-fill {
+                height: 100%;
+                border-radius: 4px;
+                transition: width 0.3s ease;
+            }
+
+            .progress-math {
+                background: var(--math-color);
+                width: 85%;
+            }
+
+            .progress-science {
+                background: var(--science-color);
+                width: 75%;
+            }
+
+            .progress-english {
+                background: var(--english-color);
+                width: 65%;
+            }
+
+            /* Achievement Section */
+            .achievement-section {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+            }
+
+            .achievement-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 20px;
+            }
+
+            .achievement-card {
+                text-align: center;
+                padding: 20px;
+                border-radius: 12px;
+                background: var(--background-color);
+            }
+
+            .achievement-icon {
+                font-size: 32px;
+                margin-bottom: 12px;
+            }
+
+            .achievement-title {
+                font-weight: 500;
+                margin-bottom: 8px;
+            }
+
+            .achievement-progress {
+                font-size: 14px;
+                color: var(--text-secondary);
+            }
+
+            @media (max-width: 968px) {
+                .chart-section {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Overview Stats -->
+            <div class="overview-grid">
+                <div class="overview-card">
+                    <div class="card-header">
+                        <h3 class="card-title">총 학습 시간</h3>
+                    </div>
+                    <div class="stat-value">42:30:15</div>
+                    <div class="stat-meta">
+                        <span>일평균 2시간</span>
+                        <span>+15% 증가</span>
+                    </div>
+                </div>
+
+                <div class="overview-card">
+                    <div class="card-header">
+                        <h3 class="card-title">푼 문제 수</h3>
+                    </div>
+                    <div class="stat-value">1,245</div>
+                    <div class="stat-meta">
+                        <span>주간 85문제</span>
+                        <span>+10% 증가</span>
+                    </div>
+                </div>
+
+                <div class="overview-card">
+                    <div class="card-header">
+                        <h3 class="card-title">평균 정답률</h3>
+                    </div>
+                    <div class="stat-value">85%</div>
+                    <div class="stat-meta">
+                        <span>최근 100문제</span>
+                        <span>+5% 증가</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Charts -->
+            <div class="chart-section">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="card-title">학습 추이</h3>
+                        <div class="period-selector">
+                            <button class="period-button">일간</button>
+                            <button class="period-button active">주간</button>
+                            <button class="period-button">월간</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <!-- Chart will be rendered here -->
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="card-title">과목별 분포</h3>
+                    </div>
+                    <div class="chart-container">
+                        <!-- Pie chart will be rendered here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subject Stats -->
+            <div class="subject-stats">
+                <div class="card-header">
+                    <h3 class="card-title">과목별 통계</h3>
+                </div>
+                <div class="subject-grid">
+                    <div class="subject-card">
+                        <div class="subject-header">
+                            <h4>수학</h4>
+                            <div
+                                class="subject-icon"
+                                style="background: var(--math-color)"
+                            >
+                                📐
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-math"></div>
+                        </div>
+                        <div class="stat-meta">
+                            <span>525문제</span>
+                            <span>85% 정답률</span>
+                        </div>
+                    </div>
+
+                    <div class="subject-card">
+                        <div class="subject-header">
+                            <h4>과학</h4>
+                            <div
+                                class="subject-icon"
+                                style="background: var(--science-color)"
+                            >
+                                🔬
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-science"></div>
+                        </div>
+                        <div class="stat-meta">
+                            <span>420문제</span>
+                            <span>75% 정답률</span>
+                        </div>
+                    </div>
+
+                    <div class="subject-card">
+                        <div class="subject-header">
+                            <h4>영어</h4>
+                            <div
+                                class="subject-icon"
+                                style="background: var(--english-color)"
+                            >
+                                📚
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-english"></div>
+                        </div>
+                        <div class="stat-meta">
+                            <span>300문제</span>
+                            <span>65% 정답률</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achievements -->
+            <div class="achievement-section">
+                <div class="card-header">
+                    <h3 class="card-title">최근 성취</h3>
+                </div>
+                <div class="achievement-grid">
+                    <div class="achievement-card">
+                        <div class="achievement-icon">🏆</div>
+                        <div class="achievement-title">학습 마스터</div>
+                        <div class="achievement-progress">1,000문제 달성!</div>
+                    </div>
+
+                    <div class="achievement-card">
+                        <div class="achievement-icon">⚡</div>
+                        <div class="achievement-title">연속 학습</div>
+                        <div class="achievement-progress">30일 달성!</div>
+                    </div>
+
+                    <div class="achievement-card">
+                        <div class="achievement-icon">🎯</div>
+                        <div class="achievement-title">정확도 달인</div>
+                        <div class="achievement-progress">90% 달성!</div>
+                    </div>
+
+                    <div class="achievement-card">
+                        <div class="achievement-icon">💫</div>
+                        <div class="achievement-title">성장왕</div>
+                        <div class="achievement-progress">최근 30% 상승!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

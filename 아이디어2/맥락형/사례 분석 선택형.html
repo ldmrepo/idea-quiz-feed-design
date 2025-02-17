@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <title>사례 분석 선택형 예시</title>
+        <style>
+            body {
+                font-family: -apple-system, sans-serif;
+                margin: 0;
+                padding: 16px;
+                background: #f9fafb;
+            }
+            .container {
+                max-width: 640px;
+                margin: 0 auto;
+            }
+            .case-card {
+                background: white;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                padding: 16px;
+                margin-bottom: 16px;
+            }
+            .case-title {
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+            .case-description {
+                font-size: 14px;
+                line-height: 1.4;
+            }
+            .media-list {
+                margin-top: 8px;
+            }
+            .question {
+                font-weight: 600;
+                margin-top: 16px;
+            }
+            .choices {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                margin-top: 8px;
+            }
+            .choice-btn {
+                background: #2563eb;
+                color: #fff;
+                border: none;
+                border-radius: 6px;
+                padding: 10px;
+                text-align: left;
+                cursor: pointer;
+            }
+            .choice-btn:hover {
+                opacity: 0.9;
+            }
+            .feedback-box {
+                background: #fff;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                padding: 12px;
+                margin-top: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h2>사례 분석 선택형</h2>
+            <div class="case-card" id="caseCard">
+                <!-- 사례 제목/설명/미디어/질문/선택지 표시 -->
+            </div>
+            <div class="feedback-box" id="feedbackBox" style="display: none">
+                <!-- 피드백/점수 표시 -->
+            </div>
+        </div>
+
+        <script>
+            const caseData = {
+                case_id: 501,
+                title: "고객 A의 컴플레인 사례",
+                description:
+                    "카페에서 음료가 너무 늦게 나와 고객이 크게 불만을 제기한 사례입니다...",
+                media: [
+                    { type: "image", url: "customer_complaint.jpg" },
+                    // {type: "video", url: "cafe_scene.mp4"} // 등등
+                ],
+                question: "이 상황에서 가장 적절한 대응은 무엇일까요?",
+                choices: [
+                    {
+                        choice_id: "ch1",
+                        text: "즉시 음료 비용을 환불하고 사과",
+                        feedback:
+                            "적극적 보상이며 고객 불만 완화, 비용부담 존재",
+                        score: 8,
+                    },
+                    {
+                        choice_id: "ch2",
+                        text: "다음번 무료 쿠폰 제공",
+                        feedback: "재방문 유도 가능하나 당장 분노 해소엔 약함",
+                        score: 6,
+                    },
+                    {
+                        choice_id: "ch3",
+                        text: "음료는 늦어도 맛은 좋다고 어필",
+                        feedback:
+                            "고객이 원하는 건 변명이 아닌 해결책. 반감 키울 위험",
+                        score: 2,
+                    },
+                    {
+                        choice_id: "ch4",
+                        text: "지배인을 불러 사태 수습을 맡긴다",
+                        feedback:
+                            "책임자가 직접 대응하면 신뢰도 상승 가능, 단 직원 해결능력 약화",
+                        score: 5,
+                    },
+                ],
+                correct_answer: "ch1",
+            }
+
+            const caseCardEl = document.getElementById("caseCard")
+            const feedbackBoxEl = document.getElementById("feedbackBox")
+
+            function renderCase() {
+                let mediaHtml = ""
+                caseData.media.forEach((m) => {
+                    if (m.type === "image") {
+                        mediaHtml += `<img src="${m.url}" alt="case image" style="max-width:100%; margin-top:8px;">`
+                    }
+                    // video/audio 등 확장 가능
+                })
+                let html = `
+      <div class="case-title">${caseData.title}</div>
+      <div class="case-description">${caseData.description}</div>
+      <div class="media-list">${mediaHtml}</div>
+      <div class="question">${caseData.question}</div>
+      <div class="choices">
+    `
+                caseData.choices.forEach((ch) => {
+                    html += `
+        <button class="choice-btn" onclick="handleChoice('${ch.choice_id}')">
+          ${ch.text}
+        </button>
+      `
+                })
+                html += `</div>`
+                caseCardEl.innerHTML = html
+            }
+
+            function handleChoice(choiceId) {
+                const choiceObj = caseData.choices.find(
+                    (c) => c.choice_id === choiceId
+                )
+                if (!choiceObj) return
+
+                feedbackBoxEl.style.display = "block"
+                // 정답 여부 판단
+                const isCorrect = choiceId === caseData.correct_answer
+                let feedbackMsg = `<strong>선택:</strong> ${choiceObj.text}<br><br>`
+                feedbackMsg += `<strong>피드백:</strong> ${choiceObj.feedback}<br><br>`
+                if (isCorrect) {
+                    feedbackMsg += `<strong style="color:green;">정답! (+${choiceObj.score}점)</strong>`
+                } else {
+                    feedbackMsg += `<strong style="color:red;">정답이 아닙니다.</strong> (점수: ${choiceObj.score}점)`
+                }
+                feedbackBoxEl.innerHTML = feedbackMsg
+            }
+
+            renderCase()
+        </script>
+    </body>
+</html>

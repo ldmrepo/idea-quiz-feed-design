@@ -1,0 +1,457 @@
+<!-- 그룹 활동 페이지의 주요 특징을 설명드리겠습니다:
+
+1. 활동 피드:
+- 필터링 옵션
+- 시간순 정렬
+- 활동 유형 구분
+- 상호작용 기능
+
+2. 주간 통계:
+- 문제 풀이 수
+- 평균 정답률
+- 활동 멤버 수
+- 토론 참여도
+
+3. 예정된 일정:
+- 스터디 일정
+- 참여자 현황
+- 시간/날짜 정보
+- 일정 설명
+
+4. 활동 순위:
+- 주간 랭킹
+- 활동 점수
+- 멤버 프로필
+- 성과 지표
+
+5. 상호작용 요소:
+- 좋아요/댓글
+- 자료 저장
+- 참여 신청
+- 공유 기능
+
+추가하거나 수정하고 싶은 부분이 있다면 말씀해 주세요! -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>그룹 활동</title>
+        <style>
+            :root {
+                --primary-color: #6c5ce7;
+                --primary-light: #a29bfe;
+                --success-color: #00b894;
+                --warning-color: #fdcb6e;
+                --danger-color: #ff7675;
+                --surface-color: #ffffff;
+                --background-color: #f8f9fa;
+                --text-primary: #2d3436;
+                --text-secondary: #636e72;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 24px;
+                display: grid;
+                grid-template-columns: 1fr 300px;
+                gap: 24px;
+            }
+
+            /* Activity Feed */
+            .activity-feed {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+            }
+
+            .feed-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 24px;
+            }
+
+            .feed-title {
+                font-size: 20px;
+                font-weight: 600;
+            }
+
+            .filter-buttons {
+                display: flex;
+                gap: 8px;
+            }
+
+            .filter-button {
+                padding: 6px 12px;
+                border-radius: 20px;
+                border: 1px solid var(--border-color);
+                background: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .filter-button.active {
+                background: var(--primary-color);
+                color: white;
+                border-color: var(--primary-color);
+            }
+
+            /* Activity Items */
+            .activity-items {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .activity-item {
+                display: flex;
+                gap: 16px;
+                padding: 16px;
+                background: var(--background-color);
+                border-radius: 12px;
+            }
+
+            .activity-avatar {
+                width: 48px;
+                height: 48px;
+                border-radius: 24px;
+                background: var(--primary-light);
+            }
+
+            .activity-content {
+                flex: 1;
+            }
+
+            .activity-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 8px;
+            }
+
+            .activity-info {
+                font-weight: 500;
+            }
+
+            .activity-time {
+                font-size: 14px;
+                color: var(--text-secondary);
+            }
+
+            .activity-text {
+                margin-bottom: 12px;
+            }
+
+            .activity-preview {
+                background: var(--surface-color);
+                border-radius: 8px;
+                padding: 12px;
+                margin-bottom: 12px;
+            }
+
+            .activity-actions {
+                display: flex;
+                gap: 16px;
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+            .action-button {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                cursor: pointer;
+            }
+
+            /* Group Stats */
+            .group-stats {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+                margin-bottom: 24px;
+            }
+
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            .stat-card {
+                text-align: center;
+                padding: 16px;
+                background: var(--background-color);
+                border-radius: 12px;
+            }
+
+            .stat-value {
+                font-size: 24px;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+
+            .stat-label {
+                font-size: 14px;
+                color: var(--text-secondary);
+            }
+
+            /* Upcoming Events */
+            .upcoming-events {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+                margin-bottom: 24px;
+            }
+
+            .event-items {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .event-item {
+                display: flex;
+                gap: 12px;
+                padding: 12px;
+                background: var(--background-color);
+                border-radius: 8px;
+            }
+
+            .event-date {
+                min-width: 48px;
+                text-align: center;
+            }
+
+            .event-day {
+                font-size: 20px;
+                font-weight: 600;
+                color: var(--primary-color);
+            }
+
+            .event-month {
+                font-size: 12px;
+                color: var(--text-secondary);
+            }
+
+            .event-info {
+                flex: 1;
+            }
+
+            .event-title {
+                font-weight: 500;
+                margin-bottom: 4px;
+            }
+
+            .event-time {
+                font-size: 12px;
+                color: var(--text-secondary);
+            }
+
+            .event-attendees {
+                font-size: 12px;
+                color: var(--text-secondary);
+                margin-top: 4px;
+            }
+
+            /* Leaderboard */
+            .leaderboard {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+            }
+
+            .leaderboard-list {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .leaderboard-item {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 8px;
+            }
+
+            .leaderboard-rank {
+                min-width: 24px;
+                text-align: center;
+                font-weight: 600;
+            }
+
+            @media (max-width: 768px) {
+                .container {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Main Feed -->
+            <div class="main-content">
+                <div class="activity-feed">
+                    <div class="feed-header">
+                        <h2 class="feed-title">그룹 활동</h2>
+                        <div class="filter-buttons">
+                            <button class="filter-button active">전체</button>
+                            <button class="filter-button">문제 풀이</button>
+                            <button class="filter-button">토론</button>
+                            <button class="filter-button">자료</button>
+                        </div>
+                    </div>
+
+                    <div class="activity-items">
+                        <!-- Study Material Share -->
+                        <div class="activity-item">
+                            <div class="activity-avatar"></div>
+                            <div class="activity-content">
+                                <div class="activity-header">
+                                    <div class="activity-info">
+                                        수학왕님이 새로운 자료를 공유했습니다
+                                    </div>
+                                    <div class="activity-time">1시간 전</div>
+                                </div>
+                                <div class="activity-text">
+                                    2024 수능 수학 가형 기출문제 풀이입니다.
+                                </div>
+                                <div class="activity-preview">
+                                    📎 2024_수능_수학_풀이.pdf
+                                </div>
+                                <div class="activity-actions">
+                                    <div class="action-button">👍 24</div>
+                                    <div class="action-button">💬 8</div>
+                                    <div class="action-button">🔖 저장</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Problem Solving -->
+                        <div class="activity-item">
+                            <div class="activity-avatar"></div>
+                            <div class="activity-content">
+                                <div class="activity-header">
+                                    <div class="activity-info">
+                                        미적분달인님이 문제를 해결했습니다
+                                    </div>
+                                    <div class="activity-time">2시간 전</div>
+                                </div>
+                                <div class="activity-preview">
+                                    🎯 미적분 심화 문제 #42
+                                </div>
+                                <div class="activity-actions">
+                                    <div class="action-button">👏 16</div>
+                                    <div class="action-button">💬 5</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Group Stats -->
+                <div class="group-stats">
+                    <h3 class="feed-title" style="margin-bottom: 16px">
+                        주간 통계
+                    </h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">126</div>
+                            <div class="stat-label">푼 문제</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">85%</div>
+                            <div class="stat-label">평균 정답률</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">24</div>
+                            <div class="stat-label">활동 멤버</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">12</div>
+                            <div class="stat-label">토론</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Events -->
+                <div class="upcoming-events">
+                    <h3 class="feed-title" style="margin-bottom: 16px">
+                        예정된 일정
+                    </h3>
+                    <div class="event-items">
+                        <div class="event-item">
+                            <div class="event-date">
+                                <div class="event-day">15</div>
+                                <div class="event-month">2월</div>
+                            </div>
+                            <div class="event-info">
+                                <div class="event-title">미적분 스터디</div>
+                                <div class="event-time">오후 8:00</div>
+                                <div class="event-attendees">
+                                    👥 12명 참여 예정
+                                </div>
+                            </div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-date">
+                                <div class="event-day">17</div>
+                                <div class="event-month">2월</div>
+                            </div>
+                            <div class="event-info">
+                                <div class="event-title">문제풀이 세션</div>
+                                <div class="event-time">오후 7:00</div>
+                                <div class="event-attendees">
+                                    👥 8명 참여 예정
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leaderboard -->
+                <div class="leaderboard">
+                    <h3 class="feed-title" style="margin-bottom: 16px">
+                        이번 주 활발한 멤버
+                    </h3>
+                    <div class="leaderboard-list">
+                        <div class="leaderboard-item">
+                            <div class="leaderboard-rank">1</div>
+                            <div class="activity-avatar"></div>
+                            <div class="event-info">
+                                <div class="event-title">수학왕</div>
+                                <div class="event-time">활동 점수 256</div>
+                            </div>
+                        </div>
+                        <div class="leaderboard-item">
+                            <div class="leaderboard-rank">2</div>
+                            <div class="activity-avatar"></div>
+                            <div class="event-info">
+                                <div class="event-title">미적분달인</div>
+                                <div class="event-time">활동 점수 234</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

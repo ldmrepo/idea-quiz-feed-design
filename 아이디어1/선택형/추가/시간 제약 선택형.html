@@ -1,0 +1,340 @@
+<!-- 
+1. 빠른 판단형
+- 즉각적인 선택 UI
+- 시간 제한 표시
+- 점수 피드백
+
+2. 연속 선택형
+- 스크롤 스냅 UI
+- 연속 문제 표시
+- 진행도 표시
+
+3. 리듬 기반형
+- 타이밍 기반 UI
+- 시각적 가이드
+- 정확도 측정
+
+4. 반응 속도형
+- 상태 변화 감지
+- 즉각적 피드백
+- 기록 측정
+
+모바일 최적화:
+- 터치 최적화
+- 반응형 레이아웃
+- 성능 최적화 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>시간 제약 선택형</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --success: #22c55e;
+                --warning: #f59e0b;
+                --error: #ef4444;
+                --gray-50: #f9fafb;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, system-ui, sans-serif;
+                background: var(--gray-50);
+                padding: 16px;
+            }
+
+            /* 타이머 스타일 */
+            .timer {
+                position: fixed;
+                top: 16px;
+                right: 16px;
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                background: var(--primary);
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                font-weight: 600;
+                z-index: 100;
+            }
+
+            /* 진행바 */
+            .progress-bar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: var(--gray-200);
+                z-index: 100;
+            }
+
+            .progress-fill {
+                height: 100%;
+                background: var(--primary);
+                width: 50%;
+                transition: width 0.1s linear;
+            }
+
+            /* 문제 카드 */
+            .question-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+                overflow: hidden;
+            }
+
+            .card-header {
+                padding: 16px;
+                border-bottom: 1px solid var(--gray-200);
+            }
+
+            .card-title {
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .card-description {
+                font-size: 14px;
+                color: var(--gray-700);
+            }
+
+            /* 빠른 판단형 스타일 */
+            .quick-choice {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                padding: 16px;
+            }
+
+            .quick-option {
+                padding: 24px;
+                background: var(--gray-50);
+                border: 2px solid var(--gray-200);
+                border-radius: 12px;
+                text-align: center;
+                font-size: 20px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .quick-option:active {
+                transform: scale(0.95);
+            }
+
+            /* 연속 선택형 스타일 */
+            .continuous-choices {
+                padding: 16px;
+            }
+
+            .choice-stream {
+                display: flex;
+                overflow-x: auto;
+                gap: 12px;
+                padding-bottom: 16px;
+                scroll-snap-type: x mandatory;
+            }
+
+            .stream-item {
+                flex: 0 0 auto;
+                width: 80%;
+                padding: 20px;
+                background: var(--gray-50);
+                border-radius: 12px;
+                scroll-snap-align: center;
+            }
+
+            /* 리듬 기반 스타일 */
+            .rhythm-container {
+                position: relative;
+                height: 200px;
+                background: var(--gray-50);
+                margin: 16px;
+                border-radius: 12px;
+                overflow: hidden;
+            }
+
+            .rhythm-target {
+                position: absolute;
+                width: 60px;
+                height: 60px;
+                background: var(--primary);
+                border-radius: 50%;
+                transform: translate(-50%, -50%);
+                cursor: pointer;
+            }
+
+            .rhythm-guide {
+                position: absolute;
+                width: 100%;
+                height: 2px;
+                background: var(--gray-200);
+                top: 50%;
+            }
+
+            /* 반응 속도형 스타일 */
+            .reaction-area {
+                height: 200px;
+                margin: 16px;
+                background: var(--error);
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 24px;
+                font-weight: 600;
+                cursor: pointer;
+            }
+
+            .reaction-area.ready {
+                background: var(--warning);
+            }
+
+            .reaction-area.go {
+                background: var(--success);
+            }
+
+            /* 점수 표시 */
+            .score-display {
+                position: fixed;
+                top: 16px;
+                left: 16px;
+                padding: 8px 16px;
+                background: white;
+                border-radius: 20px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                font-weight: 600;
+                z-index: 100;
+            }
+
+            /* 결과 모달 */
+            .result-modal {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                padding: 24px;
+                border-radius: 16px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                text-align: center;
+                z-index: 200;
+            }
+
+            .result-score {
+                font-size: 48px;
+                font-weight: 700;
+                color: var(--primary);
+                margin: 16px 0;
+            }
+
+            .result-button {
+                padding: 12px 24px;
+                background: var(--primary);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 진행바 -->
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+
+        <!-- 점수 -->
+        <div class="score-display">점수: 850</div>
+
+        <!-- 타이머 -->
+        <div class="timer">30</div>
+
+        <!-- 빠른 판단형 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2 class="card-title">빠른 판단 문제</h2>
+                <p class="card-description">더 큰 숫자를 빠르게 선택하세요.</p>
+            </div>
+            <div class="quick-choice">
+                <div class="quick-option">487</div>
+                <div class="quick-option">492</div>
+            </div>
+        </div>
+
+        <!-- 연속 선택형 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2 class="card-title">연속 선택 문제</h2>
+                <p class="card-description">
+                    연속으로 나타나는 문제를 해결하세요.
+                </p>
+            </div>
+            <div class="continuous-choices">
+                <div class="choice-stream">
+                    <div class="stream-item">
+                        <h3>문제 1</h3>
+                        <p>2 + 3 = ?</p>
+                    </div>
+                    <div class="stream-item">
+                        <h3>문제 2</h3>
+                        <p>7 - 4 = ?</p>
+                    </div>
+                    <div class="stream-item">
+                        <h3>문제 3</h3>
+                        <p>5 × 2 = ?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 리듬 기반형 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2 class="card-title">리듬 기반 문제</h2>
+                <p class="card-description">
+                    일정한 간격으로 타겟을 클릭하세요.
+                </p>
+            </div>
+            <div class="rhythm-container">
+                <div class="rhythm-guide"></div>
+                <div class="rhythm-target" style="left: 30%; top: 50%"></div>
+            </div>
+        </div>
+
+        <!-- 반응 속도형 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2 class="card-title">반응 속도 테스트</h2>
+                <p class="card-description">색상이 변경되면 즉시 탭하세요.</p>
+            </div>
+            <div class="reaction-area">대기</div>
+        </div>
+
+        <!-- 결과 모달 -->
+        <div class="result-modal" style="display: none">
+            <h2>최종 점수</h2>
+            <div class="result-score">850</div>
+            <button class="result-button">다시 시도</button>
+        </div>
+    </body>
+</html>

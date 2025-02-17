@@ -1,0 +1,381 @@
+<!-- 퀴즈 풀이 결과 페이지의 주요 특징을 설명드리겠습니다:
+
+1. 결과 요약:
+- 전체 점수 표시
+- 정답률 시각화
+- 소요 시간
+- 획득 포인트
+
+2. 성과 통계:
+- 정답/오답 수
+- 순위 정보
+- 포인트 획득
+- 성장 지표
+
+3. 문제 리뷰:
+- 문제별 상태
+- 정답/오답 표시
+- 해설 제공
+- 필터링 옵션
+
+4. 시각적 요소:
+- 원형 프로그레스바
+- 상태 뱃지
+- 컬러 코딩
+- 애니메이션
+
+5. 액션 버튼:
+- 다시 풀기
+- 결과 공유
+- 오답 노트
+- 학습 추천 -->
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>퀴즈 결과</title>
+        <style>
+            :root {
+                --primary-color: #6c5ce7;
+                --primary-light: #a29bfe;
+                --success-color: #00b894;
+                --warning-color: #fdcb6e;
+                --danger-color: #ff7675;
+                --surface-color: #ffffff;
+                --background-color: #f8f9fa;
+                --text-primary: #2d3436;
+                --text-secondary: #636e72;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 24px;
+            }
+
+            /* Result Summary */
+            .result-summary {
+                background: var(--surface-color);
+                border-radius: 24px;
+                padding: 32px;
+                text-align: center;
+                margin-bottom: 32px;
+            }
+
+            .summary-header {
+                margin-bottom: 32px;
+            }
+
+            .result-title {
+                font-size: 32px;
+                font-weight: 700;
+                margin-bottom: 8px;
+            }
+
+            .result-subtitle {
+                color: var(--text-secondary);
+                font-size: 18px;
+            }
+
+            .score-display {
+                width: 160px;
+                height: 160px;
+                margin: 0 auto 32px;
+                position: relative;
+            }
+
+            .score-circle {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                background: conic-gradient(
+                    var(--success-color) 85%,
+                    var(--background-color) 0
+                );
+                transform: rotate(-90deg);
+            }
+
+            .score-inner {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 140px;
+                height: 140px;
+                background: var(--surface-color);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+            }
+
+            .score-value {
+                font-size: 36px;
+                font-weight: 700;
+                color: var(--success-color);
+            }
+
+            .score-label {
+                font-size: 14px;
+                color: var(--text-secondary);
+            }
+
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 24px;
+                margin-bottom: 32px;
+            }
+
+            .stat-card {
+                background: var(--background-color);
+                padding: 20px;
+                border-radius: 16px;
+                text-align: center;
+            }
+
+            .stat-value {
+                font-size: 24px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .stat-label {
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+            /* Question Review */
+            .question-review {
+                background: var(--surface-color);
+                border-radius: 24px;
+                padding: 32px;
+                margin-bottom: 32px;
+            }
+
+            .review-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 24px;
+            }
+
+            .review-title {
+                font-size: 24px;
+                font-weight: 600;
+            }
+
+            .filter-buttons {
+                display: flex;
+                gap: 12px;
+            }
+
+            .filter-button {
+                padding: 8px 16px;
+                border-radius: 20px;
+                border: 1px solid var(--border-color);
+                background: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .filter-button.active {
+                background: var(--primary-color);
+                color: white;
+                border-color: var(--primary-color);
+            }
+
+            .question-list {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .question-item {
+                background: var(--background-color);
+                border-radius: 16px;
+                padding: 24px;
+            }
+
+            .question-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 16px;
+            }
+
+            .question-number {
+                font-weight: 600;
+            }
+
+            .question-status {
+                padding: 4px 12px;
+                border-radius: 12px;
+                font-size: 14px;
+            }
+
+            .status-correct {
+                background: rgba(0, 184, 148, 0.1);
+                color: var(--success-color);
+            }
+
+            .status-incorrect {
+                background: rgba(255, 118, 117, 0.1);
+                color: var(--danger-color);
+            }
+
+            .question-content {
+                margin-bottom: 16px;
+            }
+
+            .answer-section {
+                display: flex;
+                gap: 16px;
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+            /* Action Buttons */
+            .action-buttons {
+                display: flex;
+                justify-content: center;
+                gap: 16px;
+            }
+
+            .action-button {
+                padding: 12px 24px;
+                border-radius: 12px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .primary-button {
+                background: var(--primary-color);
+                color: white;
+                border: none;
+            }
+
+            .secondary-button {
+                background: none;
+                border: 1px solid var(--primary-color);
+                color: var(--primary-color);
+            }
+
+            @media (max-width: 768px) {
+                .stats-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Result Summary -->
+            <div class="result-summary">
+                <div class="summary-header">
+                    <h1 class="result-title">수고하셨습니다! 👏</h1>
+                    <p class="result-subtitle">미적분 퀴즈 결과입니다</p>
+                </div>
+
+                <div class="score-display">
+                    <div class="score-circle"></div>
+                    <div class="score-inner">
+                        <div class="score-value">85%</div>
+                        <div class="score-label">정답률</div>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">17/20</div>
+                        <div class="stat-label">정답 수</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">25:30</div>
+                        <div class="stat-label">소요 시간</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">+150</div>
+                        <div class="stat-label">획득 포인트</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">12위</div>
+                        <div class="stat-label">현재 순위</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question Review -->
+            <div class="question-review">
+                <div class="review-header">
+                    <h2 class="review-title">문제 리뷰</h2>
+                    <div class="filter-buttons">
+                        <button class="filter-button active">전체</button>
+                        <button class="filter-button">오답</button>
+                        <button class="filter-button">정답</button>
+                    </div>
+                </div>
+
+                <div class="question-list">
+                    <div class="question-item">
+                        <div class="question-header">
+                            <div class="question-number">문제 1</div>
+                            <div class="question-status status-correct">
+                                정답
+                            </div>
+                        </div>
+                        <div class="question-content">
+                            함수 f(x) = x² + 2x + 1의 극값을 구하시오.
+                        </div>
+                        <div class="answer-section">
+                            <div>선택한 답: A) -1</div>
+                            <div>정답: A) -1</div>
+                        </div>
+                    </div>
+
+                    <div class="question-item">
+                        <div class="question-header">
+                            <div class="question-number">문제 2</div>
+                            <div class="question-status status-incorrect">
+                                오답
+                            </div>
+                        </div>
+                        <div class="question-content">
+                            다음 함수의 극대값과 극소값을 구하시오.
+                        </div>
+                        <div class="answer-section">
+                            <div>선택한 답: B) 2</div>
+                            <div>정답: C) 3</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="action-button secondary-button">
+                    다시 풀기
+                </button>
+                <button class="action-button primary-button">
+                    결과 공유하기
+                </button>
+            </div>
+        </div>
+    </body>
+</html>

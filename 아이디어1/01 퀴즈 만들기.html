@@ -1,0 +1,446 @@
+<!-- 퀴즈 생성 및 공유 페이지의 주요 특징을 설명드리겠습니다:
+
+1. 퀴즈 기본 정보:
+- 제목 입력
+- 설명 추가
+- 난이도 설정
+- 예상 소요 시간
+
+2. 선택된 문항 관리:
+- 드래그로 순서 변경
+- 개별 문항 삭제
+- 문항 정보 표시
+- 선택된 문항 수
+
+3. 퀴즈 설정:
+- 문항 순서 랜덤화
+- 시간 제한 설정
+- 답안 공개 옵션
+- 난이도 조절
+
+4. 공유 기능:
+- 친구 목록 표시
+- 다중 선택 가능
+- 온라인 상태 표시
+- 빠른 선택/해제
+
+5. UI/UX 특징:
+- 직관적인 인터페이스
+- 실시간 피드백
+- 모바일 최적화
+- 사용자 친화적 디자인 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>퀴즈 만들기</title>
+        <style>
+            /* Variables */
+            :root {
+                --primary-color: #0095f6;
+                --primary-light: #e3f2fd;
+                --success-color: #4ade80;
+                --border-color: #dbdbdb;
+                --background-color: #fafafa;
+                --surface-color: #ffffff;
+                --text-primary: #262626;
+                --text-secondary: #737373;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+            }
+
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+
+            /* Quiz Creation Form */
+            .quiz-form {
+                background: var(--surface-color);
+                border: 1px solid var(--border-color);
+                border-radius: 12px;
+                overflow: hidden;
+                margin-bottom: 24px;
+            }
+
+            .form-header {
+                padding: 20px;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .header-title {
+                font-size: 1.25rem;
+                font-weight: 600;
+                margin-bottom: 12px;
+            }
+
+            .input-group {
+                margin-bottom: 16px;
+            }
+
+            .input-label {
+                display: block;
+                font-size: 0.875rem;
+                color: var(--text-secondary);
+                margin-bottom: 8px;
+            }
+
+            .text-input {
+                width: 100%;
+                padding: 12px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                font-size: 0.875rem;
+            }
+
+            .text-input:focus {
+                outline: none;
+                border-color: var(--primary-color);
+            }
+
+            /* Selected Questions List */
+            .questions-list {
+                padding: 20px;
+            }
+
+            .list-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 16px;
+            }
+
+            .selected-count {
+                color: var(--text-secondary);
+                font-size: 0.875rem;
+            }
+
+            .question-item {
+                display: flex;
+                align-items: center;
+                padding: 16px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                margin-bottom: 12px;
+                background: var(--surface-color);
+            }
+
+            .drag-handle {
+                color: var(--text-secondary);
+                margin-right: 12px;
+                cursor: move;
+            }
+
+            .question-content {
+                flex: 1;
+            }
+
+            .question-title {
+                font-weight: 500;
+                margin-bottom: 4px;
+            }
+
+            .question-meta {
+                font-size: 0.75rem;
+                color: var(--text-secondary);
+            }
+
+            .remove-button {
+                padding: 8px;
+                color: var(--text-secondary);
+                background: none;
+                border: none;
+                cursor: pointer;
+            }
+
+            /* Share Section */
+            .share-section {
+                padding: 20px;
+                border-top: 1px solid var(--border-color);
+            }
+
+            .share-title {
+                font-weight: 600;
+                margin-bottom: 16px;
+            }
+
+            .friends-list {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 12px;
+                margin-bottom: 20px;
+            }
+
+            .friend-item {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .friend-item:hover {
+                background-color: var(--primary-light);
+                border-color: var(--primary-color);
+            }
+
+            .friend-item.selected {
+                background-color: var(--primary-light);
+                border-color: var(--primary-color);
+            }
+
+            .friend-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background-color: var(--border-color);
+            }
+
+            .friend-info {
+                flex: 1;
+            }
+
+            .friend-name {
+                font-weight: 500;
+                font-size: 0.875rem;
+            }
+
+            .friend-status {
+                font-size: 0.75rem;
+                color: var(--text-secondary);
+            }
+
+            .selection-mark {
+                color: var(--primary-color);
+                font-size: 1.25rem;
+                opacity: 0;
+            }
+
+            .friend-item.selected .selection-mark {
+                opacity: 1;
+            }
+
+            /* Action Buttons */
+            .action-buttons {
+                display: flex;
+                gap: 12px;
+                justify-content: flex-end;
+                padding: 20px;
+                border-top: 1px solid var(--border-color);
+                background: var(--surface-color);
+            }
+
+            .button {
+                padding: 8px 20px;
+                border-radius: 8px;
+                font-size: 0.875rem;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .button-primary {
+                background-color: var(--primary-color);
+                color: white;
+                border: none;
+            }
+
+            .button-primary:hover {
+                opacity: 0.9;
+            }
+
+            .button-secondary {
+                background-color: transparent;
+                border: 1px solid var(--border-color);
+            }
+
+            .button-secondary:hover {
+                background-color: var(--background-color);
+            }
+
+            /* Settings Section */
+            .settings-section {
+                padding: 20px;
+                border-top: 1px solid var(--border-color);
+            }
+
+            .settings-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 16px;
+            }
+
+            .setting-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .setting-label {
+                font-size: 0.875rem;
+                color: var(--text-secondary);
+            }
+
+            @media (max-width: 640px) {
+                .container {
+                    padding: 12px;
+                }
+
+                .quiz-form {
+                    border-radius: 0;
+                    margin: -12px;
+                }
+
+                .friends-list {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <form class="quiz-form">
+                <!-- Form Header -->
+                <div class="form-header">
+                    <h1 class="header-title">새 퀴즈 만들기</h1>
+                    <div class="input-group">
+                        <label class="input-label">퀴즈 제목</label>
+                        <input
+                            type="text"
+                            class="text-input"
+                            placeholder="퀴즈 제목을 입력하세요"
+                        />
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">설명</label>
+                        <textarea
+                            class="text-input"
+                            rows="3"
+                            placeholder="퀴즈에 대한 설명을 입력하세요"
+                        ></textarea>
+                    </div>
+                </div>
+
+                <!-- Selected Questions -->
+                <div class="questions-list">
+                    <div class="list-header">
+                        <h2 class="header-title">선택된 문항</h2>
+                        <span class="selected-count">5개 선택됨</span>
+                    </div>
+
+                    <div class="question-item">
+                        <span class="drag-handle">⋮⋮</span>
+                        <div class="question-content">
+                            <div class="question-title">
+                                2024 수능 수학 - 점화식
+                            </div>
+                            <div class="question-meta">
+                                난이도: 중 | 예상 시간: 5분
+                            </div>
+                        </div>
+                        <button class="remove-button">×</button>
+                    </div>
+
+                    <div class="question-item">
+                        <span class="drag-handle">⋮⋮</span>
+                        <div class="question-content">
+                            <div class="question-title">
+                                2024 수능 수학 - 삼각함수
+                            </div>
+                            <div class="question-meta">
+                                난이도: 상 | 예상 시간: 7분
+                            </div>
+                        </div>
+                        <button class="remove-button">×</button>
+                    </div>
+                </div>
+
+                <!-- Settings -->
+                <div class="settings-section">
+                    <h2 class="header-title">퀴즈 설정</h2>
+                    <div class="settings-grid">
+                        <div class="setting-item">
+                            <input type="checkbox" id="shuffle" />
+                            <label for="shuffle" class="setting-label"
+                                >문항 순서 랜덤</label
+                            >
+                        </div>
+                        <div class="setting-item">
+                            <input type="checkbox" id="timer" />
+                            <label for="timer" class="setting-label"
+                                >시간 제한 설정</label
+                            >
+                        </div>
+                        <div class="setting-item">
+                            <input type="checkbox" id="answers" />
+                            <label for="answers" class="setting-label"
+                                >답안 즉시 공개</label
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Share Section -->
+                <div class="share-section">
+                    <h2 class="share-title">공유할 친구 선택</h2>
+                    <div class="friends-list">
+                        <div class="friend-item selected">
+                            <div class="friend-avatar"></div>
+                            <div class="friend-info">
+                                <div class="friend-name">김영수</div>
+                                <div class="friend-status">수학과</div>
+                            </div>
+                            <span class="selection-mark">✓</span>
+                        </div>
+
+                        <div class="friend-item">
+                            <div class="friend-avatar"></div>
+                            <div class="friend-info">
+                                <div class="friend-name">이미영</div>
+                                <div class="friend-status">과학과</div>
+                            </div>
+                            <span class="selection-mark">✓</span>
+                        </div>
+
+                        <div class="friend-item">
+                            <div class="friend-avatar"></div>
+                            <div class="friend-info">
+                                <div class="friend-name">박준호</div>
+                                <div class="friend-status">영어과</div>
+                            </div>
+                            <span class="selection-mark">✓</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button type="button" class="button button-secondary">
+                        취소
+                    </button>
+                    <button type="submit" class="button button-primary">
+                        퀴즈 생성 및 공유
+                    </button>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>

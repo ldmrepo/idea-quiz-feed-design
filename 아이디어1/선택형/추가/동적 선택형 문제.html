@@ -1,0 +1,368 @@
+<!-- 
+주요 구현 특징:
+
+1. 실시간 난이도 조정
+- 동적 난이도 게이지
+- 레벨 표시
+- 자동 조정 시스템
+
+2. 오답 패턴 기반
+- 패턴 분석 표시
+- 맞춤형 보완 문제
+- 오류 유형 분류
+
+3. 학습 속도 기반
+- 진행 속도 표시
+- 페이스 조절
+- 최적화 제안
+
+4. 이해도 기반
+- 실시간 체크
+- 난이도 조정
+- 맞춤형 분기
+
+모바일 최적화:
+- 터치 인터페이스
+- 실시간 반응
+- 직관적 UI -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>동적 선택형 문제</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --success: #22c55e;
+                --warning: #f59e0b;
+                --error: #ef4444;
+                --gray-50: #f9fafb;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, system-ui, sans-serif;
+                background: var(--gray-50);
+                padding: 16px;
+            }
+
+            /* 상태 바 */
+            .status-bar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                padding: 16px;
+                background: white;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                z-index: 100;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            /* 난이도 게이지 */
+            .difficulty-gauge {
+                width: 120px;
+                height: 8px;
+                background: var(--gray-200);
+                border-radius: 4px;
+                overflow: hidden;
+            }
+
+            .gauge-fill {
+                height: 100%;
+                background: var(--primary);
+                width: 60%;
+                transition: width 0.3s;
+            }
+
+            /* 학습 속도 표시 */
+            .pace-indicator {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 14px;
+            }
+
+            .pace-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: var(--gray-200);
+            }
+
+            .pace-dot.active {
+                background: var(--primary);
+            }
+
+            /* 문제 카드 */
+            .question-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+                margin-top: 60px;
+            }
+
+            .card-header {
+                padding: 16px;
+                border-bottom: 1px solid var(--gray-200);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .level-badge {
+                padding: 4px 8px;
+                background: var(--primary);
+                color: white;
+                border-radius: 12px;
+                font-size: 12px;
+            }
+
+            /* 이해도 체크 */
+            .understanding-check {
+                padding: 16px;
+                background: var(--gray-50);
+                border-radius: 8px;
+                margin: 16px;
+            }
+
+            .check-options {
+                display: flex;
+                gap: 8px;
+                margin-top: 12px;
+            }
+
+            .check-button {
+                flex: 1;
+                padding: 8px;
+                border: 1px solid var(--gray-200);
+                border-radius: 4px;
+                background: white;
+                font-size: 14px;
+                cursor: pointer;
+            }
+
+            .check-button.selected {
+                background: var(--primary);
+                color: white;
+                border-color: var(--primary);
+            }
+
+            /* 오답 패턴 분석 */
+            .pattern-analysis {
+                padding: 16px;
+                border-top: 1px solid var(--gray-200);
+            }
+
+            .pattern-item {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 12px;
+            }
+
+            .pattern-icon {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background: var(--error);
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 14px;
+            }
+
+            /* 선택지 */
+            .options-grid {
+                padding: 16px;
+                display: grid;
+                gap: 12px;
+            }
+
+            .option-button {
+                padding: 16px;
+                background: var(--gray-50);
+                border: 1px solid var(--gray-200);
+                border-radius: 8px;
+                text-align: left;
+                cursor: pointer;
+                transition: all 0.2s;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .option-number {
+                width: 24px;
+                height: 24px;
+                background: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 14px;
+                font-weight: 600;
+            }
+
+            /* AI 분석 팝업 */
+            .ai-analysis {
+                padding: 16px;
+                background: var(--gray-50);
+                border-radius: 8px;
+                margin: 16px;
+            }
+
+            .analysis-header {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 12px;
+            }
+
+            .ai-icon {
+                width: 24px;
+                height: 24px;
+                background: var(--primary);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+            }
+
+            /* 하단 네비게이션 */
+            .bottom-nav {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 16px;
+                background: white;
+                border-top: 1px solid var(--gray-200);
+                display: flex;
+                gap: 12px;
+            }
+
+            .nav-button {
+                flex: 1;
+                padding: 14px;
+                border-radius: 8px;
+                font-size: 15px;
+                font-weight: 600;
+                border: none;
+                cursor: pointer;
+            }
+
+            .primary-button {
+                background: var(--primary);
+                color: white;
+            }
+
+            .secondary-button {
+                background: var(--gray-50);
+                color: var(--gray-700);
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 상태 바 -->
+        <div class="status-bar">
+            <div class="difficulty-gauge">
+                <div class="gauge-fill"></div>
+            </div>
+            <div class="pace-indicator">
+                <span>학습 속도</span>
+                <div class="pace-dot active"></div>
+                <div class="pace-dot active"></div>
+                <div class="pace-dot"></div>
+            </div>
+        </div>
+
+        <!-- 실시간 난이도 조정 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2>문제 1</h2>
+                <span class="level-badge">Level 3</span>
+            </div>
+            <div class="options-grid">
+                <button class="option-button">
+                    <span class="option-number">1</span>
+                    <span>선택지 1</span>
+                </button>
+                <button class="option-button">
+                    <span class="option-number">2</span>
+                    <span>선택지 2</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 이해도 체크 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2>이해도 체크</h2>
+            </div>
+            <div class="understanding-check">
+                <div>현재 문제의 난이도가 적절한가요?</div>
+                <div class="check-options">
+                    <button class="check-button">쉬움</button>
+                    <button class="check-button selected">적절함</button>
+                    <button class="check-button">어려움</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 오답 패턴 분석 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2>오답 패턴 분석</h2>
+            </div>
+            <div class="pattern-analysis">
+                <div class="pattern-item">
+                    <div class="pattern-icon">!</div>
+                    <div>
+                        <div style="font-weight: 600">계산 오류 빈발</div>
+                        <div style="font-size: 14px; color: var(--gray-700)">
+                            기본 연산 문제를 추가 제공합니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI 분석 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2>학습 분석</h2>
+            </div>
+            <div class="ai-analysis">
+                <div class="analysis-header">
+                    <div class="ai-icon">AI</div>
+                    <div style="font-weight: 600">학습 제안</div>
+                </div>
+                <div style="font-size: 14px">
+                    현재 페이스를 유지하면서 난이도를 점진적으로 높이는 것을
+                    추천합니다.
+                </div>
+            </div>
+        </div>
+
+        <!-- 하단 네비게이션 -->
+        <div class="bottom-nav">
+            <button class="nav-button secondary-button">이전</button>
+            <button class="nav-button primary-button">다음</button>
+        </div>
+    </body>
+</html>

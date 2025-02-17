@@ -1,0 +1,418 @@
+<!-- 실시간 대결 페이지의 주요 특징을 설명드리겠습니다:
+
+1. 배틀 정보:
+- 플레이어 정보
+- 실시간 점수
+- 진행 상황
+- 타이머
+
+2. 퀴즈 컴포넌트:
+- 문제 표시
+- 답안 선택
+- 진행 바
+- 카테고리 표시
+
+3. 실시간 소통:
+- 라이브 채팅
+- 이모트 시스템
+- 반응 표시
+- 응원 기능
+
+4. 게임적 요소:
+- 시간 제한
+- 점수 시스템
+- 진행률 표시
+- 승패 현황
+
+5. 시각적 효과:
+- 플레이어 컬러
+- 진행 애니메이션
+- 선택 효과
+- 실시간 피드백
+ -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>실시간 퀴즈 대결</title>
+        <style>
+            :root {
+                --primary-color: #6c5ce7;
+                --primary-light: #a29bfe;
+                --success-color: #00b894;
+                --warning-color: #fdcb6e;
+                --danger-color: #ff7675;
+                --player1-color: #0984e3;
+                --player2-color: #e84393;
+                --surface-color: #ffffff;
+                --background-color: #f8f9fa;
+                --text-primary: #2d3436;
+                --text-secondary: #636e72;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 24px;
+            }
+
+            /* Battle Header */
+            .battle-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 32px;
+                background: var(--surface-color);
+                padding: 20px;
+                border-radius: 16px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+
+            .player-info {
+                text-align: center;
+                flex: 1;
+            }
+
+            .player-name {
+                font-size: 24px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .player-stats {
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+            .vs-badge {
+                background: var(--primary-color);
+                color: white;
+                padding: 8px 24px;
+                border-radius: 20px;
+                margin: 0 32px;
+                font-weight: 600;
+            }
+
+            /* Timer Section */
+            .timer-section {
+                text-align: center;
+                margin-bottom: 32px;
+            }
+
+            .timer {
+                font-size: 48px;
+                font-weight: 700;
+                color: var(--danger-color);
+                margin-bottom: 8px;
+            }
+
+            .question-counter {
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+            /* Question Card */
+            .question-card {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 32px;
+                margin-bottom: 32px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+
+            .question-category {
+                display: inline-block;
+                padding: 4px 12px;
+                background: var(--primary-light);
+                color: white;
+                border-radius: 12px;
+                font-size: 14px;
+                margin-bottom: 16px;
+            }
+
+            .question-text {
+                font-size: 20px;
+                font-weight: 500;
+                margin-bottom: 32px;
+                line-height: 1.6;
+            }
+
+            /* Answer Options */
+            .answer-options {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            .answer-option {
+                padding: 20px;
+                border: 2px solid var(--border-color);
+                border-radius: 12px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .answer-option:hover {
+                border-color: var(--primary-color);
+                background: var(--primary-light);
+                color: white;
+            }
+
+            .answer-option.selected {
+                background: var(--primary-color);
+                color: white;
+                border-color: var(--primary-color);
+            }
+
+            .progress-bar {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                height: 4px;
+                background: var(--primary-color);
+                width: 0%;
+                transition: width 0.3s ease;
+            }
+
+            /* Battle Progress */
+            .battle-progress {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 32px;
+            }
+
+            .player-progress {
+                flex: 1;
+                height: 24px;
+                background: var(--background-color);
+                border-radius: 12px;
+                overflow: hidden;
+                position: relative;
+            }
+
+            .progress-fill {
+                height: 100%;
+                transition: width 0.3s ease;
+            }
+
+            .player1-progress {
+                background: var(--player1-color);
+                width: 60%;
+            }
+
+            .player2-progress {
+                background: var(--player2-color);
+                width: 40%;
+            }
+
+            .progress-score {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                color: white;
+                font-weight: 600;
+                font-size: 14px;
+            }
+
+            /* Live Chat */
+            .live-chat {
+                background: var(--surface-color);
+                border-radius: 16px;
+                overflow: hidden;
+                height: 300px;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .chat-messages {
+                flex: 1;
+                padding: 16px;
+                overflow-y: auto;
+            }
+
+            .chat-message {
+                margin-bottom: 12px;
+                padding: 8px 12px;
+                border-radius: 8px;
+                background: var(--background-color);
+                font-size: 14px;
+            }
+
+            .chat-input {
+                display: flex;
+                padding: 16px;
+                border-top: 1px solid var(--border-color);
+            }
+
+            .chat-input input {
+                flex: 1;
+                padding: 8px 16px;
+                border: 1px solid var(--border-color);
+                border-radius: 20px;
+                margin-right: 12px;
+            }
+
+            .send-button {
+                padding: 8px 20px;
+                background: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 20px;
+                cursor: pointer;
+            }
+
+            /* Emotes */
+            .emote-list {
+                display: flex;
+                justify-content: center;
+                gap: 12px;
+                margin-bottom: 24px;
+            }
+
+            .emote-button {
+                padding: 8px;
+                border: none;
+                background: var(--surface-color);
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 20px;
+                transition: transform 0.2s ease;
+            }
+
+            .emote-button:hover {
+                transform: scale(1.2);
+            }
+
+            @media (max-width: 768px) {
+                .answer-options {
+                    grid-template-columns: 1fr;
+                }
+
+                .battle-header {
+                    flex-direction: column;
+                    gap: 16px;
+                }
+
+                .vs-badge {
+                    margin: 16px 0;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Battle Header -->
+            <div class="battle-header">
+                <div class="player-info">
+                    <div
+                        class="player-name"
+                        style="color: var(--player1-color)"
+                    >
+                        수학왕
+                    </div>
+                    <div class="player-stats">승률 85% | 연승 5회</div>
+                </div>
+                <div class="vs-badge">VS</div>
+                <div class="player-info">
+                    <div
+                        class="player-name"
+                        style="color: var(--player2-color)"
+                    >
+                        퀴즈마스터
+                    </div>
+                    <div class="player-stats">승률 82% | 연승 3회</div>
+                </div>
+            </div>
+
+            <!-- Timer Section -->
+            <div class="timer-section">
+                <div class="timer">00:30</div>
+                <div class="question-counter">5 / 10 문제</div>
+            </div>
+
+            <!-- Battle Progress -->
+            <div class="battle-progress">
+                <div class="player-progress">
+                    <div class="progress-fill player1-progress"></div>
+                    <span class="progress-score">3</span>
+                </div>
+                <div class="vs-badge" style="margin: 0 16px">:</div>
+                <div class="player-progress">
+                    <div class="progress-fill player2-progress"></div>
+                    <span class="progress-score">2</span>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="question-card">
+                <span class="question-category">수학 - 미적분</span>
+                <p class="question-text">
+                    함수 f(x) = x² + 2x + 1의 극값을 구하시오.
+                </p>
+                <div class="answer-options">
+                    <div class="answer-option">
+                        <span>A. -1</span>
+                        <div class="progress-bar" style="width: 30%"></div>
+                    </div>
+                    <div class="answer-option selected">
+                        <span>B. 0</span>
+                        <div class="progress-bar" style="width: 45%"></div>
+                    </div>
+                    <div class="answer-option">
+                        <span>C. 1</span>
+                        <div class="progress-bar" style="width: 15%"></div>
+                    </div>
+                    <div class="answer-option">
+                        <span>D. 2</span>
+                        <div class="progress-bar" style="width: 10%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emotes -->
+            <div class="emote-list">
+                <button class="emote-button">👍</button>
+                <button class="emote-button">🎉</button>
+                <button class="emote-button">🤔</button>
+                <button class="emote-button">👏</button>
+                <button class="emote-button">🔥</button>
+            </div>
+
+            <!-- Live Chat -->
+            <div class="live-chat">
+                <div class="chat-messages">
+                    <div class="chat-message">
+                        <strong>수학왕:</strong> 이번 문제 어렵네요!
+                    </div>
+                    <div class="chat-message">
+                        <strong>퀴즈마스터:</strong> 함수의 미분을 생각해보세요!
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" placeholder="메시지를 입력하세요..." />
+                    <button class="send-button">전송</button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

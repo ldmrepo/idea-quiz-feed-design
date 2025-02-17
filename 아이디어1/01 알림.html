@@ -1,0 +1,345 @@
+<!-- 알림 페이지를 디자인하겠습니다.
+
+
+
+
+
+
+
+
+
+
+
+알림 페이지의 주요 특징을 설명드리겠습니다:
+
+1. 알림 필터:
+- 카테고리별 필터링
+- 읽음/안읽음 구분
+- 기간별 분류
+- 빠른 필터링
+
+2. 알림 타입:
+- 학습 알림
+- 그룹 알림
+- 배틀 알림
+- 멘션 알림
+
+3. 알림 상호작용:
+- 읽음 표시
+- 빠른 액션
+- 상세 보기
+- 일괄 처리
+
+4. 시각적 표현:
+- 알림 아이콘
+- 읽음/안읽음 상태
+- 시간 표시
+- 빈 상태 처리
+
+5. 관리 기능:
+- 알림 설정
+- 모두 읽음 표시
+- 알림 삭제
+- 알림 환경설정
+
+추가하거나 수정하고 싶은 부분이 있다면 말씀해 주세요! -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>알림</title>
+        <style>
+            :root {
+                --primary-color: #6c5ce7;
+                --primary-light: #a29bfe;
+                --success-color: #00b894;
+                --warning-color: #fdcb6e;
+                --danger-color: #ff7675;
+                --surface-color: #ffffff;
+                --background-color: #f8f9fa;
+                --text-primary: #2d3436;
+                --text-secondary: #636e72;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+            }
+
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 24px;
+            }
+
+            /* Header */
+            .header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 24px;
+            }
+
+            .header-title {
+                font-size: 24px;
+                font-weight: 600;
+            }
+
+            .header-actions {
+                display: flex;
+                gap: 12px;
+            }
+
+            .action-button {
+                padding: 8px 16px;
+                border-radius: 8px;
+                border: 1px solid var(--border-color);
+                background: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .action-button:hover {
+                background: var(--background-color);
+            }
+
+            /* Filter Tabs */
+            .filter-tabs {
+                display: flex;
+                gap: 12px;
+                margin-bottom: 24px;
+                background: var(--surface-color);
+                padding: 8px;
+                border-radius: 12px;
+            }
+
+            .filter-tab {
+                padding: 8px 16px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .filter-tab.active {
+                background: var(--primary-color);
+                color: white;
+            }
+
+            /* Notification List */
+            .notification-list {
+                background: var(--surface-color);
+                border-radius: 16px;
+                overflow: hidden;
+            }
+
+            .notification-date {
+                padding: 16px;
+                background: var(--background-color);
+                font-weight: 500;
+                color: var(--text-secondary);
+            }
+
+            .notification-item {
+                display: flex;
+                padding: 20px;
+                gap: 16px;
+                border-bottom: 1px solid var(--background-color);
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .notification-item:hover {
+                background: var(--background-color);
+            }
+
+            .notification-item.unread {
+                background: var(--primary-light);
+                color: white;
+            }
+
+            .notification-icon {
+                width: 48px;
+                height: 48px;
+                border-radius: 24px;
+                background: var(--primary-light);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 24px;
+            }
+
+            .notification-content {
+                flex: 1;
+            }
+
+            .notification-title {
+                font-weight: 500;
+                margin-bottom: 4px;
+            }
+
+            .notification-message {
+                color: var(--text-secondary);
+                font-size: 14px;
+                margin-bottom: 8px;
+            }
+
+            .notification-meta {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 12px;
+                color: var(--text-secondary);
+            }
+
+            .notification-actions {
+                display: flex;
+                gap: 16px;
+            }
+
+            .meta-button {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                cursor: pointer;
+            }
+
+            /* Empty State */
+            .empty-state {
+                text-align: center;
+                padding: 48px 24px;
+                color: var(--text-secondary);
+            }
+
+            .empty-icon {
+                font-size: 48px;
+                margin-bottom: 16px;
+            }
+
+            .empty-title {
+                font-weight: 500;
+                margin-bottom: 8px;
+            }
+
+            .empty-message {
+                font-size: 14px;
+            }
+
+            @media (max-width: 640px) {
+                .container {
+                    padding: 16px;
+                }
+
+                .filter-tabs {
+                    overflow-x: auto;
+                    padding: 4px;
+                }
+
+                .filter-tab {
+                    white-space: nowrap;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Header -->
+            <div class="header">
+                <h1 class="header-title">알림</h1>
+                <div class="header-actions">
+                    <button class="action-button">모두 읽음 표시</button>
+                    <button class="action-button">설정</button>
+                </div>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <div class="filter-tab active">전체</div>
+                <div class="filter-tab">학습</div>
+                <div class="filter-tab">그룹</div>
+                <div class="filter-tab">배틀</div>
+                <div class="filter-tab">멘션</div>
+            </div>
+
+            <!-- Notification List -->
+            <div class="notification-list">
+                <div class="notification-date">오늘</div>
+
+                <!-- Unread Notification -->
+                <div class="notification-item unread">
+                    <div class="notification-icon">📚</div>
+                    <div class="notification-content">
+                        <div class="notification-title">
+                            새로운 퀴즈가 추가되었습니다
+                        </div>
+                        <div class="notification-message">
+                            수능 수학 기출 문제 10개가 추가되었습니다.
+                        </div>
+                        <div class="notification-meta">
+                            <span>10분 전</span>
+                            <div class="notification-actions">
+                                <div class="meta-button">👁️ 보기</div>
+                                <div class="meta-button">✓ 읽음</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="notification-item">
+                    <div class="notification-icon">🏆</div>
+                    <div class="notification-content">
+                        <div class="notification-title">배틀 승리!</div>
+                        <div class="notification-message">
+                            수학 퀴즈 배틀에서 승리했습니다. +50 포인트를
+                            획득했습니다.
+                        </div>
+                        <div class="notification-meta">
+                            <span>30분 전</span>
+                            <div class="notification-actions">
+                                <div class="meta-button">🏆 결과 보기</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="notification-date">어제</div>
+
+                <div class="notification-item">
+                    <div class="notification-icon">👥</div>
+                    <div class="notification-content">
+                        <div class="notification-title">그룹 초대</div>
+                        <div class="notification-message">
+                            '수능 수학 스터디' 그룹에 초대되었습니다.
+                        </div>
+                        <div class="notification-meta">
+                            <span>1일 전</span>
+                            <div class="notification-actions">
+                                <div class="meta-button">✓ 수락</div>
+                                <div class="meta-button">✕ 거절</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State (Hidden by default) -->
+                <div class="empty-state" style="display: none">
+                    <div class="empty-icon">🔔</div>
+                    <div class="empty-title">알림이 없습니다</div>
+                    <div class="empty-message">
+                        새로운 알림이 오면 여기에 표시됩니다.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

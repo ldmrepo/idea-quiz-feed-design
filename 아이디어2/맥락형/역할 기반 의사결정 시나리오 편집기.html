@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <title>역할 기반 의사결정형 시나리오 편집기</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --gray-200: #e5e7eb;
+                --bg: #f9fafb;
+            }
+            body {
+                font-family: -apple-system, sans-serif;
+                background: var(--bg);
+                margin: 0;
+                padding: 16px;
+            }
+            .header {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+            .header h1 {
+                font-size: 24px;
+                margin-bottom: 8px;
+            }
+            .editor-container {
+                display: flex;
+                gap: 20px;
+                flex-wrap: wrap;
+            }
+            .panel {
+                background: white;
+                border: 1px solid var(--gray-200);
+                border-radius: 6px;
+                padding: 16px;
+                flex: 1;
+                min-width: 300px;
+            }
+            .panel h2 {
+                margin-top: 0;
+                font-size: 18px;
+                margin-bottom: 12px;
+            }
+            .form-group {
+                margin-bottom: 12px;
+            }
+            .form-group label {
+                display: block;
+                margin-bottom: 4px;
+                font-weight: 600;
+                font-size: 14px;
+            }
+            .form-group input[type="text"],
+            .form-group textarea {
+                width: 100%;
+                padding: 8px;
+                font-size: 14px;
+                border: 1px solid var(--gray-200);
+                border-radius: 4px;
+            }
+            .role-card,
+            .step-card {
+                border: 1px solid var(--gray-200);
+                border-radius: 4px;
+                padding: 8px;
+                margin-bottom: 8px;
+                background: #f9fafb;
+            }
+            .choice-card {
+                border: 1px dashed var(--primary);
+                border-radius: 4px;
+                padding: 6px;
+                margin-bottom: 6px;
+                background: #fff;
+            }
+            .btn {
+                display: inline-block;
+                padding: 8px 12px;
+                background: var(--primary);
+                color: #fff;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 14px;
+                margin-top: 6px;
+            }
+            .btn-secondary {
+                background: var(--gray-200);
+                color: #374151;
+            }
+            pre {
+                background: #f3f4f6;
+                padding: 12px;
+                border-radius: 4px;
+                overflow-x: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <h1>역할 기반 의사결정형 시나리오 편집기</h1>
+            <p>출제자가 역할, 단계, 선택지를 입력하여 시나리오를 구성합니다.</p>
+        </div>
+
+        <div class="editor-container">
+            <!-- 시나리오 기본 정보 -->
+            <div class="panel" id="basicInfoPanel">
+                <h2>시나리오 기본 정보</h2>
+                <div class="form-group">
+                    <label for="scenarioTitle">시나리오 제목</label>
+                    <input
+                        type="text"
+                        id="scenarioTitle"
+                        placeholder="예: 프로젝트 기획 시나리오"
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="scenarioDescription">시나리오 설명</label>
+                    <textarea
+                        id="scenarioDescription"
+                        placeholder="시나리오 배경 및 목표 설명"
+                    ></textarea>
+                </div>
+            </div>
+
+            <!-- 역할 관리 -->
+            <div class="panel" id="rolePanel">
+                <h2>역할 관리</h2>
+                <div id="roleList"></div>
+                <button class="btn" onclick="addRole()">역할 추가</button>
+            </div>
+
+            <!-- 단계 및 선택지 관리 -->
+            <div class="panel" id="stepPanel">
+                <h2>단계 및 선택지 관리</h2>
+                <div id="stepList"></div>
+                <button class="btn" onclick="addStep()">단계 추가</button>
+            </div>
+        </div>
+
+        <!-- 미리보기 및 JSON 출력 -->
+        <div class="panel" id="previewPanel" style="margin-top: 20px">
+            <h2>미리보기 및 JSON 출력</h2>
+            <button class="btn" onclick="previewScenario()">미리보기</button>
+            <pre id="jsonOutput"></pre>
+        </div>
+
+        <script>
+            let scenario = {
+                scenario_id: Date.now(),
+                title: "",
+                description: "",
+                roles: [],
+                steps: [],
+                outcomes: [], // (선택적으로 후에 추가 가능)
+            }
+
+            // 역할 관리 함수
+            function addRole() {
+                const roleId = Date.now().toString()
+                const role = {
+                    role_id: roleId,
+                    role_name: "역할 " + (scenario.roles.length + 1),
+                    description: "역할 설명",
+                }
+                scenario.roles.push(role)
+                renderRoles()
+            }
+
+            function renderRoles() {
+                const roleListEl = document.getElementById("roleList")
+                roleListEl.innerHTML = ""
+                scenario.roles.forEach((role, index) => {
+                    const div = document.createElement("div")
+                    div.className = "role-card"
+                    div.innerHTML = `
+          <div><strong>${role.role_name}</strong></div>
+          <div>${role.description}</div>
+          <button class="btn btn-secondary" onclick="editRole(${index})">수정</button>
+        `
+                    roleListEl.appendChild(div)
+                })
+            }
+
+            function editRole(index) {
+                const newName = prompt(
+                    "역할 이름 입력",
+                    scenario.roles[index].role_name
+                )
+                const newDesc = prompt(
+                    "역할 설명 입력",
+                    scenario.roles[index].description
+                )
+                if (newName) scenario.roles[index].role_name = newName
+                if (newDesc) scenario.roles[index].description = newDesc
+                renderRoles()
+            }
+
+            // 단계 및 선택지 관리 함수
+            function addStep() {
+                const stepId = "step" + (scenario.steps.length + 1)
+                const step = {
+                    step_id: stepId,
+                    narration:
+                        "단계 " + (scenario.steps.length + 1) + " 내레이션",
+                    role_choices: {}, // 역할별 선택지를 저장할 객체
+                }
+                // 각 역할에 대해 빈 선택지 배열 초기화
+                scenario.roles.forEach((role) => {
+                    step.role_choices[role.role_id] = []
+                })
+                scenario.steps.push(step)
+                renderSteps()
+            }
+
+            function renderSteps() {
+                const stepListEl = document.getElementById("stepList")
+                stepListEl.innerHTML = ""
+                scenario.steps.forEach((step, sIndex) => {
+                    const div = document.createElement("div")
+                    div.className = "step-card"
+                    let html = `<div><strong>단계 ${sIndex + 1}</strong> (ID: ${
+                        step.step_id
+                    })</div>`
+                    html += `<div>내레이션: ${step.narration}</div>`
+                    // 각 역할별 선택지 표시
+                    for (let roleId in step.role_choices) {
+                        const role = scenario.roles.find(
+                            (r) => r.role_id === roleId
+                        )
+                        html += `<div style="margin-top:8px; font-size:14px;"><strong>${role.role_name} 선택지:</strong>`
+                        step.role_choices[roleId].forEach((choice, cIndex) => {
+                            html += `<div class="choice-card">
+              <span>${choice.choice_text}</span>
+              <button class="btn btn-secondary" onclick="editChoice('${step.step_id}', '${roleId}', ${cIndex})">수정</button>
+            </div>`
+                        })
+                        html += `<button class="btn" onclick="addChoice('${step.step_id}', '${roleId}')">선택지 추가</button>`
+                        html += `</div>`
+                    }
+                    div.innerHTML = html
+                    stepListEl.appendChild(div)
+                })
+            }
+
+            function addChoice(stepId, roleId) {
+                const choiceText = prompt("선택지 입력:")
+                if (choiceText) {
+                    const step = scenario.steps.find(
+                        (s) => s.step_id === stepId
+                    )
+                    if (step) {
+                        step.role_choices[roleId].push({
+                            choice_id: Date.now().toString(),
+                            choice_text: choiceText,
+                            next_step: "", // 나중에 다음 단계 지정 가능
+                        })
+                        renderSteps()
+                    }
+                }
+            }
+
+            function editChoice(stepId, roleId, choiceIndex) {
+                const step = scenario.steps.find((s) => s.step_id === stepId)
+                if (step) {
+                    const choice = step.role_choices[roleId][choiceIndex]
+                    const newText = prompt("선택지 수정:", choice.choice_text)
+                    if (newText) {
+                        choice.choice_text = newText
+                        renderSteps()
+                    }
+                }
+            }
+
+            // 미리보기 및 JSON 출력 함수
+            function previewScenario() {
+                // 기본 정보 업데이트
+                scenario.title = document.getElementById("scenarioTitle").value
+                scenario.description = document.getElementById(
+                    "scenarioDescription"
+                ).value
+                // JSON 출력
+                document.getElementById("jsonOutput").textContent =
+                    JSON.stringify(scenario, null, 2)
+                alert("미리보기 모드입니다. JSON 데이터를 확인하세요.")
+            }
+
+            // 초기 실행
+            // (빈 시나리오 상태)
+        </script>
+    </body>
+</html>

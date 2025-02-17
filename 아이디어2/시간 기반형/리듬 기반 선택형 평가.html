@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <title>리듬 기반 선택형 평가</title>
+        <style>
+            body {
+                font-family: -apple-system, sans-serif;
+                background: #f9fafb;
+                margin: 0;
+                padding: 16px;
+                text-align: center;
+            }
+            .timer {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+            .beat-indicator {
+                width: 50px;
+                height: 50px;
+                margin: 0 auto 20px;
+                border-radius: 50%;
+                background: #2563eb;
+                animation: pulse 1s infinite;
+            }
+            @keyframes pulse {
+                0% {
+                    transform: scale(1);
+                    opacity: 1;
+                }
+                50% {
+                    transform: scale(1.2);
+                    opacity: 0.7;
+                }
+                100% {
+                    transform: scale(1);
+                    opacity: 1;
+                }
+            }
+            .choices {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                margin: 0 auto;
+                max-width: 300px;
+            }
+            .choice-btn {
+                padding: 12px;
+                border: 2px solid #2563eb;
+                border-radius: 8px;
+                background: white;
+                font-size: 16px;
+                cursor: pointer;
+                transition: background 0.2s;
+            }
+            .choice-btn.active {
+                background: #e0e7ff;
+            }
+            .result {
+                margin-top: 20px;
+                font-size: 20px;
+                font-weight: bold;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="timer" id="timer">남은 시간: 10초</div>
+        <div class="beat-indicator"></div>
+        <div class="choices" id="choices">
+            <button class="choice-btn" onclick="selectChoice(1)">
+                선택지 1
+            </button>
+            <button class="choice-btn" onclick="selectChoice(2)">
+                선택지 2
+            </button>
+            <button class="choice-btn" onclick="selectChoice(3)">
+                선택지 3
+            </button>
+        </div>
+        <div class="result" id="result" style="display: none"></div>
+
+        <script>
+            let totalTime = 10 // 총 시간 10초
+            let timerEl = document.getElementById("timer")
+            let resultEl = document.getElementById("result")
+            let choicesEl = document.getElementById("choices")
+            let startTime = Date.now()
+            let interval = setInterval(updateTimer, 100)
+            let selectedChoice = null
+            let rhythmInterval = 1000 // 1초 간격 리듬
+            let lastBeatTime = Date.now()
+
+            function updateTimer() {
+                let elapsed = (Date.now() - startTime) / 1000
+                let remaining = Math.max(totalTime - elapsed, 0).toFixed(1)
+                timerEl.textContent = `남은 시간: ${remaining}초`
+
+                // 리듬 기반 선택: 리듬 타이밍과 현재 시간 차이를 체크해서 버튼에 효과 부여
+                if (Date.now() - lastBeatTime >= rhythmInterval) {
+                    lastBeatTime = Date.now()
+                    // 예: 모든 버튼에 temporary active 효과 토글
+                    document.querySelectorAll(".choice-btn").forEach((btn) => {
+                        btn.classList.add("active")
+                        setTimeout(() => btn.classList.remove("active"), 300)
+                    })
+                }
+
+                if (remaining <= 0) {
+                    clearInterval(interval)
+                    endAssessment()
+                }
+            }
+
+            function selectChoice(choiceId) {
+                // 선택 시점과 리듬 타이밍의 차이를 측정하여 정확도 계산
+                let currentTime = Date.now()
+                let timeSinceLastBeat = currentTime - lastBeatTime
+                // 리듬 타이밍 오차 (최적은 0 ~ 300ms 범위)
+                let error = Math.abs(timeSinceLastBeat)
+                // 예시: 오차가 작을수록 높은 점수
+                let score = Math.max(100 - error, 0)
+                selectedChoice = { id: choiceId, score: score, error: error }
+                clearInterval(interval)
+                endAssessment()
+            }
+
+            function endAssessment() {
+                // 평가 결과 표시
+                choicesEl.style.display = "none"
+                resultEl.style.display = "block"
+                if (selectedChoice) {
+                    resultEl.innerHTML = `선택한 선택지: ${selectedChoice.id}<br>타이밍 오차: ${selectedChoice.error}ms<br>점수: ${selectedChoice.score}`
+                } else {
+                    resultEl.innerHTML = `시간 초과!`
+                }
+            }
+        </script>
+    </body>
+</html>

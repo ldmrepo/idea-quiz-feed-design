@@ -1,0 +1,460 @@
+<!-- SNS 스타일의 문항 피드 디자인의 주요 특징을 설명드리겠습니다:
+
+1. 문항 작성 카드:
+- 상단에 고정된 작성 인터페이스
+- 이미지, 첨부파일, 태그 추가 기능
+- 직관적인 입력 방식
+
+2. 문항 카드 디자인:
+- 작성자 프로필 정보
+- 문항 제목과 내용
+- 이미지 첨부 지원
+- 통계 정보 표시 (조회수, 좋아요 수)
+
+3. 인터랙션 요소:
+- 좋아요 버튼
+- 댓글 기능
+- 공유 버튼
+- 메뉴 옵션
+
+4. 댓글 시스템:
+- 댓글 목록 표시
+- 작성 시간 표시
+- 댓글 입력 인터페이스
+- 실시간 상호작용
+
+5. 반응형 디자인:
+- 모바일 최적화
+- 터치 친화적 UI
+- 유동적 레이아웃
+
+추가하고 싶으신 기능이나 수정이 필요한 부분이 있으시다면 말씀해 주세요. -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>문항 피드</title>
+        <style>
+            /* Base Styles */
+            :root {
+                --primary-color: #0095f6;
+                --like-color: #ed4956;
+                --border-color: #dbdbdb;
+                --background-color: #fafafa;
+                --text-primary: #262626;
+                --text-secondary: #8e8e8e;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+            }
+
+            /* Feed Container */
+            .feed-container {
+                max-width: 600px;
+                margin: 20px auto;
+                padding: 0 16px;
+            }
+
+            /* Create Post Card */
+            .create-post {
+                background: white;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                padding: 16px;
+                margin-bottom: 24px;
+            }
+
+            .create-post-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 16px;
+            }
+
+            .create-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: #eee;
+            }
+
+            .create-input {
+                flex: 1;
+                padding: 8px 16px;
+                border: 1px solid var(--border-color);
+                border-radius: 20px;
+                font-size: 14px;
+                cursor: pointer;
+                background: var(--background-color);
+            }
+
+            .create-actions {
+                display: flex;
+                gap: 8px;
+                padding-top: 12px;
+                border-top: 1px solid var(--border-color);
+                margin-top: 12px;
+            }
+
+            .create-action-btn {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 16px;
+                border: none;
+                border-radius: 4px;
+                background: transparent;
+                color: var(--text-secondary);
+                cursor: pointer;
+                font-size: 14px;
+            }
+
+            .create-action-btn:hover {
+                background: var(--background-color);
+            }
+
+            /* Post Card */
+            .post-card {
+                background: white;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                margin-bottom: 24px;
+            }
+
+            .post-header {
+                display: flex;
+                align-items: center;
+                padding: 14px 16px;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .post-profile {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                flex: 1;
+            }
+
+            .profile-avatar {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background: #eee;
+            }
+
+            .profile-info {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .profile-name {
+                font-weight: 600;
+                font-size: 14px;
+            }
+
+            .post-time {
+                font-size: 12px;
+                color: var(--text-secondary);
+            }
+
+            .post-menu {
+                padding: 8px;
+                cursor: pointer;
+            }
+
+            .post-content {
+                padding: 16px;
+            }
+
+            .question-title {
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .question-text {
+                font-size: 14px;
+                margin-bottom: 16px;
+            }
+
+            .question-image {
+                width: 100%;
+                max-height: 400px;
+                object-fit: cover;
+                border-radius: 4px;
+                margin-bottom: 16px;
+            }
+
+            .post-stats {
+                display: flex;
+                align-items: center;
+                padding: 0 16px;
+                margin-bottom: 8px;
+            }
+
+            .stat-item {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                font-size: 14px;
+                color: var(--text-secondary);
+                margin-right: 16px;
+            }
+
+            .post-actions {
+                display: flex;
+                padding: 4px 16px;
+                border-top: 1px solid var(--border-color);
+            }
+
+            .action-button {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                padding: 8px;
+                background: none;
+                border: none;
+                color: var(--text-primary);
+                font-size: 14px;
+                cursor: pointer;
+                transition: background-color 0.2s;
+            }
+
+            .action-button:hover {
+                background-color: var(--background-color);
+            }
+
+            .action-button.liked {
+                color: var(--like-color);
+            }
+
+            /* Comments Section */
+            .comments-section {
+                padding: 12px 16px;
+                border-top: 1px solid var(--border-color);
+            }
+
+            .comment {
+                display: flex;
+                gap: 12px;
+                margin-bottom: 12px;
+            }
+
+            .comment-content {
+                flex: 1;
+            }
+
+            .comment-header {
+                display: flex;
+                align-items: baseline;
+                gap: 8px;
+                margin-bottom: 4px;
+            }
+
+            .comment-author {
+                font-weight: 600;
+                font-size: 14px;
+            }
+
+            .comment-time {
+                font-size: 12px;
+                color: var(--text-secondary);
+            }
+
+            .comment-text {
+                font-size: 14px;
+            }
+
+            .comment-input-container {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 16px;
+                border-top: 1px solid var(--border-color);
+            }
+
+            .comment-input {
+                flex: 1;
+                border: none;
+                padding: 8px 0;
+                font-size: 14px;
+            }
+
+            .comment-input:focus {
+                outline: none;
+            }
+
+            .post-button {
+                color: var(--primary-color);
+                font-weight: 600;
+                background: none;
+                border: none;
+                font-size: 14px;
+                cursor: pointer;
+                padding: 8px;
+            }
+
+            .post-button:disabled {
+                opacity: 0.3;
+                cursor: default;
+            }
+
+            /* Responsive Design */
+            @media (max-width: 640px) {
+                .feed-container {
+                    padding: 0;
+                }
+
+                .post-card {
+                    border-radius: 0;
+                    border-left: none;
+                    border-right: none;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="feed-container">
+            <!-- Create Post Card -->
+            <div class="create-post">
+                <div class="create-post-header">
+                    <div class="create-avatar"></div>
+                    <div class="create-input">
+                        새로운 문항을 작성해보세요...
+                    </div>
+                </div>
+                <div class="create-actions">
+                    <button class="create-action-btn">📷 이미지</button>
+                    <button class="create-action-btn">📎 첨부파일</button>
+                    <button class="create-action-btn">#️⃣ 태그</button>
+                </div>
+            </div>
+
+            <!-- Post Card -->
+            <div class="post-card">
+                <div class="post-header">
+                    <div class="post-profile">
+                        <div class="profile-avatar"></div>
+                        <div class="profile-info">
+                            <span class="profile-name">수학교사</span>
+                            <span class="post-time">2시간 전</span>
+                        </div>
+                    </div>
+                    <div class="post-menu">⋮</div>
+                </div>
+
+                <div class="post-content">
+                    <h2 class="question-title">
+                        2024 수능 수학 가형 21번 문항
+                    </h2>
+                    <p class="question-text">
+                        다음은 수열 {an}의 점화식입니다. 초항 a1 = 2일 때, a3의
+                        값을 구하시오...
+                    </p>
+                    <img
+                        src="/api/placeholder/600/400"
+                        alt="수학 문제 이미지"
+                        class="question-image"
+                    />
+                </div>
+
+                <div class="post-stats">
+                    <div class="stat-item">좋아요 128개</div>
+                    <div class="stat-item">댓글 24개</div>
+                    <div class="stat-item">조회 1,024회</div>
+                </div>
+
+                <div class="post-actions">
+                    <button class="action-button">❤️ 좋아요</button>
+                    <button class="action-button">💬 댓글</button>
+                    <button class="action-button">⤴️ 공유</button>
+                </div>
+
+                <div class="comments-section">
+                    <div class="comment">
+                        <div class="profile-avatar"></div>
+                        <div class="comment-content">
+                            <div class="comment-header">
+                                <span class="comment-author">수학선생님</span>
+                                <span class="comment-time">1시간 전</span>
+                            </div>
+                            <p class="comment-text">
+                                좋은 문제네요. 학생들이 이해하기 쉽게 설명되어
+                                있습니다.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="comment">
+                        <div class="profile-avatar"></div>
+                        <div class="comment-content">
+                            <div class="comment-header">
+                                <span class="comment-author">영어교사</span>
+                                <span class="comment-time">30분 전</span>
+                            </div>
+                            <p class="comment-text">
+                                다른 과목에도 적용할 수 있는 좋은
+                                아이디어입니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comment-input-container">
+                    <input
+                        type="text"
+                        class="comment-input"
+                        placeholder="댓글을 입력하세요..."
+                    />
+                    <button class="post-button" disabled>게시</button>
+                </div>
+            </div>
+
+            <!-- Additional Post Card -->
+            <div class="post-card">
+                <div class="post-header">
+                    <div class="post-profile">
+                        <div class="profile-avatar"></div>
+                        <div class="profile-info">
+                            <span class="profile-name">과학교사</span>
+                            <span class="post-time">3시간 전</span>
+                        </div>
+                    </div>
+                    <div class="post-menu">⋮</div>
+                </div>
+
+                <div class="post-content">
+                    <h2 class="question-title">2024 과학탐구 물리학 서술형</h2>
+                    <p class="question-text">
+                        다음은 운동량 보존 법칙에 관한 문제입니다...
+                    </p>
+                </div>
+
+                <div class="post-stats">
+                    <div class="stat-item">좋아요 85개</div>
+                    <div class="stat-item">댓글 16개</div>
+                    <div class="stat-item">조회 756회</div>
+                </div>
+
+                <div class="post-actions">
+                    <button class="action-button">❤️ 좋아요</button>
+                    <button class="action-button">💬 댓글</button>
+                    <button class="action-button">⤴️ 공유</button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

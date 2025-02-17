@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
+        <title>서술/분석형 문항 편집기</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --primary-light: #e0e7ff;
+                --gray-50: #f9fafb;
+                --gray-100: #f3f4f6;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+                --gray-900: #111827;
+            }
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                -webkit-tap-highlight-color: transparent;
+            }
+            body {
+                font-family: -apple-system, system-ui, sans-serif;
+                background: var(--gray-50);
+                color: var(--gray-900);
+                line-height: 1.5;
+                padding-bottom: 80px; /* 하단 버튼 영역 확보 */
+            }
+
+            /* 상단 유형 탭 */
+            .type-tabs {
+                display: flex;
+                gap: 8px;
+                padding: 8px;
+                background: white;
+                border-bottom: 1px solid var(--gray-200);
+            }
+            .tab-btn {
+                flex: 1;
+                padding: 10px;
+                border: 1px solid var(--gray-200);
+                border-radius: 20px;
+                background: white;
+                color: var(--gray-700);
+                font-size: 14px;
+                cursor: pointer;
+                text-align: center;
+            }
+            .tab-btn.active {
+                background: var(--primary);
+                color: white;
+                border-color: var(--primary);
+            }
+
+            /* 메인 에디터 컨테이너 */
+            .editor-container {
+                max-width: 720px;
+                margin: 0 auto;
+                padding: 16px;
+            }
+            .form-group {
+                margin-bottom: 16px;
+            }
+            label {
+                display: block;
+                margin-bottom: 6px;
+                font-weight: 600;
+                font-size: 14px;
+                color: var(--gray-700);
+            }
+            input[type="text"],
+            textarea {
+                width: 100%;
+                padding: 12px;
+                font-size: 14px;
+                border: 1px solid var(--gray-200);
+                border-radius: 6px;
+                outline: none;
+            }
+            input[type="text"]:focus,
+            textarea:focus {
+                border-color: var(--primary);
+            }
+            textarea {
+                resize: vertical;
+                min-height: 120px;
+                max-height: 400px;
+            }
+
+            /* 데이터 분석형 - 파일/이미지 업로드 */
+            .upload-area {
+                border: 2px dashed var(--gray-200);
+                padding: 16px;
+                text-align: center;
+                border-radius: 6px;
+                color: var(--gray-700);
+                cursor: pointer;
+            }
+            .upload-area:hover {
+                background: var(--primary-light);
+                border-color: var(--primary);
+            }
+            .upload-area input {
+                display: none;
+            }
+
+            /* 평가 기준(루브릭) 설정 */
+            .rubric-container {
+                margin-top: 8px;
+                border: 1px solid var(--gray-200);
+                border-radius: 6px;
+                padding: 8px;
+            }
+            .rubric-item {
+                display: flex;
+                align-items: center;
+                margin-bottom: 8px;
+            }
+            .rubric-item input[type="text"] {
+                flex: 1;
+                margin-right: 8px;
+            }
+
+            /* 미리보기 영역 */
+            .preview-container {
+                margin-top: 24px;
+            }
+            .preview-title {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 8px;
+                color: var(--gray-700);
+            }
+            .preview-card {
+                background: white;
+                border: 1px solid var(--gray-200);
+                border-radius: 8px;
+                padding: 16px;
+            }
+            .preview-question-title {
+                font-size: 15px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+            .preview-question-body {
+                font-size: 14px;
+                margin-bottom: 8px;
+                white-space: pre-wrap; /* textarea 줄바꿈 유지 */
+            }
+            .preview-attachment {
+                margin-bottom: 8px;
+                border: 1px solid var(--gray-200);
+                border-radius: 6px;
+                padding: 8px;
+                color: var(--gray-700);
+            }
+
+            /* 하단 고정 버튼 */
+            .bottom-buttons {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                display: flex;
+                gap: 12px;
+                padding: 12px;
+                padding-bottom: calc(12px + env(safe-area-inset-bottom));
+                background: white;
+                border-top: 1px solid var(--gray-200);
+                z-index: 10;
+            }
+            .btn {
+                flex: 1;
+                border: none;
+                border-radius: 6px;
+                padding: 14px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+            }
+            .btn-cancel {
+                background: var(--gray-100);
+                color: var(--gray-700);
+            }
+            .btn-save {
+                background: var(--primary);
+                color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 상단 유형 탭 -->
+        <div class="type-tabs">
+            <button class="tab-btn active" data-type="written">서술형</button>
+            <button class="tab-btn" data-type="analysis">데이터 분석형</button>
+        </div>
+
+        <div class="editor-container">
+            <!-- 문제 제목 -->
+            <div class="form-group">
+                <label for="questionTitle">문제 제목</label>
+                <input
+                    type="text"
+                    id="questionTitle"
+                    placeholder="예: 'OOP 개념을 설명하시오' 등"
+                />
+            </div>
+
+            <!-- 문제 설명/지시문 -->
+            <div class="form-group">
+                <label for="questionBody">문제 내용</label>
+                <textarea
+                    id="questionBody"
+                    rows="5"
+                    placeholder="문제 설명, 요구사항 등을 작성하세요"
+                ></textarea>
+            </div>
+
+            <!-- 데이터 분석형 전용 섹션(파일 업로드, 예시) -->
+            <div class="form-group" id="analysisSection" style="display: none">
+                <label>분석 자료 첨부</label>
+                <div class="upload-area" id="uploadArea">
+                    <input type="file" id="analysisFile" multiple />
+                    <p>이곳을 클릭하거나 드래그하여 파일을 업로드하세요</p>
+                </div>
+                <div id="fileList"></div>
+            </div>
+
+            <!-- 루브릭(평가 기준) 입력 예시 -->
+            <div class="form-group">
+                <label>평가 기준 (루브릭)</label>
+                <div class="rubric-container" id="rubricContainer">
+                    <!-- 루브릭 항목 추가 -->
+                </div>
+                <button
+                    type="button"
+                    style="
+                        margin-top: 8px;
+                        background: var(--gray-100);
+                        padding: 8px;
+                        border: none;
+                        border-radius: 4px;
+                        cursor: pointer;
+                    "
+                    id="addRubricBtn"
+                >
+                    + 루브릭 항목 추가
+                </button>
+            </div>
+
+            <!-- 미리보기 -->
+            <div class="preview-container">
+                <div class="preview-title">미리보기</div>
+                <div class="preview-card" id="previewCard">
+                    <div class="preview-question-title" id="previewTitle"></div>
+                    <div class="preview-question-body" id="previewBody"></div>
+                    <div
+                        id="previewAttachment"
+                        class="preview-attachment"
+                        style="display: none"
+                    ></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 하단 버튼 -->
+        <div class="bottom-buttons">
+            <button class="btn btn-cancel">취소</button>
+            <button class="btn btn-save" id="saveBtn">저장하기</button>
+        </div>
+
+        <script>
+            // ========== 전역 상태 ==========
+            let currentType = "written" // 'written' | 'analysis'
+            let rubricItems = []
+
+            // ========== DOM 참조 ==========
+            const tabs = document.querySelectorAll(".tab-btn")
+            const questionTitleEl = document.getElementById("questionTitle")
+            const questionBodyEl = document.getElementById("questionBody")
+            const analysisSection = document.getElementById("analysisSection")
+            const uploadArea = document.getElementById("uploadArea")
+            const analysisFileInput = document.getElementById("analysisFile")
+            const fileListEl = document.getElementById("fileList")
+            const previewTitleEl = document.getElementById("previewTitle")
+            const previewBodyEl = document.getElementById("previewBody")
+            const previewAttachmentEl =
+                document.getElementById("previewAttachment")
+            const rubricContainer = document.getElementById("rubricContainer")
+            const addRubricBtn = document.getElementById("addRubricBtn")
+            const saveBtn = document.getElementById("saveBtn")
+
+            // ========== 탭 전환 ==========
+            tabs.forEach((tab) => {
+                tab.addEventListener("click", () => {
+                    tabs.forEach((t) => t.classList.remove("active"))
+                    tab.classList.add("active")
+                    currentType = tab.dataset.type
+                    refreshUI()
+                })
+            })
+
+            // ========== UI 갱신 ==========
+            function refreshUI() {
+                // 데이터 분석형에만 파일 업로드 섹션 표시
+                if (currentType === "analysis") {
+                    analysisSection.style.display = "block"
+                } else {
+                    analysisSection.style.display = "none"
+                }
+                updatePreview()
+            }
+
+            // ========== 미리보기 ==========
+            function updatePreview() {
+                previewTitleEl.textContent =
+                    questionTitleEl.value.trim() || "[문제 제목]"
+                previewBodyEl.textContent =
+                    questionBodyEl.value.trim() ||
+                    "문제 내용이 여기에 표시됩니다."
+
+                if (
+                    currentType === "analysis" &&
+                    fileListEl.innerHTML.trim() !== ""
+                ) {
+                    previewAttachmentEl.style.display = "block"
+                    previewAttachmentEl.textContent = `첨부된 파일:\n${fileListEl.innerText}`
+                } else {
+                    previewAttachmentEl.style.display = "none"
+                }
+            }
+
+            questionTitleEl.addEventListener("input", updatePreview)
+            questionBodyEl.addEventListener("input", updatePreview)
+
+            // ========== 파일 업로드 ==========
+            uploadArea.addEventListener("click", () => {
+                analysisFileInput.click()
+            })
+            analysisFileInput.addEventListener("change", handleFileChange)
+
+            function handleFileChange(e) {
+                const files = e.target.files
+                fileListEl.innerHTML = ""
+                for (let i = 0; i < files.length; i++) {
+                    const li = document.createElement("div")
+                    li.textContent = files[i].name
+                    fileListEl.appendChild(li)
+                }
+                updatePreview()
+            }
+
+            // ========== 루브릭 (평가 기준) 추가 ==========
+            addRubricBtn.addEventListener("click", () => {
+                const idx = rubricItems.length
+                rubricItems.push({ criterion: "", weight: "" })
+                renderRubrics()
+            })
+
+            function renderRubrics() {
+                rubricContainer.innerHTML = ""
+                rubricItems.forEach((item, idx) => {
+                    const row = document.createElement("div")
+                    row.className = "rubric-item"
+
+                    const criterionInput = document.createElement("input")
+                    criterionInput.type = "text"
+                    criterionInput.placeholder = "평가 기준 (예: 논리적 근거)"
+                    criterionInput.value = item.criterion
+                    criterionInput.addEventListener("input", (e) => {
+                        rubricItems[idx].criterion = e.target.value
+                    })
+
+                    const weightInput = document.createElement("input")
+                    weightInput.type = "text"
+                    weightInput.placeholder = "배점/비중 (예: 30%)"
+                    weightInput.value = item.weight
+                    weightInput.style.width = "100px"
+                    weightInput.addEventListener("input", (e) => {
+                        rubricItems[idx].weight = e.target.value
+                    })
+
+                    const removeBtn = document.createElement("button")
+                    removeBtn.textContent = "X"
+                    removeBtn.style.marginLeft = "8px"
+                    removeBtn.style.background = "#e53e3e"
+                    removeBtn.style.color = "#fff"
+                    removeBtn.style.border = "none"
+                    removeBtn.style.borderRadius = "4px"
+                    removeBtn.style.padding = "8px"
+                    removeBtn.addEventListener("click", () => {
+                        rubricItems.splice(idx, 1)
+                        renderRubrics()
+                    })
+
+                    row.appendChild(criterionInput)
+                    row.appendChild(weightInput)
+                    row.appendChild(removeBtn)
+                    rubricContainer.appendChild(row)
+                })
+            }
+
+            // ========== "저장하기" 예시 ==========
+            saveBtn.addEventListener("click", () => {
+                // 실제로는 서버로 전송 or localStorage에 저장
+                const questionData = {
+                    type: currentType,
+                    title: questionTitleEl.value.trim(),
+                    body: questionBodyEl.value.trim(),
+                    files: [...analysisFileInput.files].map((f) => f.name),
+                    rubric: rubricItems,
+                }
+                console.log("[저장] 문항 데이터:", questionData)
+                alert("문항이 저장되었습니다.")
+            })
+
+            // 초기 렌더링
+            refreshUI()
+        </script>
+    </body>
+</html>

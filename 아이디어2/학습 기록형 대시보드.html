@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <title>학습 기록형 대시보드</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --gray-50: #f9fafb;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+            }
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+                background: var(--gray-50);
+            }
+            .header {
+                background: white;
+                padding: 16px;
+                border-bottom: 1px solid var(--gray-200);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .header .title {
+                font-size: 18px;
+                font-weight: 600;
+            }
+            .header button {
+                background: var(--primary);
+                color: #fff;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 6px;
+                cursor: pointer;
+            }
+
+            .nav {
+                display: flex;
+                gap: 8px;
+                padding: 8px;
+                background: white;
+                border-bottom: 1px solid var(--gray-200);
+            }
+            .nav button {
+                background: none;
+                border: 1px solid var(--gray-200);
+                padding: 8px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+                color: var(--gray-700);
+            }
+            .nav button.active {
+                background: var(--primary);
+                color: #fff;
+                border-color: var(--primary);
+            }
+
+            .container {
+                max-width: 720px;
+                margin: 0 auto;
+                padding: 16px;
+            }
+            .record-list {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+            .record-card {
+                background: white;
+                border: 1px solid var(--gray-200);
+                border-radius: 8px;
+                padding: 12px;
+            }
+            .record-card .type {
+                font-size: 12px;
+                color: var(--primary);
+                font-weight: 600;
+            }
+            .record-card .date {
+                font-size: 14px;
+                color: var(--gray-700);
+            }
+            .record-card .title {
+                font-size: 16px;
+                font-weight: 600;
+                margin: 8px 0;
+            }
+        </style>
+    </head>
+    <body>
+        <header class="header">
+            <div class="title">학습 기록 대시보드</div>
+            <button id="newRecordBtn">+ 새 기록 작성</button>
+        </header>
+        <nav class="nav">
+            <button class="nav-btn active" data-type="all">전체</button>
+            <button class="nav-btn" data-type="study_journal">학습 일지</button>
+            <button class="nav-btn" data-type="reflection">성찰 일기</button>
+            <button class="nav-btn" data-type="research_note">연구 노트</button>
+            <button class="nav-btn" data-type="activity_log">활동 기록</button>
+            <button class="nav-btn" data-type="progress_tracking">
+                진도 관리
+            </button>
+        </nav>
+        <main class="container">
+            <div class="record-list" id="recordList"></div>
+        </main>
+
+        <script>
+            const navButtons = document.querySelectorAll(".nav-btn")
+            const recordListEl = document.getElementById("recordList")
+
+            // 임시 데이터
+            let records = [
+                {
+                    id: 1,
+                    record_type: "study_journal",
+                    date: "2025-02-14",
+                    title: "React Hooks 학습",
+                    content: "...",
+                },
+                {
+                    id: 2,
+                    record_type: "reflection",
+                    date: "2025-02-13",
+                    title: "Hooks 개념 성찰",
+                    feeling: "😀",
+                },
+                {
+                    id: 3,
+                    record_type: "progress_tracking",
+                    date: "2025-02-12",
+                    title: "JS 알고리즘 20문제 목표",
+                    progress_info: { target: 20, done: 5, unit: "problems" },
+                },
+            ]
+
+            // 네비게이션 탭 클릭
+            navButtons.forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    navButtons.forEach((b) => b.classList.remove("active"))
+                    btn.classList.add("active")
+                    renderRecords(btn.dataset.type)
+                })
+            })
+
+            // 렌더
+            function renderRecords(filterType) {
+                recordListEl.innerHTML = ""
+                let filtered = records
+                if (filterType && filterType !== "all") {
+                    filtered = records.filter(
+                        (r) => r.record_type === filterType
+                    )
+                }
+                filtered.forEach((rec) => {
+                    const card = document.createElement("div")
+                    card.className = "record-card"
+                    card.innerHTML = `
+          <div class="type">${rec.record_type}</div>
+          <div class="date">${rec.date}</div>
+          <div class="title">${rec.title}</div>
+        `
+                    recordListEl.appendChild(card)
+                })
+            }
+
+            // 초기 전체 보기
+            renderRecords("all")
+        </script>
+    </body>
+</html>

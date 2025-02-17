@@ -1,0 +1,499 @@
+<!-- 그룹 토론 페이지의 주요 특징을 설명드리겠습니다:
+
+1. 토론 게시물:
+- 카테고리 필터
+- 첨부파일 지원
+- 인터랙션 기능
+- 정렬 옵션
+
+2. 댓글 시스템:
+- 대댓글 지원
+- 실시간 입력
+- 알림 기능
+- 멤버 태그
+
+3. 인기 토론:
+- 인기 주제 표시
+- 참여도 통계
+- 빠른 접근
+- 상태 표시
+
+4. 토론 통계:
+- 활성 토론 수
+- 총 댓글 수
+- 참여 멤버
+- 해결률
+
+5. 상호작용:
+- 좋아요/공유
+- 댓글 작성
+- 파일 첨부
+- 토론 참여 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>그룹 토론</title>
+        <style>
+            :root {
+                --primary-color: #6c5ce7;
+                --primary-light: #a29bfe;
+                --success-color: #00b894;
+                --warning-color: #fdcb6e;
+                --danger-color: #ff7675;
+                --surface-color: #ffffff;
+                --background-color: #f8f9fa;
+                --text-primary: #2d3436;
+                --text-secondary: #636e72;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 24px;
+                display: grid;
+                grid-template-columns: 1fr 300px;
+                gap: 24px;
+            }
+
+            /* Discussion Filter */
+            .discussion-header {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+                margin-bottom: 24px;
+            }
+
+            .header-title {
+                font-size: 24px;
+                font-weight: 600;
+                margin-bottom: 16px;
+            }
+
+            .filter-options {
+                display: flex;
+                gap: 12px;
+            }
+
+            .filter-button {
+                padding: 8px 16px;
+                border-radius: 20px;
+                border: 1px solid var(--border-color);
+                background: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .filter-button.active {
+                background: var(--primary-color);
+                color: white;
+                border-color: var(--primary-color);
+            }
+
+            /* Discussion Posts */
+            .discussion-posts {
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            .post-card {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+            }
+
+            .post-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 16px;
+            }
+
+            .post-author {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .author-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 20px;
+                background: var(--primary-light);
+            }
+
+            .author-info {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .author-name {
+                font-weight: 500;
+            }
+
+            .post-time {
+                font-size: 14px;
+                color: var(--text-secondary);
+            }
+
+            .post-content {
+                margin-bottom: 20px;
+            }
+
+            .post-text {
+                margin-bottom: 16px;
+                line-height: 1.6;
+            }
+
+            .post-attachments {
+                background: var(--background-color);
+                border-radius: 8px;
+                padding: 12px;
+                margin-bottom: 16px;
+            }
+
+            .attachment-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+            .attachment-item:hover {
+                background: var(--surface-color);
+            }
+
+            .post-actions {
+                display: flex;
+                gap: 16px;
+                color: var(--text-secondary);
+            }
+
+            .action-button {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                cursor: pointer;
+            }
+
+            /* Comments Section */
+            .comments-section {
+                margin-top: 16px;
+                padding-top: 16px;
+                border-top: 1px solid var(--border-color);
+            }
+
+            .comment-list {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+                margin-bottom: 16px;
+            }
+
+            .comment-item {
+                display: flex;
+                gap: 12px;
+            }
+
+            .comment-content {
+                flex: 1;
+                background: var(--background-color);
+                padding: 12px;
+                border-radius: 8px;
+            }
+
+            .comment-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 8px;
+            }
+
+            .comment-info {
+                font-weight: 500;
+            }
+
+            .comment-time {
+                font-size: 12px;
+                color: var(--text-secondary);
+            }
+
+            .reply-section {
+                margin-left: 52px;
+                margin-top: 12px;
+            }
+
+            .comment-input {
+                display: flex;
+                gap: 12px;
+                margin-top: 16px;
+            }
+
+            .input-field {
+                flex: 1;
+                padding: 12px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                resize: none;
+            }
+
+            .send-button {
+                padding: 8px 16px;
+                background: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+            }
+
+            /* Hot Topics */
+            .hot-topics {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+                margin-bottom: 24px;
+            }
+
+            .topic-list {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .topic-item {
+                display: flex;
+                gap: 12px;
+                padding: 12px;
+                background: var(--background-color);
+                border-radius: 8px;
+                cursor: pointer;
+            }
+
+            .topic-info {
+                flex: 1;
+            }
+
+            .topic-title {
+                font-weight: 500;
+                margin-bottom: 4px;
+            }
+
+            .topic-meta {
+                font-size: 12px;
+                color: var(--text-secondary);
+            }
+
+            /* Discussion Stats */
+            .discussion-stats {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+            }
+
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            .stat-card {
+                text-align: center;
+                padding: 16px;
+                background: var(--background-color);
+                border-radius: 8px;
+            }
+
+            .stat-value {
+                font-size: 24px;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+
+            .stat-label {
+                font-size: 12px;
+                color: var(--text-secondary);
+            }
+
+            @media (max-width: 768px) {
+                .container {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Discussion Header -->
+                <div class="discussion-header">
+                    <h1 class="header-title">토론</h1>
+                    <div class="filter-options">
+                        <button class="filter-button active">전체</button>
+                        <button class="filter-button">문제 풀이</button>
+                        <button class="filter-button">개념 질문</button>
+                        <button class="filter-button">일반 토론</button>
+                    </div>
+                </div>
+
+                <!-- Discussion Posts -->
+                <div class="discussion-posts">
+                    <div class="post-card">
+                        <div class="post-header">
+                            <div class="post-author">
+                                <div class="author-avatar"></div>
+                                <div class="author-info">
+                                    <div class="author-name">수학왕</div>
+                                    <div class="post-time">2시간 전</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            <div class="post-text">
+                                미적분 문제 42번에서 극값을 구하는 방법에 대해
+                                토론해보고 싶습니다. 여러분은 어떤 방식으로
+                                접근하셨나요?
+                            </div>
+                            <div class="post-attachments">
+                                <div class="attachment-item">
+                                    📎 문제42_풀이과정.jpg
+                                </div>
+                            </div>
+                            <div class="post-actions">
+                                <div class="action-button">👍 24</div>
+                                <div class="action-button">💬 8</div>
+                                <div class="action-button">🔗 공유</div>
+                            </div>
+                        </div>
+
+                        <!-- Comments -->
+                        <div class="comments-section">
+                            <div class="comment-list">
+                                <div class="comment-item">
+                                    <div class="author-avatar"></div>
+                                    <div class="comment-content">
+                                        <div class="comment-header">
+                                            <div class="comment-info">
+                                                미적분달인
+                                            </div>
+                                            <div class="comment-time">
+                                                1시간 전
+                                            </div>
+                                        </div>
+                                        <div class="comment-text">
+                                            저는 이계도함수를 활용했습니다.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Reply -->
+                                <div class="reply-section">
+                                    <div class="comment-item">
+                                        <div class="author-avatar"></div>
+                                        <div class="comment-content">
+                                            <div class="comment-header">
+                                                <div class="comment-info">
+                                                    수학왕
+                                                </div>
+                                                <div class="comment-time">
+                                                    30분 전
+                                                </div>
+                                            </div>
+                                            <div class="comment-text">
+                                                좋은 접근방법이네요!
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Comment Input -->
+                            <div class="comment-input">
+                                <textarea
+                                    class="input-field"
+                                    placeholder="댓글을 입력하세요..."
+                                ></textarea>
+                                <button class="send-button">게시</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Hot Topics -->
+                <div class="hot-topics">
+                    <h3 class="header-title" style="font-size: 18px">
+                        인기 토론
+                    </h3>
+                    <div class="topic-list">
+                        <div class="topic-item">
+                            <div class="topic-info">
+                                <div class="topic-title">
+                                    수열의 극한 풀이 방법
+                                </div>
+                                <div class="topic-meta">
+                                    댓글 32 · 좋아요 128
+                                </div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="topic-info">
+                                <div class="topic-title">적분 공식 정리</div>
+                                <div class="topic-meta">
+                                    댓글 24 · 좋아요 96
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Discussion Stats -->
+                <div class="discussion-stats">
+                    <h3
+                        class="header-title"
+                        style="font-size: 18px; margin-bottom: 16px"
+                    >
+                        토론 통계
+                    </h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">128</div>
+                            <div class="stat-label">활성 토론</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">1.2k</div>
+                            <div class="stat-label">총 댓글</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">24</div>
+                            <div class="stat-label">참여 멤버</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">85%</div>
+                            <div class="stat-label">해결률</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

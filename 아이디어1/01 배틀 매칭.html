@@ -1,0 +1,388 @@
+<!-- 배틀 매칭 페이지의 주요 특징을 설명드리겠습니다:
+
+1. 매칭 모드 선택:
+- 빠른 매칭
+- 랭크 매칭
+- 친구 대결
+- 모드별 통계
+
+2. 매칭 상태:
+- 실시간 대기 시간
+- 매칭 애니메이션
+- 상태 메시지
+- 취소 옵션
+
+3. 플레이어 프리뷰:
+- 프로필 표시
+- 레벨/랭크 정보
+- VS 배지
+- 대기 상태
+
+4. 실시간 통계:
+- 현재 매칭 인원
+- 평균 대기 시간
+- 매칭 성공률
+- 실시간 업데이트
+
+5. 상호작용:
+- 모드 선택
+- 매칭 취소
+- 강제 매칭
+- 친구 초대 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>배틀 매칭</title>
+        <style>
+            :root {
+                --primary-color: #6c5ce7;
+                --primary-light: #a29bfe;
+                --success-color: #00b894;
+                --warning-color: #fdcb6e;
+                --danger-color: #ff7675;
+                --surface-color: #ffffff;
+                --background-color: #f8f9fa;
+                --text-primary: #2d3436;
+                --text-secondary: #636e72;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                line-height: 1.5;
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 24px;
+            }
+
+            /* Mode Selection */
+            .mode-selection {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 24px;
+                margin-bottom: 48px;
+            }
+
+            .mode-card {
+                background: var(--surface-color);
+                border-radius: 16px;
+                padding: 24px;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .mode-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            }
+
+            .mode-card.active {
+                border: 2px solid var(--primary-color);
+            }
+
+            .mode-icon {
+                font-size: 48px;
+                margin-bottom: 16px;
+            }
+
+            .mode-title {
+                font-size: 20px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .mode-description {
+                color: var(--text-secondary);
+                font-size: 14px;
+                margin-bottom: 16px;
+            }
+
+            .mode-stats {
+                display: flex;
+                justify-content: center;
+                gap: 16px;
+                font-size: 14px;
+                color: var(--text-secondary);
+            }
+
+            /* Matching Section */
+            .matching-section {
+                background: var(--surface-color);
+                border-radius: 24px;
+                padding: 32px;
+                text-align: center;
+                margin-bottom: 32px;
+            }
+
+            .matching-title {
+                font-size: 24px;
+                font-weight: 600;
+                margin-bottom: 24px;
+            }
+
+            .matching-animation {
+                width: 120px;
+                height: 120px;
+                margin: 0 auto 24px;
+                border: 4px solid var(--primary-light);
+                border-top-color: var(--primary-color);
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+
+            @keyframes spin {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+
+            .matching-status {
+                color: var(--text-secondary);
+                margin-bottom: 24px;
+            }
+
+            .matching-time {
+                font-size: 20px;
+                font-weight: 600;
+                color: var(--primary-color);
+                margin-bottom: 32px;
+            }
+
+            /* Player Preview */
+            .player-preview {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 48px;
+                margin-bottom: 32px;
+            }
+
+            .player-card {
+                text-align: center;
+            }
+
+            .player-avatar {
+                width: 80px;
+                height: 80px;
+                border-radius: 40px;
+                background: var(--primary-light);
+                margin: 0 auto 16px;
+                position: relative;
+            }
+
+            .player-level {
+                position: absolute;
+                bottom: -8px;
+                right: -8px;
+                width: 32px;
+                height: 32px;
+                background: var(--warning-color);
+                border-radius: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-weight: 600;
+                font-size: 14px;
+                border: 3px solid var(--surface-color);
+            }
+
+            .player-name {
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+
+            .player-rank {
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+            .vs-badge {
+                font-size: 24px;
+                font-weight: 600;
+                color: var(--primary-color);
+            }
+
+            /* Action Buttons */
+            .action-buttons {
+                display: flex;
+                justify-content: center;
+                gap: 16px;
+            }
+
+            .button {
+                padding: 12px 32px;
+                border-radius: 12px;
+                font-size: 16px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .primary-button {
+                background: var(--primary-color);
+                color: white;
+                border: none;
+            }
+
+            .primary-button:hover {
+                background: var(--primary-light);
+            }
+
+            .secondary-button {
+                background: transparent;
+                border: 2px solid var(--primary-color);
+                color: var(--primary-color);
+            }
+
+            .secondary-button:hover {
+                background: var(--primary-light);
+                color: white;
+            }
+
+            /* Quick Match Stats */
+            .quick-stats {
+                display: flex;
+                justify-content: center;
+                gap: 32px;
+                margin-top: 32px;
+            }
+
+            .stat-item {
+                text-align: center;
+            }
+
+            .stat-value {
+                font-size: 24px;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+
+            .stat-label {
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+            @media (max-width: 768px) {
+                .player-preview {
+                    flex-direction: column;
+                    gap: 24px;
+                }
+
+                .vs-badge {
+                    font-size: 20px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Mode Selection -->
+            <div class="mode-selection">
+                <div class="mode-card active">
+                    <div class="mode-icon">⚡</div>
+                    <h3 class="mode-title">빠른 매칭</h3>
+                    <p class="mode-description">
+                        실력이 비슷한 상대와 빠르게 매칭
+                    </p>
+                    <div class="mode-stats">
+                        <span>👥 1,234명 대기 중</span>
+                        <span>⌛ 평균 15초</span>
+                    </div>
+                </div>
+
+                <div class="mode-card">
+                    <div class="mode-icon">🎯</div>
+                    <h3 class="mode-title">랭크 매칭</h3>
+                    <p class="mode-description">실력별 등급전 매칭</p>
+                    <div class="mode-stats">
+                        <span>👥 856명 대기 중</span>
+                        <span>⌛ 평균 30초</span>
+                    </div>
+                </div>
+
+                <div class="mode-card">
+                    <div class="mode-icon">👥</div>
+                    <h3 class="mode-title">친구 대결</h3>
+                    <p class="mode-description">친구와 1:1 대결</p>
+                    <div class="mode-stats">
+                        <span>👥 12명 온라인</span>
+                        <span>🤝 초대하기</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Matching Section -->
+            <div class="matching-section">
+                <h2 class="matching-title">상대를 찾는 중...</h2>
+                <div class="matching-animation"></div>
+                <p class="matching-status">
+                    비슷한 실력의 상대를 찾고 있습니다
+                </p>
+                <div class="matching-time">00:15</div>
+
+                <!-- Player Preview -->
+                <div class="player-preview">
+                    <div class="player-card">
+                        <div class="player-avatar">
+                            <div class="player-level">32</div>
+                        </div>
+                        <div class="player-name">수학왕</div>
+                        <div class="player-rank">골드 III</div>
+                    </div>
+
+                    <div class="vs-badge">VS</div>
+
+                    <div class="player-card">
+                        <div class="player-avatar">
+                            <div class="player-level">?</div>
+                        </div>
+                        <div class="player-name">매칭 중...</div>
+                        <div class="player-rank">---</div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="button secondary-button">취소</button>
+                    <button class="button primary-button">강제 매칭</button>
+                </div>
+            </div>
+
+            <!-- Quick Match Stats -->
+            <div class="quick-stats">
+                <div class="stat-item">
+                    <div class="stat-value">2,345</div>
+                    <div class="stat-label">현재 매칭 중</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">15초</div>
+                    <div class="stat-label">평균 대기 시간</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">85%</div>
+                    <div class="stat-label">매칭 성공률</div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

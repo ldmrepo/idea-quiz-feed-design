@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <title>맥락형 시나리오 예시</title>
+        <style>
+            body {
+                font-family: -apple-system, sans-serif;
+                margin: 0;
+                padding: 16px;
+                background: #f9fafb;
+            }
+            .scenario-container {
+                max-width: 600px;
+                margin: 0 auto;
+            }
+            .step-narration {
+                background: white;
+                padding: 12px;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                margin-bottom: 8px;
+            }
+            .choice-list {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            .choice-btn {
+                background: #2563eb;
+                color: #fff;
+                border: none;
+                padding: 10px;
+                border-radius: 6px;
+                cursor: pointer;
+                text-align: left;
+            }
+            .outcome-screen {
+                background: white;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                padding: 12px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="scenario-container">
+            <h2>맥락형 시나리오 플레이어</h2>
+            <div id="scenarioView"></div>
+        </div>
+
+        <script>
+            // 예시 시나리오 데이터(실제로는 API로 로드)
+            const scenarioData = {
+                scenario_id: 101,
+                title: "고객 불만 응대 시나리오",
+                steps: [
+                    {
+                        step_id: "step1",
+                        narration:
+                            "고객이 화난 목소리로 전화를 받았습니다. 어떻게 응대하시겠습니까?",
+                        choices: [
+                            {
+                                choice_id: "c1",
+                                choice_text:
+                                    "적극적으로 사과 후 상황을 파악한다.",
+                                next_step: "step2A",
+                            },
+                            {
+                                choice_id: "c2",
+                                choice_text:
+                                    "차분히 고객에게 상황을 설명하도록 요구한다.",
+                                next_step: "step2B",
+                            },
+                        ],
+                    },
+                    {
+                        step_id: "step2A",
+                        narration:
+                            "사과 후 듣기 결과, 배송 문제가 있음을 확인했습니다.",
+                        choices: [
+                            {
+                                choice_id: "c3",
+                                choice_text: "즉시 재배송 약속",
+                                next_step: "outcomeA",
+                            },
+                            {
+                                choice_id: "c4",
+                                choice_text: "환불 절차 안내",
+                                next_step: "outcomeB",
+                            },
+                        ],
+                    },
+                    {
+                        step_id: "step2B",
+                        narration:
+                            "고객이 불만을 장황하게 늘어놓으며 점점 화가 난 상황입니다...",
+                        choices: [
+                            {
+                                choice_id: "c5",
+                                choice_text:
+                                    "일단 들어주고 공감 표현 후 해결책 제시",
+                                next_step: "outcomeC",
+                            },
+                            {
+                                choice_id: "c6",
+                                choice_text: "전화 끊고 콜백 약속",
+                                next_step: "outcomeD",
+                            },
+                        ],
+                    },
+                ],
+                outcomes: [
+                    {
+                        outcome_id: "outcomeA",
+                        outcome_text:
+                            "고객 만족도가 높아지고 추가 구매 가능성이 생김. +10점",
+                    },
+                    {
+                        outcome_id: "outcomeB",
+                        outcome_text: "고객은 환불받았지만 다소 불만족함. +5점",
+                    },
+                    {
+                        outcome_id: "outcomeC",
+                        outcome_text:
+                            "화난 고객이지만 공감 덕분에 불만이 누그러짐. +8점",
+                    },
+                    {
+                        outcome_id: "outcomeD",
+                        outcome_text: "전화를 끊어버려 고객이 더 불만. -3점",
+                    },
+                ],
+            }
+
+            let currentStep = "step1" // 시작 단계
+            const scenarioView = document.getElementById("scenarioView")
+
+            function renderStep(stepId) {
+                // step 정보 찾기
+                const stepObj = scenarioData.steps.find(
+                    (s) => s.step_id === stepId
+                )
+                if (!stepObj) return
+
+                scenarioView.innerHTML = `
+        <div class="step-narration">
+          <p>${stepObj.narration}</p>
+        </div>
+        <div class="choice-list" id="choiceList"></div>
+      `
+                const choiceListEl = document.getElementById("choiceList")
+
+                stepObj.choices.forEach((choice) => {
+                    const btn = document.createElement("button")
+                    btn.className = "choice-btn"
+                    btn.textContent = choice.choice_text
+                    btn.addEventListener("click", () => {
+                        handleChoice(choice.next_step)
+                    })
+                    choiceListEl.appendChild(btn)
+                })
+            }
+
+            function handleChoice(nextStepOrOutcome) {
+                // outcome인지 step인지 판별
+                const isOutcome = scenarioData.outcomes.find(
+                    (o) => o.outcome_id === nextStepOrOutcome
+                )
+                if (isOutcome) {
+                    renderOutcome(isOutcome)
+                } else {
+                    currentStep = nextStepOrOutcome
+                    renderStep(currentStep)
+                }
+            }
+
+            function renderOutcome(outcomeObj) {
+                scenarioView.innerHTML = `
+        <div class="outcome-screen">
+          <h3>결과</h3>
+          <p>${outcomeObj.outcome_text}</p>
+          <button onclick="restartScenario()">다시 시도하기</button>
+        </div>
+      `
+            }
+
+            function restartScenario() {
+                currentStep = "step1"
+                renderStep(currentStep)
+            }
+
+            // 초깃값 렌더
+            renderStep(currentStep)
+        </script>
+    </body>
+</html>

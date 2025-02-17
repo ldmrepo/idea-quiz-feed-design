@@ -1,0 +1,417 @@
+<!-- 주요 구현 특징:
+
+1. 단계별 심화형
+- 레벨 시스템
+- 진행 상태 표시
+- 난이도 상승 체계
+
+2. 오답 기반 분기형
+- 맞춤형 피드백
+- 오답 분석 
+- 보완 학습 경로
+
+3. 복합 지식 통합형
+- 지식 맵 시각화
+- 개념 연결
+- 통합적 사고
+
+4. 응용 확장형
+- 실생활 시나리오
+- 힌트 시스템
+- 단계적 확장
+
+모바일 최적화:
+- 터치 인터페이스
+- 반응형 레이아웃
+- 시각적 피드백
+ -->
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>진화형 선택형 문제</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --success: #22c55e;
+                --warning: #f59e0b;
+                --error: #ef4444;
+                --gray-50: #f9fafb;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, system-ui, sans-serif;
+                background: var(--gray-50);
+                padding: 16px;
+            }
+
+            /* 레벨 인디케이터 */
+            .level-indicator {
+                position: fixed;
+                top: 16px;
+                right: 16px;
+                background: white;
+                padding: 8px 16px;
+                border-radius: 20px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                z-index: 100;
+            }
+
+            .level-badge {
+                width: 24px;
+                height: 24px;
+                background: var(--primary);
+                color: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+            }
+
+            /* 진행 상태 */
+            .progress-status {
+                display: flex;
+                gap: 8px;
+                margin-bottom: 20px;
+                overflow-x: auto;
+                padding: 4px;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .stage-indicator {
+                flex: 0 0 auto;
+                padding: 8px 16px;
+                background: white;
+                border-radius: 20px;
+                font-size: 14px;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            }
+
+            .stage-indicator.active {
+                background: var(--primary);
+                color: white;
+            }
+
+            /* 문제 카드 */
+            .question-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+                overflow: hidden;
+            }
+
+            .card-header {
+                padding: 16px;
+                border-bottom: 1px solid var(--gray-200);
+            }
+
+            .card-title {
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .card-description {
+                font-size: 14px;
+                color: var(--gray-700);
+            }
+
+            /* 심화 학습 영역 */
+            .advanced-content {
+                padding: 16px;
+                background: var(--gray-50);
+                margin: 16px;
+                border-radius: 8px;
+                border-left: 4px solid var(--primary);
+            }
+
+            /* 선택지 스타일 */
+            .option-grid {
+                display: grid;
+                gap: 12px;
+                padding: 16px;
+            }
+
+            .option-button {
+                padding: 16px;
+                background: var(--gray-50);
+                border: 1px solid var(--gray-200);
+                border-radius: 8px;
+                text-align: left;
+                cursor: pointer;
+                transition: all 0.2s;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .option-button:hover {
+                background: var(--gray-200);
+            }
+
+            .option-number {
+                width: 24px;
+                height: 24px;
+                background: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 14px;
+                font-weight: 600;
+            }
+
+            /* 힌트 시스템 */
+            .hint-system {
+                padding: 12px 16px;
+                background: var(--gray-50);
+                border-top: 1px solid var(--gray-200);
+            }
+
+            .hint-toggle {
+                color: var(--primary);
+                font-size: 14px;
+                background: none;
+                border: none;
+                cursor: pointer;
+            }
+
+            .hint-content {
+                margin-top: 8px;
+                padding: 12px;
+                background: white;
+                border-radius: 8px;
+                font-size: 14px;
+                display: none;
+            }
+
+            /* 복합 지식 시각화 */
+            .knowledge-map {
+                padding: 16px;
+                overflow-x: auto;
+            }
+
+            .map-container {
+                min-width: 600px;
+                height: 200px;
+                background: var(--gray-50);
+                border-radius: 8px;
+                position: relative;
+            }
+
+            .knowledge-node {
+                position: absolute;
+                width: 100px;
+                padding: 8px;
+                background: white;
+                border: 1px solid var(--gray-200);
+                border-radius: 8px;
+                text-align: center;
+                font-size: 14px;
+            }
+
+            /* 응용 문제 영역 */
+            .application-section {
+                padding: 16px;
+                background: var(--gray-50);
+                margin: 16px;
+                border-radius: 8px;
+            }
+
+            .application-scenario {
+                font-size: 14px;
+                color: var(--gray-700);
+                margin-bottom: 16px;
+            }
+
+            /* 피드백 시스템 */
+            .feedback-area {
+                padding: 16px;
+                border-top: 1px solid var(--gray-200);
+            }
+
+            .feedback-message {
+                padding: 12px;
+                background: var(--gray-50);
+                border-radius: 8px;
+                font-size: 14px;
+                margin-bottom: 12px;
+                display: flex;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .feedback-icon {
+                width: 20px;
+                height: 20px;
+                background: var(--primary);
+                border-radius: 50%;
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 12px;
+            }
+
+            /* 하단 네비게이션 */
+            .bottom-nav {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 16px;
+                background: white;
+                border-top: 1px solid var(--gray-200);
+                display: flex;
+                gap: 12px;
+            }
+
+            .nav-button {
+                flex: 1;
+                padding: 14px;
+                border-radius: 8px;
+                font-size: 15px;
+                font-weight: 600;
+                border: none;
+                cursor: pointer;
+            }
+
+            .primary-button {
+                background: var(--primary);
+                color: white;
+            }
+
+            .secondary-button {
+                background: var(--gray-50);
+                color: var(--gray-700);
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 레벨 인디케이터 -->
+        <div class="level-indicator">
+            <span>Level</span>
+            <div class="level-badge">3</div>
+        </div>
+
+        <!-- 진행 상태 -->
+        <div class="progress-status">
+            <div class="stage-indicator">기초 개념</div>
+            <div class="stage-indicator active">심화 학습</div>
+            <div class="stage-indicator">응용 단계</div>
+            <div class="stage-indicator">통합 응용</div>
+        </div>
+
+        <!-- 단계별 심화형 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2 class="card-title">심화 학습</h2>
+                <p class="card-description">
+                    이전 단계의 개념을 확장하여 풀어보세요.
+                </p>
+            </div>
+            <div class="advanced-content">
+                이전 학습: 기본 연산 현재 단계: 복합 연산
+            </div>
+            <div class="option-grid">
+                <button class="option-button">
+                    <span class="option-number">1</span>
+                    <span>선택지 1</span>
+                </button>
+                <button class="option-button">
+                    <span class="option-number">2</span>
+                    <span>선택지 2</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 오답 기반 분기형 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2 class="card-title">맞춤형 보완 학습</h2>
+                <p class="card-description">
+                    이전 오답을 분석한 맞춤형 문제입니다.
+                </p>
+            </div>
+            <div class="feedback-area">
+                <div class="feedback-message">
+                    <div class="feedback-icon">i</div>
+                    <div>이전 문제에서 놓친 부분을 보완하는 문제입니다.</div>
+                </div>
+            </div>
+            <div class="option-grid">
+                <button class="option-button">
+                    <span class="option-number">A</span>
+                    <span>보완 학습 1</span>
+                </button>
+                <button class="option-button">
+                    <span class="option-number">B</span>
+                    <span>보완 학습 2</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 복합 지식 통합형 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2 class="card-title">지식 통합 문제</h2>
+                <p class="card-description">여러 개념을 통합하여 해결하세요.</p>
+            </div>
+            <div class="knowledge-map">
+                <div class="map-container">
+                    <div class="knowledge-node" style="left: 10%; top: 20%">
+                        개념 A
+                    </div>
+                    <div class="knowledge-node" style="left: 40%; top: 50%">
+                        개념 B
+                    </div>
+                    <div class="knowledge-node" style="left: 70%; top: 30%">
+                        개념 C
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 응용 확장형 -->
+        <div class="question-card">
+            <div class="card-header">
+                <h2 class="card-title">실생활 응용 문제</h2>
+                <p class="card-description">
+                    학습한 내용을 실제 상황에 적용해보세요.
+                </p>
+            </div>
+            <div class="application-section">
+                <div class="application-scenario">
+                    실제 상황에 기반한 시나리오가 제시됩니다.
+                </div>
+            </div>
+            <div class="hint-system">
+                <button class="hint-toggle">힌트 보기</button>
+                <div class="hint-content">
+                    문제 해결을 위한 힌트가 제공됩니다.
+                </div>
+            </div>
+        </div>
+
+        <!-- 하단 네비게이션 -->
+        <div class="bottom-nav">
+            <button class="nav-button secondary-button">이전</button>
+            <button class="nav-button primary-button">다음 단계</button>
+        </div>
+    </body>
+</html>

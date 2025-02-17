@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <title>진도 관리</title>
+        <style>
+            :root {
+                --primary: #2563eb;
+                --gray-100: #f3f4f6;
+                --gray-200: #e5e7eb;
+                --gray-700: #374151;
+            }
+            body {
+                font-family: -apple-system, sans-serif;
+                margin: 0;
+                background: var(--gray-100);
+            }
+            .header {
+                background: white;
+                padding: 16px;
+                border-bottom: 1px solid var(--gray-200);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .header .title {
+                font-size: 18px;
+                font-weight: 600;
+            }
+            .header button {
+                background: var(--primary);
+                color: #fff;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 6px;
+                cursor: pointer;
+            }
+            .container {
+                max-width: 720px;
+                margin: 16px auto;
+                padding: 0 16px;
+            }
+            .progress-list {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                margin-top: 16px;
+            }
+            .progress-item {
+                background: white;
+                border: 1px solid var(--gray-200);
+                border-radius: 6px;
+                padding: 12px;
+            }
+            .title-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 4px;
+            }
+            .title-row .main-title {
+                font-size: 16px;
+                font-weight: 600;
+            }
+            .progress-bar-bg {
+                background: var(--gray-200);
+                height: 10px;
+                border-radius: 4px;
+                margin-top: 8px;
+                position: relative;
+                overflow: hidden;
+            }
+            .progress-bar-fill {
+                background: var(--primary);
+                height: 100%;
+                width: 0%;
+                transition: width 0.3s;
+            }
+            .update-btn,
+            .complete-btn {
+                background: var(--gray-100);
+                border: none;
+                padding: 6px 8px;
+                border-radius: 4px;
+                cursor: pointer;
+                margin-left: 8px;
+            }
+
+            .modal-bg {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.4);
+                display: none;
+                justify-content: center;
+                align-items: center;
+                z-index: 10;
+            }
+            .modal {
+                background: white;
+                width: 90%;
+                max-width: 600px;
+                border-radius: 8px;
+                padding: 16px;
+            }
+            .form-group {
+                margin-bottom: 16px;
+            }
+            label {
+                display: block;
+                font-weight: 600;
+                margin-bottom: 6px;
+            }
+            input[type="text"],
+            input[type="number"] {
+                width: 100%;
+                padding: 8px;
+                border: 1px solid var(--gray-200);
+                border-radius: 4px;
+            }
+            .actions {
+                display: flex;
+                gap: 8px;
+                justify-content: flex-end;
+            }
+            .cancel-btn {
+                background: var(--gray-100);
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+            .save-btn {
+                background: var(--primary);
+                color: #fff;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <header class="header">
+            <div class="title">진도 관리</div>
+            <button id="newGoalBtn">+ 목표 추가</button>
+        </header>
+        <div class="container">
+            <div class="progress-list" id="progressList"></div>
+        </div>
+
+        <!-- 모달 -->
+        <div class="modal-bg" id="modalBg">
+            <div class="modal">
+                <h2>새 목표 추가</h2>
+                <div class="form-group">
+                    <label for="goalTitle">목표 제목</label>
+                    <input
+                        type="text"
+                        id="goalTitle"
+                        placeholder="예: React 강의 20강 완강"
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="targetCount">전체량</label>
+                    <input
+                        type="number"
+                        id="targetCount"
+                        placeholder="예: 20"
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="unitText">단위</label>
+                    <input
+                        type="text"
+                        id="unitText"
+                        placeholder="강, 문제, 페이지 등"
+                    />
+                </div>
+                <div class="actions">
+                    <button class="cancel-btn" id="cancelBtn">취소</button>
+                    <button class="save-btn" id="saveBtn">저장</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const newGoalBtn = document.getElementById("newGoalBtn")
+            const modalBg = document.getElementById("modalBg")
+            const cancelBtn = document.getElementById("cancelBtn")
+            const saveBtn = document.getElementById("saveBtn")
+
+            const goalTitleEl = document.getElementById("goalTitle")
+            const targetCountEl = document.getElementById("targetCount")
+            const unitTextEl = document.getElementById("unitText")
+
+            const progressListEl = document.getElementById("progressList")
+
+            let goals = []
+
+            // 모달 열기
+            newGoalBtn.addEventListener("click", () => {
+                modalBg.style.display = "flex"
+                goalTitleEl.value = ""
+                targetCountEl.value = ""
+                unitTextEl.value = ""
+            })
+
+            // 모달 닫기
+            cancelBtn.addEventListener("click", () => {
+                modalBg.style.display = "none"
+            })
+
+            // 목표 저장
+            saveBtn.addEventListener("click", () => {
+                const goal = {
+                    id: Date.now(),
+                    title: goalTitleEl.value.trim(),
+                    target_count: parseInt(targetCountEl.value.trim(), 10) || 0,
+                    completed_count: 0,
+                    unit: unitTextEl.value.trim() || "개",
+                }
+                goal.progress_percent = calcPercent(
+                    goal.completed_count,
+                    goal.target_count
+                )
+                goals.unshift(goal)
+                renderGoals()
+                modalBg.style.display = "none"
+            })
+
+            // 퍼센트 계산
+            function calcPercent(current, total) {
+                if (total <= 0) return 0
+                return Math.round((current / total) * 100)
+            }
+
+            // 진행도 +1 업데이트
+            function incrementGoal(id) {
+                const g = goals.find((x) => x.id === id)
+                if (!g) return
+                if (g.completed_count < g.target_count) {
+                    g.completed_count += 1
+                    g.progress_percent = calcPercent(
+                        g.completed_count,
+                        g.target_count
+                    )
+                }
+                renderGoals()
+            }
+
+            // 완료 처리
+            function completeGoal(id) {
+                const g = goals.find((x) => x.id === id)
+                if (!g) return
+                g.completed_count = g.target_count
+                g.progress_percent = 100
+                renderGoals()
+            }
+
+            // 목록 렌더
+            function renderGoals() {
+                progressListEl.innerHTML = ""
+                goals.forEach((g) => {
+                    const item = document.createElement("div")
+                    item.className = "progress-item"
+
+                    // Title row
+                    const titleRow = document.createElement("div")
+                    titleRow.className = "title-row"
+
+                    const mainTitle = document.createElement("div")
+                    mainTitle.className = "main-title"
+                    mainTitle.textContent = g.title
+
+                    const actionWrap = document.createElement("div")
+
+                    // +1 버튼
+                    const updateBtn = document.createElement("button")
+                    updateBtn.className = "update-btn"
+                    updateBtn.textContent = `+1 ${g.unit}`
+                    updateBtn.addEventListener("click", () =>
+                        incrementGoal(g.id)
+                    )
+
+                    // 완료 버튼
+                    const completeBtn = document.createElement("button")
+                    completeBtn.className = "complete-btn"
+                    completeBtn.textContent = "완료"
+                    completeBtn.addEventListener("click", () =>
+                        completeGoal(g.id)
+                    )
+
+                    actionWrap.appendChild(updateBtn)
+                    actionWrap.appendChild(completeBtn)
+
+                    titleRow.appendChild(mainTitle)
+                    titleRow.appendChild(actionWrap)
+
+                    // progress info
+                    const infoText = document.createElement("div")
+                    infoText.textContent = `진행: ${g.completed_count}/${g.target_count} ${g.unit} (${g.progress_percent}%)`
+
+                    // progress bar
+                    const barBg = document.createElement("div")
+                    barBg.className = "progress-bar-bg"
+                    const barFill = document.createElement("div")
+                    barFill.className = "progress-bar-fill"
+                    barFill.style.width = g.progress_percent + "%"
+                    barBg.appendChild(barFill)
+
+                    item.appendChild(titleRow)
+                    item.appendChild(infoText)
+                    item.appendChild(barBg)
+
+                    progressListEl.appendChild(item)
+                })
+            }
+        </script>
+    </body>
+</html>
